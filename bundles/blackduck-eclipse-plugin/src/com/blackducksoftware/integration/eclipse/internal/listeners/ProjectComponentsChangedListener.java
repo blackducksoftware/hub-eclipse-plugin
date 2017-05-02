@@ -36,12 +36,12 @@ import com.blackducksoftware.integration.eclipse.common.services.ComponentInform
 import com.blackducksoftware.integration.eclipse.common.services.inspector.ComponentInspectorService;
 import com.blackducksoftware.integration.hub.buildtool.Gav;
 
-public class ProjectDependenciesChangedListener implements IElementChangedListener {
+public class ProjectComponentsChangedListener implements IElementChangedListener {
 	private final ComponentInspectorService inspectorService;
 
 	private final ComponentInformationService componentInformationService;
 
-	public ProjectDependenciesChangedListener(final ComponentInspectorService inspectorService) {
+	public ProjectComponentsChangedListener(final ComponentInspectorService inspectorService) {
 		this.inspectorService = inspectorService;
 		this.componentInformationService = new ComponentInformationService();
 	}

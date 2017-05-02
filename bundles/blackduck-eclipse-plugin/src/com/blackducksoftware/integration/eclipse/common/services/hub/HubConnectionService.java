@@ -71,6 +71,11 @@ public class HubConnectionService {
 		this.restConnection = this.getHubConnectionFromPreferences();
 		this.logger = new IntBufferedLogger();
 		this.hubServicesFactory = new HubServicesFactory(restConnection);
+		try {
+			this.phoneHome();
+		} catch (final IntegrationException e) {
+			//Do nothing
+		}
 	}
 
 	private RestConnection getHubConnectionFromPreferences() {

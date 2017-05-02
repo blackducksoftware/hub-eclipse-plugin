@@ -33,8 +33,8 @@ import com.blackducksoftware.integration.eclipse.common.services.hub.HubConnecti
 import com.blackducksoftware.integration.eclipse.common.services.inspector.ComponentInspectorService;
 import com.blackducksoftware.integration.eclipse.common.services.inspector.ComponentInspectorViewService;
 import com.blackducksoftware.integration.eclipse.internal.listeners.NewProjectListener;
+import com.blackducksoftware.integration.eclipse.internal.listeners.ProjectComponentsChangedListener;
 import com.blackducksoftware.integration.eclipse.internal.listeners.ProjectDeletedListener;
-import com.blackducksoftware.integration.eclipse.internal.listeners.ProjectDependenciesChangedListener;
 import com.blackducksoftware.integration.eclipse.internal.listeners.ProjectMarkedForInspectionListener;
 
 public class BlackDuckHubPluginActivator extends AbstractUIPlugin {
@@ -52,7 +52,7 @@ public class BlackDuckHubPluginActivator extends AbstractUIPlugin {
 
 	private NewProjectListener newProjectListener;
 
-	private ProjectDependenciesChangedListener depsChangedListener;
+	private ProjectComponentsChangedListener projectComponentsChangedListener;
 
 	private ProjectMarkedForInspectionListener projectMarkedForInspectionListener;
 
@@ -71,18 +71,21 @@ public class BlackDuckHubPluginActivator extends AbstractUIPlugin {
 		hubConnectionService = new HubConnectionService();
 		inspectorViewService = inspectorViewService == null ? new ComponentInspectorViewService() : inspectorViewService;
 		inspectorService = new ComponentInspectorService(inspectorViewService, hubConnectionService);
+		this.updateListeners();
+	}
 
+	public void updateListeners(){
 		if(projectMarkedForInspectionListener != null){
 			plugin.getPreferenceStore().removePropertyChangeListener(projectMarkedForInspectionListener);
 		}
 		projectMarkedForInspectionListener = new ProjectMarkedForInspectionListener(inspectorService, inspectorViewService);
 		plugin.getPreferenceStore().addPropertyChangeListener(projectMarkedForInspectionListener);
 
-		if(depsChangedListener != null){
-			JavaCore.removeElementChangedListener(depsChangedListener);
+		if(projectComponentsChangedListener != null){
+			JavaCore.removeElementChangedListener(projectComponentsChangedListener);
 		}
-		depsChangedListener = new ProjectDependenciesChangedListener(inspectorService);
-		JavaCore.addElementChangedListener(depsChangedListener);
+		projectComponentsChangedListener = new ProjectComponentsChangedListener(inspectorService);
+		JavaCore.addElementChangedListener(projectComponentsChangedListener);
 
 		if(newProjectListener != null){
 			ResourcesPlugin.getWorkspace().removeResourceChangeListener(newProjectListener);
@@ -104,11 +107,11 @@ public class BlackDuckHubPluginActivator extends AbstractUIPlugin {
 		inspectorService.shutDown();
 		ResourcesPlugin.getWorkspace().removeResourceChangeListener(newProjectListener);
 		ResourcesPlugin.getWorkspace().removeResourceChangeListener(projectDeletedListener);
-		JavaCore.removeElementChangedListener(depsChangedListener);
+		JavaCore.removeElementChangedListener(projectComponentsChangedListener);
 		try {
 			super.stop(context);
 		} catch (final Exception e) {
-			e.printStackTrace();
+			//TODO: Log properly
 		}
 	}
 
