@@ -28,9 +28,9 @@ import java.net.URISyntaxException;
 import java.util.Arrays;
 import java.util.List;
 
-import com.blackducksoftware.integration.eclipse.common.Constants;
 import com.blackducksoftware.integration.eclipse.common.services.hub.ComponentLookupService;
 import com.blackducksoftware.integration.eclipse.common.services.hub.HubConnectionService;
+import com.blackducksoftware.integration.eclipse.internal.ComponentModel;
 import com.blackducksoftware.integration.eclipse.internal.InspectionJob;
 import com.blackducksoftware.integration.eclipse.internal.datastructures.InspectionJobQueue;
 import com.blackducksoftware.integration.eclipse.internal.listeners.InspectionJobChangeListener;
@@ -44,6 +44,26 @@ public class ComponentInspectorService {
 	private final ComponentInspectorCacheService inspectorCacheService;
 	private final ComponentInspectorViewService inspectorViewService;
 	private final ComponentInspectorPreferencesService inspectorPreferencesService;
+
+	public static final String INITIALIZING_STATUS = "Initializing component inspector...";
+
+	public static final String NO_SELECTED_PROJECT_STATUS = "No open project selected";
+
+	public static final String PROJECT_INSPECTION_ACTIVE_STATUS = "Inspecting project...";
+
+	public static final String PROJECT_INSPECTION_SCHEDULED_STATUS = "Project scheduled for inspection";
+
+	public static final String PROJECT_INSPECTION_INACTIVE_STATUS = "Inspection not activated for current project";
+
+	public static final String PROJECT_NEEDS_INSPECTION_STATUS = "Project has not yet been inspected";
+
+	public static final String CONNECTION_DISCONNECTED_STATUS = "Cannot connect to Hub instance";
+
+	public static final String CONNECTION_OK_STATUS = "Connected to Hub instance - double-click any component to open it in the Hub";
+
+	public static final String CONNECTION_OK_NO_COMPONENTS_STATUS = "Connected to Hub instance - No components found.";
+
+	public static final String PROJECT_NOT_SUPPORTED_STATUS = "Cannot inspect selected project - either it is not a Java project or no Maven or Gradle nature was detected";
 
 	public ComponentInspectorService(final ComponentInspectorViewService inspectorViewService, final HubConnectionService hubConnectionService){
 		final InspectionJobChangeListener inspectionJobChangeListener = new InspectionJobChangeListener(inspectorViewService);
@@ -84,7 +104,7 @@ public class ComponentInspectorService {
 				|| !inspectorPreferencesService.isProjectMarkedForInspection(projectName)) {
 			return false;
 		}
-		inspectorViewService.setProjectStatus(projectName, Constants.PROJECT_INSPECTION_SCHEDULED);
+		inspectorViewService.setProjectStatus(projectName, PROJECT_INSPECTION_SCHEDULED_STATUS);
 		final InspectionJob inspection = new InspectionJob(projectName, this);
 		inspectionQueue.enqueueInspection(inspection);
 		return true;
@@ -102,6 +122,14 @@ public class ComponentInspectorService {
 		return success;
 	}
 
+	public boolean isInspectionRunning(final String projectName) {
+		return inspectionQueue.getInspectionIsRunning(projectName);
+	}
+
+	public boolean getInspectionIsScheduled(final String projectName) {
+		return inspectionQueue.getInspectionIsScheduled(projectName);
+	}
+
 	public void shutDown() {
 		inspectionQueue.cancelAll();
 	}
@@ -109,6 +137,10 @@ public class ComponentInspectorService {
 	public void removeProject(final String projectName) {
 		inspectorCacheService.removeProject(projectName);
 		inspectorViewService.clearProjectDisplay(projectName);
+	}
+
+	public List<ComponentModel> getProjectComponents(final String projectName) {
+		return inspectorCacheService.getProjectComponents(projectName);
 	}
 
 }

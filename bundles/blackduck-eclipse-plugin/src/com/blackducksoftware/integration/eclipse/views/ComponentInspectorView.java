@@ -27,6 +27,13 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.part.ViewPart;
 
 public class ComponentInspectorView extends ViewPart {
+	public static final String DUCKY_PNG_PATH = "resources/icons/ducky.png";
+
+	public static final String DISCONNECT_PNG_PATH = "resources/icons/disconnect_co.gif";
+
+	public static final String WAITING_PNG_PATH = "resources/icons/waiting.gif";
+
+	public static final String WARNING_PNG_PATH = "resources/icons/warning.gif";
 
 	@Override
 	public void createPartControl(final Composite arg0) {

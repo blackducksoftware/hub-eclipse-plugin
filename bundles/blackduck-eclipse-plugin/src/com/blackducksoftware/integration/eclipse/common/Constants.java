@@ -39,26 +39,6 @@ public class Constants {
 
 	public static final String GRADLE_NAMESPACE = "maven";
 
-	public static final String INITIALIZING = "Initializing component inspector...";
-
-	public static final String NO_SELECTED_PROJECT = "No open project selected";
-
-	public static final String PROJECT_INSPECTION_ACTIVE = "Inspecting project...";
-
-	public static final String PROJECT_INSPECTION_SCHEDULED = "Project scheduled for inspection";
-
-	public static final String PROJECT_INSPECTION_INACTIVE = "Inspection not activated for current project";
-
-	public static final String PROJECT_NEEDS_INSPECTION = "Project has not yet been inspected";
-
-	public static final String CONNECTION_DISCONNECTED = "Cannot connect to Hub instance";
-
-	public static final String CONNECTION_OK = "Connected to Hub instance - double-click any component to open it in the Hub";
-
-	public static final String CONNECTION_OK_NO_COMPONENTS = "Connected to Hub instance - No components found.";
-
-	public static final String PROJECT_NOT_SUPPORTED = "Cannot inspect selected project - either it is not a Java project or no Maven or Gradle nature was detected";
-
 	public static final String BLACK_DUCK_PREFERENCE_ID = "com.blackducksoftware.integration.eclipse.preferencepages";
 
 	public static final String COMPONENT_INSPECTOR_PREFERENCE_ID = "com.blackducksoftware.integration.eclipse.preferencepages.ComponentInspectorSettings";

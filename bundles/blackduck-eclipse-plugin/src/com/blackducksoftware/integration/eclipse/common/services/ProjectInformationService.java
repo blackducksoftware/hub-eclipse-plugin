@@ -41,7 +41,6 @@ import com.blackducksoftware.integration.eclipse.common.Constants;
 import com.blackducksoftware.integration.hub.buildtool.Gav;
 
 public class ProjectInformationService {
-
 	private final ComponentInformationService componentInformationService;
 
 	public ProjectInformationService() {

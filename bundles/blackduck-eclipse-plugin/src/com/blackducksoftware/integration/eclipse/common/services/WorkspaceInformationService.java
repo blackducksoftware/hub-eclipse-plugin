@@ -44,7 +44,6 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 
 public class WorkspaceInformationService {
-
 	private final ProjectInformationService projectInformationService;
 
 	public WorkspaceInformationService(){

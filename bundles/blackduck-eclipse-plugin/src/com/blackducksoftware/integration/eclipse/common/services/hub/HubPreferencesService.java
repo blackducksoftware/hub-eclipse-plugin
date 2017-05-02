@@ -47,7 +47,6 @@ public class HubPreferencesService {
 	public static final String PROXY_PASSWORD_LENGTH = "proxyPasswordLength";
 	public static final String PROXY_HOST = "proxyHost";
 	public static final String PROXY_PORT = "proxyPort";
-
 	public static final String DEFAULT_HUB_TIMEOUT = "120";
 
 	public HubPreferencesService(){

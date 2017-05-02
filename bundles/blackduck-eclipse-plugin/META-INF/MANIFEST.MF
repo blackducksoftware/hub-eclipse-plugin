@@ -24,5 +24,6 @@ Require-Bundle: org.eclipse.core.runtime,
  org.apache.servicemix.bundles.okio,
  org.eclipse.equinox.security,
  org.eclipse.equinox.preferences,
- com.blackducksoftware.integration.phone-home-api
+ com.blackducksoftware.integration.phone-home-api,
+ org.apache.commons.lang3
 Bundle-Activator: com.blackducksoftware.integration.eclipse.BlackDuckHubPluginActivator
