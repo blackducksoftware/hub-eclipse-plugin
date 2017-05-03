@@ -33,8 +33,8 @@ import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PlatformUI;
 
-import com.blackducksoftware.integration.eclipse.common.services.WorkspaceInformationService;
-import com.blackducksoftware.integration.eclipse.common.services.inspector.ComponentInspectorViewService;
+import com.blackducksoftware.integration.eclipse.services.WorkspaceInformationService;
+import com.blackducksoftware.integration.eclipse.services.inspector.ComponentInspectorViewService;
 
 public class EditorSelectionListener implements ISelectionListener {
 	private final ComponentInspectorViewService componentInspectorViewService;

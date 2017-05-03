@@ -29,9 +29,9 @@ import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IResourceChangeListener;
 import org.eclipse.core.resources.IResourceDelta;
 
-import com.blackducksoftware.integration.eclipse.common.services.ProjectInformationService;
-import com.blackducksoftware.integration.eclipse.common.services.inspector.ComponentInspectorPreferencesService;
-import com.blackducksoftware.integration.eclipse.common.services.inspector.ComponentInspectorService;
+import com.blackducksoftware.integration.eclipse.services.ProjectInformationService;
+import com.blackducksoftware.integration.eclipse.services.inspector.ComponentInspectorPreferencesService;
+import com.blackducksoftware.integration.eclipse.services.inspector.ComponentInspectorService;
 
 public class NewProjectListener implements IResourceChangeListener {
 	private final ComponentInspectorService componentInspectorService;

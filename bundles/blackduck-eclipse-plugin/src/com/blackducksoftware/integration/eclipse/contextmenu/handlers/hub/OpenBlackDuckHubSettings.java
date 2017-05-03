@@ -31,15 +31,16 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.dialogs.PreferencesUtil;
 import org.eclipse.ui.handlers.HandlerUtil;
 
-import com.blackducksoftware.integration.eclipse.common.Constants;
+import com.blackducksoftware.integration.eclipse.preferencepages.ComponentInspectorPreferences;
+import com.blackducksoftware.integration.eclipse.preferencepages.hub.HubPreferences;
 
 public class OpenBlackDuckHubSettings extends AbstractHandler {
 	@Override
 	public Object execute(final ExecutionEvent event) throws ExecutionException {
 		final Shell activeShell = HandlerUtil.getActiveShell(event);
-		final String[] pageIds = new String[] { Constants.BLACK_DUCK_PREFERENCE_ID, Constants.HUB_SETTINGS_PREFERENCE_ID };
+		final String[] pageIds = new String[] { HubPreferences.PREFERENCE_PAGE_ID, ComponentInspectorPreferences.PREFERENCE_PAGE_ID };
 		final PreferenceDialog prefPage = PreferencesUtil.createPreferenceDialogOn(activeShell,
-				Constants.BLACK_DUCK_PREFERENCE_ID, pageIds, null);
+				HubPreferences.PREFERENCE_PAGE_ID, pageIds, null);
 		prefPage.open();
 		return null;
 	}

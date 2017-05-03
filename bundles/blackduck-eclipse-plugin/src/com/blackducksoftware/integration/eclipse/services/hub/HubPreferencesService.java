@@ -21,12 +21,12 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package com.blackducksoftware.integration.eclipse.common.services.hub;
+package com.blackducksoftware.integration.eclipse.services.hub;
 
 import java.net.URL;
 
 import com.blackducksoftware.integration.eclipse.BlackDuckHubPluginActivator;
-import com.blackducksoftware.integration.eclipse.common.services.BlackDuckPreferencesService;
+import com.blackducksoftware.integration.eclipse.services.BlackDuckPreferencesService;
 import com.blackducksoftware.integration.exception.EncryptionException;
 import com.blackducksoftware.integration.hub.builder.HubCredentialsBuilder;
 import com.blackducksoftware.integration.hub.builder.HubProxyInfoBuilder;

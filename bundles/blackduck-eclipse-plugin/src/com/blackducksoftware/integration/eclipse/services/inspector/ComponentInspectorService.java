@@ -21,19 +21,19 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package com.blackducksoftware.integration.eclipse.common.services.inspector;
+package com.blackducksoftware.integration.eclipse.services.inspector;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.Arrays;
 import java.util.List;
 
-import com.blackducksoftware.integration.eclipse.common.services.hub.ComponentLookupService;
-import com.blackducksoftware.integration.eclipse.common.services.hub.HubConnectionService;
 import com.blackducksoftware.integration.eclipse.internal.ComponentModel;
 import com.blackducksoftware.integration.eclipse.internal.InspectionJob;
 import com.blackducksoftware.integration.eclipse.internal.datastructures.InspectionJobQueue;
 import com.blackducksoftware.integration.eclipse.internal.listeners.InspectionJobChangeListener;
+import com.blackducksoftware.integration.eclipse.services.hub.ComponentLookupService;
+import com.blackducksoftware.integration.eclipse.services.hub.HubConnectionService;
 import com.blackducksoftware.integration.hub.buildtool.Gav;
 import com.blackducksoftware.integration.hub.dataservice.license.LicenseDataService;
 import com.blackducksoftware.integration.hub.dataservice.vulnerability.VulnerabilityDataService;

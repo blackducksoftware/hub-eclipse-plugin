@@ -21,7 +21,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package com.blackducksoftware.integration.eclipse.common.services.inspector;
+package com.blackducksoftware.integration.eclipse.services.inspector;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -32,9 +32,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import com.blackducksoftware.integration.eclipse.common.services.hub.ComponentLookupService;
 import com.blackducksoftware.integration.eclipse.internal.ComponentModel;
 import com.blackducksoftware.integration.eclipse.internal.ComponentModelVulnerabilityFirstComparator;
+import com.blackducksoftware.integration.eclipse.services.hub.ComponentLookupService;
 import com.blackducksoftware.integration.exception.IntegrationException;
 import com.blackducksoftware.integration.hub.buildtool.Gav;
 

@@ -35,10 +35,9 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.handlers.HandlerUtil;
 
 import com.blackducksoftware.integration.eclipse.BlackDuckHubPluginActivator;
-import com.blackducksoftware.integration.eclipse.common.Constants;
+import com.blackducksoftware.integration.eclipse.views.ComponentInspectorView;
 
 public class OpenComponentInspectorView extends AbstractHandler {
-
 	@Override
 	public Object execute(final ExecutionEvent event) throws ExecutionException {
 		if (event == null) {
@@ -49,7 +48,7 @@ public class OpenComponentInspectorView extends AbstractHandler {
 			if (window != null) {
 				final IWorkbenchPage page = window.getActivePage();
 				if (page != null) {
-					page.showView(Constants.COMPONENT_INSPECTOR_ID);
+					page.showView(ComponentInspectorView.VIEW_ID);
 				}
 			}
 		} catch (final PartInitException e) {

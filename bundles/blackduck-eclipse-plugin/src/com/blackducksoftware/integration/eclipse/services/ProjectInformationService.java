@@ -21,7 +21,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package com.blackducksoftware.integration.eclipse.common.services;
+package com.blackducksoftware.integration.eclipse.services;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -37,10 +37,18 @@ import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 
-import com.blackducksoftware.integration.eclipse.common.Constants;
 import com.blackducksoftware.integration.hub.buildtool.Gav;
 
 public class ProjectInformationService {
+	public static final String GRADLE_NATURE = "org.eclipse.buildship.core.gradleprojectnature";
+
+	public static final String MAVEN_NATURE = "org.eclipse.m2e.core.maven2Nature";
+
+	public static final String[] SUPPORTED_NATURES = {
+			GRADLE_NATURE,
+			MAVEN_NATURE
+	};
+
 	private final ComponentInformationService componentInformationService;
 
 	public ProjectInformationService() {
@@ -123,7 +131,7 @@ public class ProjectInformationService {
 	public boolean isSupportedProject(final IProject project){
 		try {
 			if(project.hasNature(JavaCore.NATURE_ID)){
-				for (final String nature : Constants.SUPPORTED_NATURES) {
+				for (final String nature : SUPPORTED_NATURES) {
 					if (project.hasNature(nature)) {
 						return true;
 					}

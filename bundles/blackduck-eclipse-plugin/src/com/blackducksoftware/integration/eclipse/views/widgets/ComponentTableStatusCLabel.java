@@ -31,11 +31,11 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 
 import com.blackducksoftware.integration.eclipse.BlackDuckHubPluginActivator;
-import com.blackducksoftware.integration.eclipse.common.services.ProjectInformationService;
-import com.blackducksoftware.integration.eclipse.common.services.hub.HubConnectionService;
-import com.blackducksoftware.integration.eclipse.common.services.inspector.ComponentInspectorPreferencesService;
-import com.blackducksoftware.integration.eclipse.common.services.inspector.ComponentInspectorService;
 import com.blackducksoftware.integration.eclipse.internal.ComponentModel;
+import com.blackducksoftware.integration.eclipse.services.ProjectInformationService;
+import com.blackducksoftware.integration.eclipse.services.hub.HubConnectionService;
+import com.blackducksoftware.integration.eclipse.services.inspector.ComponentInspectorPreferencesService;
+import com.blackducksoftware.integration.eclipse.services.inspector.ComponentInspectorService;
 import com.blackducksoftware.integration.eclipse.views.ComponentInspectorView;
 
 public class ComponentTableStatusCLabel extends CLabel{

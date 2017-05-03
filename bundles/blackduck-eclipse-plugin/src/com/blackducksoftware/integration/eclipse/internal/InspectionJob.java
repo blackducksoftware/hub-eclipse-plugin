@@ -32,10 +32,10 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.core.runtime.jobs.Job;
 
-import com.blackducksoftware.integration.eclipse.common.services.ComponentInformationService;
-import com.blackducksoftware.integration.eclipse.common.services.ProjectInformationService;
-import com.blackducksoftware.integration.eclipse.common.services.inspector.ComponentInspectorPreferencesService;
-import com.blackducksoftware.integration.eclipse.common.services.inspector.ComponentInspectorService;
+import com.blackducksoftware.integration.eclipse.services.ComponentInformationService;
+import com.blackducksoftware.integration.eclipse.services.ProjectInformationService;
+import com.blackducksoftware.integration.eclipse.services.inspector.ComponentInspectorPreferencesService;
+import com.blackducksoftware.integration.eclipse.services.inspector.ComponentInspectorService;
 import com.blackducksoftware.integration.hub.buildtool.Gav;
 
 public class InspectionJob extends Job {

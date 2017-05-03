@@ -21,7 +21,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package com.blackducksoftware.integration.eclipse.preferencepages;
+package com.blackducksoftware.integration.eclipse.preferencepages.hub;
 
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.preference.StringFieldEditor;
@@ -41,12 +41,14 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 
 import com.blackducksoftware.integration.eclipse.BlackDuckHubPluginActivator;
-import com.blackducksoftware.integration.eclipse.common.services.hub.HubPreferencesService;
-import com.blackducksoftware.integration.eclipse.common.services.inspector.ComponentInspectorViewService;
+import com.blackducksoftware.integration.eclipse.services.hub.HubPreferencesService;
+import com.blackducksoftware.integration.eclipse.services.inspector.ComponentInspectorViewService;
 import com.blackducksoftware.integration.hub.builder.HubServerConfigBuilder;
 import com.blackducksoftware.integration.hub.exception.HubIntegrationException;
 
 public class HubPreferences extends PreferencePage implements IWorkbenchPreferencePage {
+	public static final String PREFERENCE_PAGE_ID = "com.blackducksoftware.integration.eclipse.preferencepages.HubPreferences";
+
 	public static final String TEST_HUB_CREDENTIALS_TEXT = "Test Connection";
 
 	public static final String LOGIN_SUCCESS_MESSAGE = "Connection successful!";

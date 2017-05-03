@@ -32,8 +32,8 @@ import org.eclipse.jdt.core.IElementChangedListener;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaElementDelta;
 
-import com.blackducksoftware.integration.eclipse.common.services.ComponentInformationService;
-import com.blackducksoftware.integration.eclipse.common.services.inspector.ComponentInspectorService;
+import com.blackducksoftware.integration.eclipse.services.ComponentInformationService;
+import com.blackducksoftware.integration.eclipse.services.inspector.ComponentInspectorService;
 import com.blackducksoftware.integration.hub.buildtool.Gav;
 
 public class ProjectComponentsChangedListener implements IElementChangedListener {

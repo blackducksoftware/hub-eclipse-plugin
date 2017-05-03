@@ -21,7 +21,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package com.blackducksoftware.integration.eclipse.common.services.inspector;
+package com.blackducksoftware.integration.eclipse.services.inspector;
 
 import com.blackducksoftware.integration.eclipse.views.ComponentInspectorView;
 

@@ -26,7 +26,7 @@ package com.blackducksoftware.integration.eclipse.internal.listeners;
 import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IResourceChangeListener;
 
-import com.blackducksoftware.integration.eclipse.common.services.inspector.ComponentInspectorService;
+import com.blackducksoftware.integration.eclipse.services.inspector.ComponentInspectorService;
 
 public class ProjectDeletedListener implements IResourceChangeListener {
 	private final ComponentInspectorService componentInspectorService;

@@ -37,9 +37,9 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.browser.IWebBrowser;
 
-import com.blackducksoftware.integration.eclipse.common.services.hub.HubConnectionService;
-import com.blackducksoftware.integration.eclipse.common.services.inspector.ComponentInspectorViewService;
 import com.blackducksoftware.integration.eclipse.internal.ComponentModel;
+import com.blackducksoftware.integration.eclipse.services.hub.HubConnectionService;
+import com.blackducksoftware.integration.eclipse.services.inspector.ComponentInspectorViewService;
 import com.blackducksoftware.integration.exception.IntegrationException;
 import com.blackducksoftware.integration.hub.buildtool.Gav;
 import com.blackducksoftware.integration.hub.dataservice.component.ComponentDataService;

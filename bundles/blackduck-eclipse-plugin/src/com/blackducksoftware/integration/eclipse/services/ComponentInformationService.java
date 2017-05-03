@@ -21,18 +21,23 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package com.blackducksoftware.integration.eclipse.common.services;
+package com.blackducksoftware.integration.eclipse.services;
 
 import java.net.MalformedURLException;
 import java.net.URL;
 
 import org.eclipse.jdt.core.JavaCore;
 
-import com.blackducksoftware.integration.eclipse.common.Constants;
 import com.blackducksoftware.integration.hub.buildtool.FilePathGavExtractor;
 import com.blackducksoftware.integration.hub.buildtool.Gav;
 
 public class ComponentInformationService {
+	public static final String M2_REPO = "M2_REPO";
+
+	public static final String MAVEN_NAMESPACE = "maven";
+
+	public static final String GRADLE_NAMESPACE = "maven";
+
 	private final FilePathGavExtractor filePathGavExtractor;
 
 	public ComponentInformationService(){
@@ -42,7 +47,7 @@ public class ComponentInformationService {
 	public boolean isMavenDependency(final URL filePath) {
 		URL m2Repo;
 		try {
-			m2Repo = JavaCore.getClasspathVariable(Constants.M2_REPO).toFile().toURI().toURL();
+			m2Repo = JavaCore.getClasspathVariable(M2_REPO).toFile().toURI().toURL();
 		} catch (final MalformedURLException e) {
 			e.printStackTrace();
 			return false;
@@ -82,11 +87,11 @@ public class ComponentInformationService {
 		try{
 			if (this.isGradleDependency(componentUrl)) {
 				final Gav gav = filePathGavExtractor.getGradlePathGav(componentUrl);
-				return new Gav(Constants.GRADLE_NAMESPACE, gav.getGroupId(), gav.getArtifactId(), gav.getVersion());
+				return new Gav(GRADLE_NAMESPACE, gav.getGroupId(), gav.getArtifactId(), gav.getVersion());
 			} else if (this.isMavenDependency(componentUrl)) {
-				final URL mavenURL = JavaCore.getClasspathVariable(Constants.M2_REPO).toFile().toURI().toURL();
+				final URL mavenURL = JavaCore.getClasspathVariable(M2_REPO).toFile().toURI().toURL();
 				final Gav gav = filePathGavExtractor.getMavenPathGav(componentUrl, mavenURL);
-				return new Gav(Constants.MAVEN_NAMESPACE, gav.getGroupId(), gav.getArtifactId(), gav.getVersion());
+				return new Gav(MAVEN_NAMESPACE, gav.getGroupId(), gav.getArtifactId(), gav.getVersion());
 			}
 		}catch(final MalformedURLException e){
 			//Return null if we can't resolve the maven url

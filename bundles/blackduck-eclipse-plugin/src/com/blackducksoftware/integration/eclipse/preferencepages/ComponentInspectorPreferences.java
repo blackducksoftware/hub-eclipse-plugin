@@ -43,10 +43,12 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 
 import com.blackducksoftware.integration.eclipse.BlackDuckHubPluginActivator;
-import com.blackducksoftware.integration.eclipse.common.services.WorkspaceInformationService;
-import com.blackducksoftware.integration.eclipse.common.services.inspector.ComponentInspectorPreferencesService;
+import com.blackducksoftware.integration.eclipse.services.WorkspaceInformationService;
+import com.blackducksoftware.integration.eclipse.services.inspector.ComponentInspectorPreferencesService;
 
 public class ComponentInspectorPreferences extends PreferencePage implements IWorkbenchPreferencePage {
+	public static final String PREFERENCE_PAGE_ID = "com.blackducksoftware.integration.eclipse.preferencepages.ComponentInspectorSettings";
+
 	public static final String SUPPORTED_PROJECT_ADDED_ACTION_LABEL = "When supported projects are added to workspace...";
 
 	public static final String INSPECT_AUTOMATICALLY_LABEL = "Inspect them automatically";

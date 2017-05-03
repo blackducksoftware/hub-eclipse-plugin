@@ -43,13 +43,13 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.part.ViewPart;
 
 import com.blackducksoftware.integration.eclipse.BlackDuckHubPluginActivator;
-import com.blackducksoftware.integration.eclipse.common.services.WorkspaceInformationService;
-import com.blackducksoftware.integration.eclipse.common.services.hub.HubConnectionService;
-import com.blackducksoftware.integration.eclipse.common.services.inspector.ComponentInspectorService;
-import com.blackducksoftware.integration.eclipse.common.services.inspector.ComponentInspectorViewService;
 import com.blackducksoftware.integration.eclipse.internal.ComponentModel;
 import com.blackducksoftware.integration.eclipse.internal.listeners.EditorSelectionListener;
 import com.blackducksoftware.integration.eclipse.internal.listeners.hub.TableDoubleClickListener;
+import com.blackducksoftware.integration.eclipse.services.WorkspaceInformationService;
+import com.blackducksoftware.integration.eclipse.services.hub.HubConnectionService;
+import com.blackducksoftware.integration.eclipse.services.inspector.ComponentInspectorService;
+import com.blackducksoftware.integration.eclipse.services.inspector.ComponentInspectorViewService;
 import com.blackducksoftware.integration.eclipse.views.providers.ComponentTableContentProvider;
 import com.blackducksoftware.integration.eclipse.views.providers.LicenseColumnLabelProvider;
 import com.blackducksoftware.integration.eclipse.views.providers.NameColumnLabelProvider;
@@ -58,6 +58,8 @@ import com.blackducksoftware.integration.eclipse.views.widgets.ComponentModelFil
 import com.blackducksoftware.integration.eclipse.views.widgets.ComponentTableStatusCLabel;
 
 public class ComponentInspectorView extends ViewPart {
+	public static final String VIEW_ID = "com.blackducksoftware.integration.eclipse.views.ComponentInspectorView";
+
 	public static final String DUCKY_PNG_PATH = "resources/icons/ducky.png";
 
 	public static final String DISCONNECT_PNG_PATH = "resources/icons/disconnect_co.gif";

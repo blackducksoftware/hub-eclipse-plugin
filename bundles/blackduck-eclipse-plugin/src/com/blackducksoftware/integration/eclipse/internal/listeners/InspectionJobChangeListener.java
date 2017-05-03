@@ -26,9 +26,9 @@ package com.blackducksoftware.integration.eclipse.internal.listeners;
 import org.eclipse.core.runtime.jobs.IJobChangeEvent;
 import org.eclipse.core.runtime.jobs.IJobChangeListener;
 
-import com.blackducksoftware.integration.eclipse.common.services.inspector.ComponentInspectorViewService;
 import com.blackducksoftware.integration.eclipse.internal.InspectionJob;
 import com.blackducksoftware.integration.eclipse.internal.datastructures.InspectionJobQueue;
+import com.blackducksoftware.integration.eclipse.services.inspector.ComponentInspectorViewService;
 
 public class InspectionJobChangeListener implements IJobChangeListener{
 	private final ComponentInspectorViewService componentInspectorViewService;

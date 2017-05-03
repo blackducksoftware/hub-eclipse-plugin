@@ -186,7 +186,7 @@
          point="org.eclipse.ui.preferencePages">
       <!-- Parent Black Duck preference page -->
       <page
-            class="com.blackducksoftware.integration.eclipse.preferencepages.HubPreferences"
+            class="com.blackducksoftware.integration.eclipse.preferencepages.hub.HubPreferences"
             id="com.blackducksoftware.integration.eclipse.preferencepages"
             name="Black Duck Hub">
       </page>

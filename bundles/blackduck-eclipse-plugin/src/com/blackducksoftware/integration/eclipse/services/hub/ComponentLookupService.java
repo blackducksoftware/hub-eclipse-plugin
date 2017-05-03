@@ -21,7 +21,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package com.blackducksoftware.integration.eclipse.common.services.hub;
+package com.blackducksoftware.integration.eclipse.services.hub;
 
 import java.io.IOException;
 import java.net.URISyntaxException;

@@ -30,9 +30,9 @@ import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 
 import com.blackducksoftware.integration.eclipse.BlackDuckHubPluginActivator;
-import com.blackducksoftware.integration.eclipse.common.services.WorkspaceInformationService;
-import com.blackducksoftware.integration.eclipse.common.services.inspector.ComponentInspectorPreferencesService;
-import com.blackducksoftware.integration.eclipse.common.services.inspector.ComponentInspectorService;
+import com.blackducksoftware.integration.eclipse.services.WorkspaceInformationService;
+import com.blackducksoftware.integration.eclipse.services.inspector.ComponentInspectorPreferencesService;
+import com.blackducksoftware.integration.eclipse.services.inspector.ComponentInspectorService;
 
 public class InspectSelectedProject extends AbstractHandler {
 	@Override

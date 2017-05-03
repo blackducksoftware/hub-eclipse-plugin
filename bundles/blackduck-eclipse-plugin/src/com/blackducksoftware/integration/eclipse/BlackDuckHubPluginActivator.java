@@ -29,13 +29,13 @@ import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
-import com.blackducksoftware.integration.eclipse.common.services.hub.HubConnectionService;
-import com.blackducksoftware.integration.eclipse.common.services.inspector.ComponentInspectorService;
-import com.blackducksoftware.integration.eclipse.common.services.inspector.ComponentInspectorViewService;
 import com.blackducksoftware.integration.eclipse.internal.listeners.NewProjectListener;
 import com.blackducksoftware.integration.eclipse.internal.listeners.ProjectComponentsChangedListener;
 import com.blackducksoftware.integration.eclipse.internal.listeners.ProjectDeletedListener;
 import com.blackducksoftware.integration.eclipse.internal.listeners.ProjectMarkedForInspectionListener;
+import com.blackducksoftware.integration.eclipse.services.hub.HubConnectionService;
+import com.blackducksoftware.integration.eclipse.services.inspector.ComponentInspectorService;
+import com.blackducksoftware.integration.eclipse.services.inspector.ComponentInspectorViewService;
 
 public class BlackDuckHubPluginActivator extends AbstractUIPlugin {
 	public static final String PLUGIN_ID = "com.blackducksoftware.integration.eclipse.plugin";

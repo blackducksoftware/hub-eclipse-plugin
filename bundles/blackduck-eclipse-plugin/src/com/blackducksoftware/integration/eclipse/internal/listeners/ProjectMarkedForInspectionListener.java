@@ -26,9 +26,9 @@ package com.blackducksoftware.integration.eclipse.internal.listeners;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 
-import com.blackducksoftware.integration.eclipse.common.services.inspector.ComponentInspectorPreferencesService;
-import com.blackducksoftware.integration.eclipse.common.services.inspector.ComponentInspectorService;
-import com.blackducksoftware.integration.eclipse.common.services.inspector.ComponentInspectorViewService;
+import com.blackducksoftware.integration.eclipse.services.inspector.ComponentInspectorPreferencesService;
+import com.blackducksoftware.integration.eclipse.services.inspector.ComponentInspectorService;
+import com.blackducksoftware.integration.eclipse.services.inspector.ComponentInspectorViewService;
 
 public class ProjectMarkedForInspectionListener implements IPropertyChangeListener {
 	private final ComponentInspectorService inspectorService;
