@@ -115,7 +115,7 @@ public class ProjectInformationService {
 		return null;
 	}
 
-	public boolean isSupportedProject(final String projectName) {
+	public boolean isProjectSupported(final String projectName) {
 		final IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(projectName);
 		return this.isSupportedProject(project);
 	}

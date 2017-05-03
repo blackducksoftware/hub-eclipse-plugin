@@ -23,8 +23,15 @@
  */
 package com.blackducksoftware.integration.eclipse.views;
 
+import java.util.List;
+
+import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.part.ViewPart;
+
+import com.blackducksoftware.integration.eclipse.BlackDuckHubPluginActivator;
+import com.blackducksoftware.integration.eclipse.internal.ComponentModel;
+import com.blackducksoftware.integration.eclipse.views.widgets.ComponentTableStatusCLabel;
 
 public class ComponentInspectorView extends ViewPart {
 	public static final String DUCKY_PNG_PATH = "resources/icons/ducky.png";
@@ -35,6 +42,12 @@ public class ComponentInspectorView extends ViewPart {
 
 	public static final String WARNING_PNG_PATH = "resources/icons/warning.gif";
 
+	private ComponentTableStatusCLabel tableStatus;
+
+	private String lastSelectedProjectName = "";
+
+	private TableViewer tableViewer;
+
 	@Override
 	public void createPartControl(final Composite arg0) {
 	}
@@ -43,29 +56,31 @@ public class ComponentInspectorView extends ViewPart {
 	public void setFocus() {
 	}
 
-	public Object getLastSelectedProjectName() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public void setStatusMessage(final String statusMsg) {
-		// TODO Auto-generated method stub
-
+	public String getLastSelectedProjectName() {
+		return lastSelectedProjectName;
 	}
 
 	public void resetInput() {
-		// TODO Auto-generated method stub
-
+		this.setLastSelectedProjectName(lastSelectedProjectName);
 	}
 
-	public void setLastSelectedProjectName(final String string) {
-		// TODO Auto-generated method stub
-
+	public void setLastSelectedProjectName(final String projectName) {
+		lastSelectedProjectName = projectName;
+		this.setTableInput(projectName);
+		tableStatus.updateStatus(projectName);
 	}
 
-	public void setTableInput(final String projectName) {
-		// TODO Auto-generated method stub
+	private void setTableInput(final String projectName){
+		ComponentModel[] results = new ComponentModel[]{};
+		final List<ComponentModel> componentModels = BlackDuckHubPluginActivator.getDefault().getInspectorService().getProjectComponents(projectName);
+		if (componentModels != null) {
+			results = componentModels.toArray(new ComponentModel[componentModels.size()]);
+		}
+		tableViewer.setInput(results);
+	}
 
+	public void setStatusMessage(final String statusMessage) {
+		tableStatus.setStatusMessage(statusMessage);
 	}
 
 }

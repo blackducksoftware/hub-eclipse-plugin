@@ -56,7 +56,7 @@ public class NewProjectListener implements IResourceChangeListener {
 		final IResourceDelta[] childrenDeltas = eventDelta.getAffectedChildren();
 		for (final IResourceDelta delta : childrenDeltas) {
 			final String projectName = this.extractProjectNameIfMovedOrAdded(delta);
-			if (projectName != null && projectInformationService.isSupportedProject(projectName)) {
+			if (projectName != null && projectInformationService.isProjectSupported(projectName)) {
 				if ((delta.getFlags() == IResourceDelta.MOVED_FROM) && delta.getMovedFromPath() != null) {
 					final String oldProjectName = delta.getMovedFromPath().toFile().getName();
 					if (componentInspectorPreferenceService.isProjectMarkedForInspection(oldProjectName)) {

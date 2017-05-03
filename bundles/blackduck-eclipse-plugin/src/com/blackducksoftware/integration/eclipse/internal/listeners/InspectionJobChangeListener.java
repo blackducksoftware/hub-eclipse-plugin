@@ -46,13 +46,13 @@ public class InspectionJobChangeListener implements IJobChangeListener{
 	@Override
 	public void aboutToRun(final IJobChangeEvent event) {
 		final InspectionJob inspection = (InspectionJob) event.getJob();
-		componentInspectorViewService.setProjectStatus(ComponentInspectorService.PROJECT_INSPECTION_ACTIVE_STATUS, inspection.getProjectName());
+		componentInspectorViewService.setProjectStatus(ComponentInspectorService.PROJECT_INSPECTION_RUNNING_STATUS, inspection.getProjectName());
 	}
 
 	@Override
 	public void awake(final IJobChangeEvent event) {
 		final InspectionJob inspection = (InspectionJob) event.getJob();
-		componentInspectorViewService.setProjectStatus(ComponentInspectorService.PROJECT_INSPECTION_ACTIVE_STATUS, inspection.getProjectName());
+		componentInspectorViewService.setProjectStatus(ComponentInspectorService.PROJECT_INSPECTION_RUNNING_STATUS, inspection.getProjectName());
 	}
 
 	@Override
@@ -65,7 +65,7 @@ public class InspectionJobChangeListener implements IJobChangeListener{
 	@Override
 	public void running(final IJobChangeEvent event) {
 		final InspectionJob inspection = (InspectionJob) event.getJob();
-		componentInspectorViewService.setProjectStatus(ComponentInspectorService.PROJECT_INSPECTION_ACTIVE_STATUS, inspection.getProjectName());
+		componentInspectorViewService.setProjectStatus(ComponentInspectorService.PROJECT_INSPECTION_RUNNING_STATUS, inspection.getProjectName());
 	}
 
 	@Override

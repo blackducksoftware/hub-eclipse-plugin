@@ -86,10 +86,10 @@ public class ComponentTableContentProvider implements ILazyContentProvider {
 			if (plugin.getHubConnectionService().hasActiveHubConnection()) {
 				final List<ComponentModel> componentModels = componentInspectorService.getProjectComponents(projectName);
 				if (componentModels != null) {
-					if (componentInspectorService.isInspectionRunning(projectName)) {
-						view.setStatusMessage(ComponentInspectorService.PROJECT_INSPECTION_ACTIVE_STATUS);
+					if (componentInspectorService.isProjectInspectionRunning(projectName)) {
+						view.setStatusMessage(ComponentInspectorService.PROJECT_INSPECTION_RUNNING_STATUS);
 					} else {
-						if (componentInspectorService.getInspectionIsScheduled(projectName)) {
+						if (componentInspectorService.isProjectInspectionScheduled(projectName)) {
 							view.setStatusMessage(ComponentInspectorService.PROJECT_INSPECTION_SCHEDULED_STATUS);
 						} else if (componentModels.size() == 0) {
 							view.setStatusMessage(ComponentInspectorService.CONNECTION_OK_NO_COMPONENTS_STATUS);
@@ -106,8 +106,8 @@ public class ComponentTableContentProvider implements ILazyContentProvider {
 			return NOTHING;
 		}
 		final ProjectInformationService projectInformationService = new ProjectInformationService();
-		if (projectInformationService.isSupportedProject(projectName)) {
-			view.setStatusMessage(ComponentInspectorService.PROJECT_INSPECTION_INACTIVE_STATUS);
+		if (projectInformationService.isProjectSupported(projectName)) {
+			view.setStatusMessage(ComponentInspectorService.PROJECT_NOT_MARKED_FOR_INSPECTION_STATUS);
 		} else {
 			view.setStatusMessage(ComponentInspectorService.PROJECT_NOT_SUPPORTED_STATUS);
 		}

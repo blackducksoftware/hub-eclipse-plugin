@@ -49,11 +49,11 @@ public class ComponentInspectorService {
 
 	public static final String NO_SELECTED_PROJECT_STATUS = "No open project selected";
 
-	public static final String PROJECT_INSPECTION_ACTIVE_STATUS = "Inspecting project...";
+	public static final String PROJECT_INSPECTION_RUNNING_STATUS = "Inspecting project...";
 
 	public static final String PROJECT_INSPECTION_SCHEDULED_STATUS = "Project scheduled for inspection";
 
-	public static final String PROJECT_INSPECTION_INACTIVE_STATUS = "Inspection not activated for current project";
+	public static final String PROJECT_NOT_MARKED_FOR_INSPECTION_STATUS = "Inspection not activated for current project";
 
 	public static final String PROJECT_NEEDS_INSPECTION_STATUS = "Project has not yet been inspected";
 
@@ -122,11 +122,11 @@ public class ComponentInspectorService {
 		return success;
 	}
 
-	public boolean isInspectionRunning(final String projectName) {
+	public boolean isProjectInspectionRunning(final String projectName) {
 		return inspectionQueue.getInspectionIsRunning(projectName);
 	}
 
-	public boolean getInspectionIsScheduled(final String projectName) {
+	public boolean isProjectInspectionScheduled(final String projectName) {
 		return inspectionQueue.getInspectionIsScheduled(projectName);
 	}
 
