@@ -38,7 +38,7 @@ import com.blackducksoftware.integration.eclipse.internal.listeners.ProjectDelet
 import com.blackducksoftware.integration.eclipse.internal.listeners.ProjectMarkedForInspectionListener;
 
 public class BlackDuckHubPluginActivator extends AbstractUIPlugin {
-	public static final String PLUGIN_ID = "black-duck-hub-plugin";
+	public static final String PLUGIN_ID = "com.blackducksoftware.integration.eclipse.plugin";
 
 	private static BlackDuckHubPluginActivator plugin;
 
