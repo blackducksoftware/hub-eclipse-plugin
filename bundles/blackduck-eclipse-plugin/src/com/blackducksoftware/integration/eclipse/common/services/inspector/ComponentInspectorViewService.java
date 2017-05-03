@@ -69,8 +69,9 @@ public class ComponentInspectorViewService {
 	}
 
 	public void openError(final String string, final String format, final Exception e) {
-		// TODO Auto-generated method stub
-
+		if(componentInspectorView != null){
+			componentInspectorView.openError(string, format, e);
+		}
 	}
 
 	public void refreshProjectStatus(final String projectName) {

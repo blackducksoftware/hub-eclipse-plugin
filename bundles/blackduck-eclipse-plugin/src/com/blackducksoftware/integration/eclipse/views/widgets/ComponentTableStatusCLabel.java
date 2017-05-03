@@ -45,6 +45,7 @@ public class ComponentTableStatusCLabel extends CLabel{
 		this.componentInspectorPreferencesService = new ComponentInspectorPreferencesService();
 		this.projectInformationService = new ProjectInformationService();
 		this.componentInspectorTableViewer = componentInspectorTableViewer;
+		this.setText(INITIALIZING_STATUS);
 	}
 
 	public void updateStatus(final String projectName){
