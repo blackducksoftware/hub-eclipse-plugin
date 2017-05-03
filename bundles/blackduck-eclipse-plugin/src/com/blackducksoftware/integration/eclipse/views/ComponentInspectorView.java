@@ -60,7 +60,7 @@ public class ComponentInspectorView extends ViewPart {
 		return lastSelectedProjectName;
 	}
 
-	public void resetInput() {
+	public void refreshInput() {
 		this.setLastSelectedProjectName(lastSelectedProjectName);
 	}
 
@@ -79,8 +79,8 @@ public class ComponentInspectorView extends ViewPart {
 		tableViewer.setInput(results);
 	}
 
-	public void setStatusMessage(final String statusMessage) {
-		tableStatus.setStatusMessage(statusMessage);
+	public void refreshStatus() {
+		tableStatus.updateStatus(lastSelectedProjectName);
 	}
 
 }

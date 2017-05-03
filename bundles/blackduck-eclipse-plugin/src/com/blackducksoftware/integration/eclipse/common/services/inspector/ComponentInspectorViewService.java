@@ -32,25 +32,17 @@ public class ComponentInspectorViewService {
 		this.componentInspectorView = componentInspectorView;
 	}
 
-	public void setProjectStatus(final String projectName, final String statusMessage){
-		if (componentInspectorView != null) {
-			if(componentInspectorView.getLastSelectedProjectName().equals(projectName)){
-				componentInspectorView.setStatusMessage(statusMessage);
-			}
-		}
-	}
-
-	public void resetProjectDisplay(final String projectName) {
+	public void refreshComponentInspectorForProject(final String projectName) {
 		if (componentInspectorView != null) {
 			if(componentInspectorView.getLastSelectedProjectName().equals(projectName)) {
-				componentInspectorView.resetInput();
+				componentInspectorView.refreshInput();
 			}
 		}
 	}
 
 	public void resetDisplay(){
 		if (componentInspectorView != null) {
-			componentInspectorView.resetInput();
+			componentInspectorView.refreshInput();
 		}
 	}
 
@@ -79,6 +71,14 @@ public class ComponentInspectorViewService {
 	public void openError(final String string, final String format, final Exception e) {
 		// TODO Auto-generated method stub
 
+	}
+
+	public void refreshProjectStatus(final String projectName) {
+		if (componentInspectorView != null) {
+			if(componentInspectorView.getLastSelectedProjectName().equals(projectName)){
+				componentInspectorView.refreshStatus();
+			}
+		}
 	}
 
 }

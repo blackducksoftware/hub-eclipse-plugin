@@ -26,7 +26,6 @@ package com.blackducksoftware.integration.eclipse.internal.listeners;
 import org.eclipse.core.runtime.jobs.IJobChangeEvent;
 import org.eclipse.core.runtime.jobs.IJobChangeListener;
 
-import com.blackducksoftware.integration.eclipse.common.services.inspector.ComponentInspectorService;
 import com.blackducksoftware.integration.eclipse.common.services.inspector.ComponentInspectorViewService;
 import com.blackducksoftware.integration.eclipse.internal.InspectionJob;
 import com.blackducksoftware.integration.eclipse.internal.datastructures.InspectionJobQueue;
@@ -45,39 +44,33 @@ public class InspectionJobChangeListener implements IJobChangeListener{
 
 	@Override
 	public void aboutToRun(final IJobChangeEvent event) {
-		final InspectionJob inspection = (InspectionJob) event.getJob();
-		componentInspectorViewService.setProjectStatus(ComponentInspectorService.PROJECT_INSPECTION_RUNNING_STATUS, inspection.getProjectName());
+		componentInspectorViewService.refreshProjectStatus(((InspectionJob) event.getJob()).getProjectName());
 	}
 
 	@Override
 	public void awake(final IJobChangeEvent event) {
-		final InspectionJob inspection = (InspectionJob) event.getJob();
-		componentInspectorViewService.setProjectStatus(ComponentInspectorService.PROJECT_INSPECTION_RUNNING_STATUS, inspection.getProjectName());
+		componentInspectorViewService.refreshProjectStatus(((InspectionJob) event.getJob()).getProjectName());
 	}
 
 	@Override
 	public void done(final IJobChangeEvent event) {
-		final InspectionJob inspection = (InspectionJob) event.getJob();
-		componentInspectorViewService.resetProjectDisplay(inspection.getProjectName());
+		componentInspectorViewService.refreshProjectStatus(((InspectionJob) event.getJob()).getProjectName());
 		inspectionJobQueue.currentInspectionDone();
 	}
 
 	@Override
 	public void running(final IJobChangeEvent event) {
-		final InspectionJob inspection = (InspectionJob) event.getJob();
-		componentInspectorViewService.setProjectStatus(ComponentInspectorService.PROJECT_INSPECTION_RUNNING_STATUS, inspection.getProjectName());
+		componentInspectorViewService.refreshProjectStatus(((InspectionJob) event.getJob()).getProjectName());
 	}
 
 	@Override
 	public void scheduled(final IJobChangeEvent event) {
-		final InspectionJob inspection = (InspectionJob) event.getJob();
-		componentInspectorViewService.setProjectStatus(ComponentInspectorService.PROJECT_INSPECTION_SCHEDULED_STATUS, inspection.getProjectName());
+		componentInspectorViewService.refreshProjectStatus(((InspectionJob) event.getJob()).getProjectName());
 	}
 
 	@Override
 	public void sleeping(final IJobChangeEvent event) {
-		final InspectionJob inspection = (InspectionJob) event.getJob();
-		componentInspectorViewService.setProjectStatus(ComponentInspectorService.PROJECT_INSPECTION_SCHEDULED_STATUS, inspection.getProjectName());
+		componentInspectorViewService.refreshProjectStatus(((InspectionJob) event.getJob()).getProjectName());
 	}
 
 }
