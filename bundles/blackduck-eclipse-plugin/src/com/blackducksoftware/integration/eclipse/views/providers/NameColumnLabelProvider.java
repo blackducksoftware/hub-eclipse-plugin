@@ -1,5 +1,5 @@
 /**
- * hub-eclipse-plugin
+ * com.blackducksoftware.integration.eclipse.plugin
  *
  * Copyright (C) 2017 Black Duck Software, Inc.
  * http://www.blackducksoftware.com/
