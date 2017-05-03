@@ -9,6 +9,7 @@ import org.eclipse.swt.widgets.Display;
 
 import com.blackducksoftware.integration.eclipse.BlackDuckHubPluginActivator;
 import com.blackducksoftware.integration.eclipse.common.services.ProjectInformationService;
+import com.blackducksoftware.integration.eclipse.common.services.hub.HubConnectionService;
 import com.blackducksoftware.integration.eclipse.common.services.inspector.ComponentInspectorPreferencesService;
 import com.blackducksoftware.integration.eclipse.common.services.inspector.ComponentInspectorService;
 import com.blackducksoftware.integration.eclipse.internal.ComponentModel;
@@ -18,6 +19,8 @@ public class ComponentTableStatusCLabel extends CLabel{
 	private final ComponentInspectorPreferencesService componentInspectorPreferencesService;
 	private final ProjectInformationService projectInformationService;
 	private final TableViewer componentInspectorTableViewer;
+	private final ComponentInspectorService componentInspectorService;
+	private final HubConnectionService hubConnectionService;
 
 	public static final String INITIALIZING_STATUS = "Initializing component inspector...";
 
@@ -40,23 +43,24 @@ public class ComponentTableStatusCLabel extends CLabel{
 	public static final String PROJECT_NOT_SUPPORTED_STATUS = "Cannot inspect selected project - either it is not a Java project or no Maven or Gradle nature was detected";
 
 
-	public ComponentTableStatusCLabel(final Composite parent, final int style, final TableViewer componentInspectorTableViewer) {
+	public ComponentTableStatusCLabel(final Composite parent, final int style, final TableViewer componentInspectorTableViewer, final ComponentInspectorService componentInspectorService, final HubConnectionService hubConnectionService) {
 		super(parent, style);
 		this.componentInspectorPreferencesService = new ComponentInspectorPreferencesService();
 		this.projectInformationService = new ProjectInformationService();
 		this.componentInspectorTableViewer = componentInspectorTableViewer;
+		this.hubConnectionService = hubConnectionService;
+		this.componentInspectorService = componentInspectorService;
 		this.setText(INITIALIZING_STATUS);
 	}
 
 	public void updateStatus(final String projectName){
-		final ComponentInspectorService componentInspectorService = BlackDuckHubPluginActivator.getDefault().getInspectorService();
 		final boolean noComponents = ((ComponentModel[]) componentInspectorTableViewer.getInput()).length == 0;
 		final boolean noProjectMapping = componentInspectorService.getProjectComponents(projectName) == null;
 		if (projectName.equals("")) {
 			this.setStatusMessage(NO_SELECTED_PROJECT_STATUS);
 		}else{
 			if(componentInspectorPreferencesService.isProjectMarkedForInspection(projectName)){
-				if(BlackDuckHubPluginActivator.getDefault().getHubConnectionService().hasActiveHubConnection()){
+				if(hubConnectionService.hasActiveHubConnection()){
 					if (componentInspectorService.isProjectInspectionRunning(projectName)) {
 						this.setStatusMessage(PROJECT_INSPECTION_RUNNING_STATUS);
 					} else if (componentInspectorService.isProjectInspectionScheduled(projectName)) {

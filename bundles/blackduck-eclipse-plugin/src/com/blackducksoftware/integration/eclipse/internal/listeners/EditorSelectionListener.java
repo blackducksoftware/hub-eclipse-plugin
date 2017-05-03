@@ -33,10 +33,17 @@ import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PlatformUI;
 
-import com.blackducksoftware.integration.eclipse.BlackDuckHubPluginActivator;
 import com.blackducksoftware.integration.eclipse.common.services.WorkspaceInformationService;
+import com.blackducksoftware.integration.eclipse.common.services.inspector.ComponentInspectorViewService;
 
 public class EditorSelectionListener implements ISelectionListener {
+	private final ComponentInspectorViewService componentInspectorViewService;
+
+	public EditorSelectionListener(final ComponentInspectorViewService componentInspectorViewService){
+		super();
+		this.componentInspectorViewService = componentInspectorViewService;
+	}
+
 	@Override
 	public void selectionChanged(final IWorkbenchPart part, final ISelection sel) {
 		final WorkspaceInformationService workspaceInformationService = new WorkspaceInformationService();
@@ -66,7 +73,7 @@ public class EditorSelectionListener implements ISelectionListener {
 		try {
 			if (project != null && project.getDescription() != null) {
 				projectName = project.getDescription().getName();
-				BlackDuckHubPluginActivator.getDefault().getInspectorViewService().setProject(projectName);
+				componentInspectorViewService.setProject(projectName);
 			}
 		} catch (final CoreException e) {
 			// Do nothing, we just don't set the project name

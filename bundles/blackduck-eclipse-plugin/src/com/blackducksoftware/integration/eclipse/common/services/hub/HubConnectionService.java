@@ -46,11 +46,11 @@ import com.blackducksoftware.integration.log.IntLogger;
 import com.blackducksoftware.integration.phone.home.enums.ThirdPartyName;
 
 public class HubConnectionService {
-	private final HubServicesFactory hubServicesFactory;
+	private HubServicesFactory hubServicesFactory;
 
 	private final IntLogger logger;
 
-	private final RestConnection restConnection;
+	private RestConnection restConnection;
 
 	private LicenseDataService licenseDataService;
 
@@ -64,18 +64,11 @@ public class HubConnectionService {
 
 	private HubVersionRequestService hubVersionRequestService;
 
-	private final HubPreferencesService hubPreferencesService;
+	private HubPreferencesService hubPreferencesService;
 
 	public HubConnectionService(){
-		this.hubPreferencesService = new HubPreferencesService();
-		this.restConnection = this.getHubConnectionFromPreferences();
 		this.logger = new IntBufferedLogger();
-		this.hubServicesFactory = new HubServicesFactory(restConnection);
-		try {
-			this.phoneHome();
-		} catch (final IntegrationException e) {
-			//Do nothing
-		}
+		this.reloadConnection();
 	}
 
 	private RestConnection getHubConnectionFromPreferences() {
@@ -91,6 +84,17 @@ public class HubConnectionService {
 			return null;
 		}
 		return connection;
+	}
+
+	public void reloadConnection(){
+		this.hubPreferencesService = new HubPreferencesService();
+		this.restConnection = this.getHubConnectionFromPreferences();
+		this.hubServicesFactory = new HubServicesFactory(restConnection);
+		try {
+			this.phoneHome();
+		} catch (final IntegrationException e) {
+			//Do nothing
+		}
 	}
 
 	public CredentialsRestConnection getCredentialsRestConnection(final HubServerConfig config)

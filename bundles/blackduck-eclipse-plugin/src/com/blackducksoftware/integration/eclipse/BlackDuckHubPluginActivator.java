@@ -61,43 +61,25 @@ public class BlackDuckHubPluginActivator extends AbstractUIPlugin {
 		try {
 			super.start(context);
 		} catch (final Exception e) {
-			e.printStackTrace();
+			//TODO: Log properly
 		}
 		plugin = this;
-		this.updateHubConnection();
-	}
-
-	public void updateHubConnection() {
 		hubConnectionService = new HubConnectionService();
-		inspectorViewService = inspectorViewService == null ? new ComponentInspectorViewService() : inspectorViewService;
 		inspectorService = new ComponentInspectorService(inspectorViewService, hubConnectionService);
-		this.updateListeners();
-	}
-
-	public void updateListeners(){
-		if(projectMarkedForInspectionListener != null){
-			plugin.getPreferenceStore().removePropertyChangeListener(projectMarkedForInspectionListener);
-		}
+		inspectorViewService = new ComponentInspectorViewService();
+		this.reconnectToHub();
 		projectMarkedForInspectionListener = new ProjectMarkedForInspectionListener(inspectorService, inspectorViewService);
 		plugin.getPreferenceStore().addPropertyChangeListener(projectMarkedForInspectionListener);
-
-		if(projectComponentsChangedListener != null){
-			JavaCore.removeElementChangedListener(projectComponentsChangedListener);
-		}
 		projectComponentsChangedListener = new ProjectComponentsChangedListener(inspectorService);
 		JavaCore.addElementChangedListener(projectComponentsChangedListener);
-
-		if(newProjectListener != null){
-			ResourcesPlugin.getWorkspace().removeResourceChangeListener(newProjectListener);
-		}
 		newProjectListener = new NewProjectListener(inspectorService);
 		ResourcesPlugin.getWorkspace().addResourceChangeListener(newProjectListener);
-
-		if(projectDeletedListener != null){
-			ResourcesPlugin.getWorkspace().removeResourceChangeListener(projectDeletedListener);
-		}
 		projectDeletedListener = new ProjectDeletedListener(inspectorService);
 		ResourcesPlugin.getWorkspace().addResourceChangeListener(projectDeletedListener, IResourceChangeEvent.PRE_DELETE);
+	}
+
+	public void reconnectToHub() {
+		hubConnectionService.reloadConnection();
 	}
 
 	@Override

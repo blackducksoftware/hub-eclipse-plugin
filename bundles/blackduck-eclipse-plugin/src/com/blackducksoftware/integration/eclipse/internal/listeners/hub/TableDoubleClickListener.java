@@ -37,7 +37,6 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.browser.IWebBrowser;
 
-import com.blackducksoftware.integration.eclipse.BlackDuckHubPluginActivator;
 import com.blackducksoftware.integration.eclipse.common.services.hub.HubConnectionService;
 import com.blackducksoftware.integration.eclipse.common.services.inspector.ComponentInspectorViewService;
 import com.blackducksoftware.integration.eclipse.internal.ComponentModel;
@@ -48,11 +47,16 @@ import com.blackducksoftware.integration.hub.model.view.ComponentVersionView;
 
 public class TableDoubleClickListener implements IDoubleClickListener {
 	public static final String JOB_GENERATE_URL = "Opening component in the Hub...";
+	private final ComponentInspectorViewService componentInspectorViewService;
+	private final HubConnectionService hubConnectionService;
+
+	public TableDoubleClickListener(final ComponentInspectorViewService componentInspectorViewService, final HubConnectionService hubConnectionService){
+		this.componentInspectorViewService = componentInspectorViewService;
+		this.hubConnectionService = hubConnectionService;
+	}
 
 	@Override
 	public void doubleClick(final DoubleClickEvent event) {
-		final ComponentInspectorViewService componentInspectorViewService = BlackDuckHubPluginActivator.getDefault().getInspectorViewService();
-		final HubConnectionService hubConnectionService = BlackDuckHubPluginActivator.getDefault().getHubConnectionService();
 		final ComponentDataService componentDataService = hubConnectionService.getComponentDataService();
 		final IStructuredSelection selection = (IStructuredSelection) event.getSelection();
 

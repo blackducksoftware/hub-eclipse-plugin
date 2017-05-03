@@ -44,6 +44,9 @@ import org.eclipse.ui.part.ViewPart;
 
 import com.blackducksoftware.integration.eclipse.BlackDuckHubPluginActivator;
 import com.blackducksoftware.integration.eclipse.common.services.WorkspaceInformationService;
+import com.blackducksoftware.integration.eclipse.common.services.hub.HubConnectionService;
+import com.blackducksoftware.integration.eclipse.common.services.inspector.ComponentInspectorService;
+import com.blackducksoftware.integration.eclipse.common.services.inspector.ComponentInspectorViewService;
 import com.blackducksoftware.integration.eclipse.internal.ComponentModel;
 import com.blackducksoftware.integration.eclipse.internal.listeners.EditorSelectionListener;
 import com.blackducksoftware.integration.eclipse.internal.listeners.hub.TableDoubleClickListener;
@@ -75,9 +78,22 @@ public class ComponentInspectorView extends ViewPart {
 
 	private EditorSelectionListener editorSelectionListener;
 
+	private final ComponentInspectorViewService componentInspectorViewService;
+
+	private final HubConnectionService hubConnectionService;
+
+	private final ComponentInspectorService componentInspectorService;
+
+	public ComponentInspectorView(){
+		super();
+		componentInspectorViewService = BlackDuckHubPluginActivator.getDefault().getInspectorViewService();
+		hubConnectionService = BlackDuckHubPluginActivator.getDefault().getHubConnectionService();
+		componentInspectorService = BlackDuckHubPluginActivator.getDefault().getInspectorService();
+	}
+
 	@Override
 	public void createPartControl(final Composite parent) {
-		BlackDuckHubPluginActivator.getDefault().getInspectorViewService().registerComponentInspectorView(this);
+		componentInspectorViewService.registerComponentInspectorView(this);
 		final GridLayout parentLayout = new GridLayout(1, false);
 		parentLayout.marginWidth = 0;
 		parentLayout.marginHeight = 0;
@@ -91,15 +107,15 @@ public class ComponentInspectorView extends ViewPart {
 		tableViewer.getTable().setHeaderVisible(true);
 		tableViewer.getTable().setLinesVisible(true);
 		tableViewer.getTable().setLayoutData(new GridData(GridData.FILL_BOTH));
-		tableViewer.addDoubleClickListener(new TableDoubleClickListener());
+		tableViewer.addDoubleClickListener(new TableDoubleClickListener(componentInspectorViewService, hubConnectionService));
 		contentProvider = new ComponentTableContentProvider(tableViewer);
 		contentProvider.addFilter(componentFilter);
 		tableViewer.setContentProvider(contentProvider);
-		editorSelectionListener = new EditorSelectionListener();
+		editorSelectionListener = new EditorSelectionListener(componentInspectorViewService);
 		getSite().getPage().addSelectionListener(editorSelectionListener);
 		this.createColumns();
 		this.refreshInput();
-		tableStatus = new ComponentTableStatusCLabel(parent, SWT.LEFT, tableViewer);
+		tableStatus = new ComponentTableStatusCLabel(parent, SWT.LEFT, tableViewer, componentInspectorService, hubConnectionService);
 		tableStatus.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 	}
 
@@ -189,7 +205,7 @@ public class ComponentInspectorView extends ViewPart {
 
 	private void setTableInput(final String projectName){
 		ComponentModel[] results = new ComponentModel[]{};
-		final List<ComponentModel> componentModels = BlackDuckHubPluginActivator.getDefault().getInspectorService().getProjectComponents(projectName);
+		final List<ComponentModel> componentModels = componentInspectorService.getProjectComponents(projectName);
 		if (componentModels != null) {
 			results = componentModels.toArray(new ComponentModel[componentModels.size()]);
 		}

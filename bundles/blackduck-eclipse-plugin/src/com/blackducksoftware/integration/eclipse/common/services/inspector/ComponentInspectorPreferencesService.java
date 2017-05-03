@@ -28,7 +28,9 @@ import com.blackducksoftware.integration.eclipse.common.services.BlackDuckPrefer
 
 public class ComponentInspectorPreferencesService {
 	public static final String INSPECTOR_NODE_ID = "inspector";
+
 	public static final String INSPECT_BY_DEFAULT = "inspectNewProjectsByDefault";
+
 	private final BlackDuckPreferencesService blackDuckPreferencesService;
 
 	public ComponentInspectorPreferencesService(){

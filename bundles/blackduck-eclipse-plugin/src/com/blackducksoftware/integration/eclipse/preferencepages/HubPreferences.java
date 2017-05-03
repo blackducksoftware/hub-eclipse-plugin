@@ -248,7 +248,7 @@ public class HubPreferences extends PreferencePage implements IWorkbenchPreferen
 		hubPreferencesService.saveHubProxyUsername(proxyUsernameField.getStringValue());
 		hubPreferencesService.saveHubProxyPassword(proxyPasswordField.getText());
 		final BlackDuckHubPluginActivator plugin = BlackDuckHubPluginActivator.getDefault();
-		plugin.updateHubConnection();
+		plugin.reconnectToHub();
 		final ComponentInspectorViewService inspectorViewService = plugin.getInspectorViewService();
 		inspectorViewService.resetDisplay();
 	}
