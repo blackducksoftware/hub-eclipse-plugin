@@ -79,4 +79,5 @@ public class EditorSelectionListener implements ISelectionListener {
 			// Do nothing, we just don't set the project name
 		}
 	}
+
 }

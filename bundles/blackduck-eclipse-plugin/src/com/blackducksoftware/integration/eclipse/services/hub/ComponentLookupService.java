@@ -49,7 +49,6 @@ public class ComponentLookupService {
 
 	private final int CACHE_TTL = 3600000;
 
-
 	public ComponentLookupService(final LicenseDataService licenseDataService, final VulnerabilityDataService vulnerabilityDataService){
 		this.componentLoadingCache = new TimedLRUCache<>(CACHE_CAPACITY, CACHE_TTL);
 		this.licenseDataService = licenseDataService;

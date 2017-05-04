@@ -38,10 +38,9 @@ public class InspectSelectedProject extends AbstractHandler {
 	@Override
 	public Object execute(final ExecutionEvent event) throws ExecutionException {
 		final WorkspaceInformationService workspaceService = new WorkspaceInformationService();
-		final List<String> selectedProjects = workspaceService.getAllSelectedProjects();
 		final ComponentInspectorPreferencesService componentInspectorPreferencesService = new ComponentInspectorPreferencesService();
-		final BlackDuckHubPluginActivator plugin = BlackDuckHubPluginActivator.getDefault();
-		final ComponentInspectorService componentInspectorService = plugin.getInspectorService();
+		final ComponentInspectorService componentInspectorService = BlackDuckHubPluginActivator.getDefault().getInspectorService();
+		final List<String> selectedProjects = workspaceService.getAllSelectedProjects();
 		for (final String selectedProject : selectedProjects) {
 			if (!componentInspectorPreferencesService.isProjectMarkedForInspection(selectedProject)) {
 				componentInspectorPreferencesService.activateProject(selectedProject);

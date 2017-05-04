@@ -40,9 +40,13 @@ import com.blackducksoftware.integration.hub.dataservice.vulnerability.Vulnerabi
 
 public class ComponentInspectorService {
 	private final InspectionJobQueue inspectionQueue;
+
 	private final HubConnectionService hubConnectionService;
+
 	private final ComponentInspectorCacheService inspectorCacheService;
+
 	private final ComponentInspectorViewService inspectorViewService;
+
 	private final ComponentInspectorPreferencesService inspectorPreferencesService;
 
 	public ComponentInspectorService(final ComponentInspectorViewService inspectorViewService, final HubConnectionService hubConnectionService){

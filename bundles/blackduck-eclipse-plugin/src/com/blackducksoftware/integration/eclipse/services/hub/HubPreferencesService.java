@@ -37,16 +37,27 @@ import com.blackducksoftware.integration.hub.global.HubServerConfig;
 
 public class HubPreferencesService {
 	private final BlackDuckPreferencesService blackDuckPreferencesService;
+
 	public static final String HUB_USERNAME = "hubUsername";
+
 	public static final String HUB_PASSWORD = "hubPassword";
+
 	public static final String HUB_PASSWORD_LENGTH = "hubPasswordLength";
+
 	public static final String HUB_URL = "hubURL";
+
 	public static final String HUB_TIMEOUT = "hubTimeout";
+
 	public static final String PROXY_USERNAME = "proxyUsername";
+
 	public static final String PROXY_PASSWORD = "proxyPassword";
+
 	public static final String PROXY_PASSWORD_LENGTH = "proxyPasswordLength";
+
 	public static final String PROXY_HOST = "proxyHost";
+
 	public static final String PROXY_PORT = "proxyPort";
+
 	public static final String DEFAULT_HUB_TIMEOUT = "120";
 
 	public HubPreferencesService(){

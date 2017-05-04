@@ -206,4 +206,5 @@ public class ComponentInspectorPreferences extends PreferencePage implements IWo
 		projectCheckboxes.add(projectCheckBox);
 		return projectCheckBox;
 	}
+
 }

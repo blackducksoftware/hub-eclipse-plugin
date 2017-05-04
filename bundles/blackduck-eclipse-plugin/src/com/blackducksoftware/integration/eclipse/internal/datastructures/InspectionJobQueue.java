@@ -117,4 +117,5 @@ public class InspectionJobQueue {
 			currentInspection = null;
 		}
 	}
+
 }

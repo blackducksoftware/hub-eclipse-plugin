@@ -45,5 +45,4 @@ public class OpenBlackDuckHubSettings extends AbstractHandler {
 		return null;
 	}
 
-
 }

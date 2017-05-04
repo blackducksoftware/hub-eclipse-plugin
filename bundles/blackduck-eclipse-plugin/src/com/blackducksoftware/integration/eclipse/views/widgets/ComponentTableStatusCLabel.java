@@ -40,9 +40,13 @@ import com.blackducksoftware.integration.eclipse.views.ComponentInspectorView;
 
 public class ComponentTableStatusCLabel extends CLabel{
 	private final ComponentInspectorPreferencesService componentInspectorPreferencesService;
+
 	private final ProjectInformationService projectInformationService;
+
 	private final TableViewer componentInspectorTableViewer;
+
 	private final ComponentInspectorService componentInspectorService;
+
 	private final HubConnectionService hubConnectionService;
 
 	public static final String INITIALIZING_STATUS = "Initializing component inspector...";

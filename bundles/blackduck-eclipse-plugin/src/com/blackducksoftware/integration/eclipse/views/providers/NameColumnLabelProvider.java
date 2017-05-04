@@ -38,7 +38,6 @@ import com.blackducksoftware.integration.eclipse.views.ComponentInspectorView;
 import com.blackducksoftware.integration.hub.buildtool.Gav;
 
 public class NameColumnLabelProvider extends ComponentTableColumnLabelProvider {
-
 	@Override
 	public String getText(final Object input) {
 		if (input instanceof ComponentModel) {

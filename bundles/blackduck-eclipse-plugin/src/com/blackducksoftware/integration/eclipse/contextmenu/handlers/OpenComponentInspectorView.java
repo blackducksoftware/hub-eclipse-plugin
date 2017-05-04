@@ -29,8 +29,6 @@ import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.ErrorDialog;
-import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.handlers.HandlerUtil;
 
@@ -40,16 +38,9 @@ import com.blackducksoftware.integration.eclipse.views.ComponentInspectorView;
 public class OpenComponentInspectorView extends AbstractHandler {
 	@Override
 	public Object execute(final ExecutionEvent event) throws ExecutionException {
-		if (event == null) {
-			return null;
-		}
 		try {
-			final IWorkbenchWindow window = HandlerUtil.getActiveWorkbenchWindow(event);
-			if (window != null) {
-				final IWorkbenchPage page = window.getActivePage();
-				if (page != null) {
-					page.showView(ComponentInspectorView.VIEW_ID);
-				}
+			if (HandlerUtil.getActiveWorkbenchWindow(event) != null && HandlerUtil.getActiveWorkbenchWindow(event).getActivePage() != null) {
+				HandlerUtil.getActiveWorkbenchWindow(event).getActivePage().showView(ComponentInspectorView.VIEW_ID);
 			}
 		} catch (final PartInitException e) {
 			ErrorDialog.openError(HandlerUtil.getActiveShell(event), "Error Opening Black Duck Component Inspector View",

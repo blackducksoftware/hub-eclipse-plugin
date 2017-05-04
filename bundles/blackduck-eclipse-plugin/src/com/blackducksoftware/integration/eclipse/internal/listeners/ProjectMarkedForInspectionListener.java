@@ -50,4 +50,5 @@ public class ProjectMarkedForInspectionListener implements IPropertyChangeListen
 			inspectorViewService.resetDisplay();
 		}
 	}
+
 }

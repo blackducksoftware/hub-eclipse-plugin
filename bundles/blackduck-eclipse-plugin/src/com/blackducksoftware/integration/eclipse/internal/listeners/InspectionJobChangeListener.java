@@ -32,6 +32,7 @@ import com.blackducksoftware.integration.eclipse.services.inspector.ComponentIns
 
 public class InspectionJobChangeListener implements IJobChangeListener{
 	private final ComponentInspectorViewService componentInspectorViewService;
+
 	private InspectionJobQueue inspectionJobQueue = null;
 
 	public InspectionJobChangeListener(final ComponentInspectorViewService componentInspectorViewService){

@@ -198,7 +198,6 @@ public class HubConnectionService {
 							gav.getNamespace(), gav.getGroupId(), gav.getArtifactId(), gav.getVersion());
 					// Final solution, will work once the redirect is set up
 					link = getMetaService().getHref(selectedComponentVersion);
-
 					// But for now...
 					final String versionID = link.substring(link.lastIndexOf("/") + 1);
 					link = getRestConnection().hubBaseUrl.toString();
@@ -213,10 +212,7 @@ public class HubConnectionService {
 				} catch (PartInitException | MalformedURLException | IntegrationException e) {
 					componentInspectorViewService.openError("Could not open Component in Hub instance",
 							String.format("Problem opening %1$s %2$s in %3$s, are you connected to your hub instance?",
-									gav.getArtifactId(),
-									gav.getVersion(),
-									getRestConnection().hubBaseUrl),
-							e);
+									gav.getArtifactId(), gav.getVersion(), getRestConnection().hubBaseUrl), e);
 					return Status.CANCEL_STATUS;
 				}
 				return Status.OK_STATUS;

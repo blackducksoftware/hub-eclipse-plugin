@@ -254,4 +254,5 @@ public class HubPreferences extends PreferencePage implements IWorkbenchPreferen
 		final ComponentInspectorViewService inspectorViewService = plugin.getInspectorViewService();
 		inspectorViewService.resetDisplay();
 	}
+
 }

@@ -61,4 +61,5 @@ public class ComponentModel {
 	public boolean getLicenseIsKnown() {
 		return license != null;
 	}
+
 }
