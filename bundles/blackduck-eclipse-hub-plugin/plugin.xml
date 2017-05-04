@@ -12,7 +12,7 @@
          <!-- Menu item that opens vulnerability view -->
          <!-- Menu item that opens Black Duck preference page -->
          <command
-               commandId="com.blackducksoftware.integration.eclipse.contextmenu.hub.OpenBlackDuckHubSettings"
+               commandId="com.blackducksoftware.integration.eclipse.hub.contextmenu.OpenBlackDuckHubSettings"
                label="Hub Settings..."
                style="push"
       		   icon="resources/icons/ducky.png">
@@ -27,7 +27,7 @@
          <!-- Menu item that opens vulnerability view -->
          <!-- Menu item that opens Black Duck preference page -->
          <command
-               commandId="com.blackducksoftware.integration.eclipse.contextmenu.hub.OpenBlackDuckHubSettings"
+               commandId="com.blackducksoftware.integration.eclipse.hub.contextmenu.OpenBlackDuckHubSettings"
                label="Hub Settings..."
                style="push"
       		   icon="resources/icons/ducky.png">
@@ -44,8 +44,8 @@
       <!-- Corresponds to "Open Black Duck Vulnerability View" menu item -->
       <!-- Corresponds to "Black Duck Settings..." menu item -->
       <command
-            defaultHandler="com.blackducksoftware.integration.eclipse.contextmenu.hub.handlers.OpenBlackDuckHubSettings"
-            id="com.blackducksoftware.integration.eclipse.contextmenu.hub.OpenBlackDuckHubSettings"
+            defaultHandler="com.blackducksoftware.integration.eclipse.hub.contextmenu.handlers.OpenBlackDuckHubSettings"
+            id="com.blackducksoftware.integration.eclipse.hub.contextmenu.OpenBlackDuckHubSettings"
             name="Open Black Duck Hub Settings">
       </command>
       <!-- Corresponds to "Project Preferences..." menu item -->
