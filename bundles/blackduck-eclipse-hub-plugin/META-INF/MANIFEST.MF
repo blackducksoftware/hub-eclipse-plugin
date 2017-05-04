@@ -1,23 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Black Duck Hub Plugin for Eclipse
+Bundle-Name: Black Duck Hub Connector Plugin for Eclipse
 Bundle-SymbolicName: com.blackducksoftware.integration.eclipse.hub.plugin;singleton:=true
 Bundle-Version: 1.0.0.qualifier
+Fragment-Host: com.blackducksoftware.integration.eclipse.plugin;bundle-version="1.0.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
-Require-Bundle: org.eclipse.core.runtime,
- org.eclipse.core.resources,
- org.eclipse.jdt.core,
- org.eclipse.ui.workbench,
- org.eclipse.ui.forms,
- org.eclipse.jface,
- org.eclipse.equinox.registry,
- org.eclipse.ui,
- org.eclipse.ui.ide,
- com.blackducksoftware.integration.hub-common,
- com.blackducksoftware.integration.hub-common-rest,
- com.blackducksoftware.integration.hub-common-response,
- com.blackducksoftware.integration.phone-home-api,
- com.blackducksoftware.integration.common,
- com.blackducksoftware.integration.eclipse.plugin;bundle-version="1.0.0",
- org.eclipse.ui.workbench,
- org.eclipse.jface
