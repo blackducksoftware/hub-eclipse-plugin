@@ -43,7 +43,7 @@ public class ComponentInspectorPreferencesService {
 		if(projectActivated.equals("")){
 			return false;
 		}
-		return Boolean.getBoolean(projectActivated);
+		return Boolean.parseBoolean(projectActivated);
 	}
 
 	public String getInspectByDefault(){

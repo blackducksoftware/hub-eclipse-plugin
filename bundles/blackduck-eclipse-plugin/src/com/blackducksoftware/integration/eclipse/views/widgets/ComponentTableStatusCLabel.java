@@ -49,8 +49,6 @@ public class ComponentTableStatusCLabel extends CLabel{
 
 	private final HubConnectionService hubConnectionService;
 
-	public static final String INITIALIZING_STATUS = "Initializing component inspector...";
-
 	public static final String NO_SELECTED_PROJECT_STATUS = "No open project selected";
 
 	public static final String PROJECT_INSPECTION_RUNNING_STATUS = "Inspecting project...";
@@ -69,7 +67,6 @@ public class ComponentTableStatusCLabel extends CLabel{
 
 	public static final String PROJECT_NOT_SUPPORTED_STATUS = "Cannot inspect selected project - either it is not a Java project or no Maven or Gradle nature was detected";
 
-
 	public ComponentTableStatusCLabel(final Composite parent, final int style, final TableViewer componentInspectorTableViewer, final ComponentInspectorService componentInspectorService, final HubConnectionService hubConnectionService) {
 		super(parent, style);
 		this.componentInspectorPreferencesService = new ComponentInspectorPreferencesService();
@@ -77,7 +74,7 @@ public class ComponentTableStatusCLabel extends CLabel{
 		this.componentInspectorTableViewer = componentInspectorTableViewer;
 		this.hubConnectionService = hubConnectionService;
 		this.componentInspectorService = componentInspectorService;
-		this.setText(INITIALIZING_STATUS);
+		this.setText(NO_SELECTED_PROJECT_STATUS);
 	}
 
 	public void updateStatus(final String projectName){

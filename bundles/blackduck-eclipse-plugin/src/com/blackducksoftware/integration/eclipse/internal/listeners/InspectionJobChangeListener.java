@@ -55,8 +55,8 @@ public class InspectionJobChangeListener implements IJobChangeListener{
 
 	@Override
 	public void done(final IJobChangeEvent event) {
-		componentInspectorViewService.refreshProjectStatus(((InspectionJob) event.getJob()).getProjectName());
 		inspectionJobQueue.currentInspectionDone();
+		componentInspectorViewService.refreshProjectStatus(((InspectionJob) event.getJob()).getProjectName());
 	}
 
 	@Override

@@ -32,7 +32,6 @@ import java.util.List;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
@@ -87,13 +86,16 @@ public class ProjectInformationService {
 	public List<URL> getProjectComponentUrls(final String projectName) {
 		final IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(projectName);
 		try {
-			final IPackageFragmentRoot[] packageFragmentRoots = ((IJavaProject) project).getPackageFragmentRoots();
-			final List<URL> dependencyFilepaths = getBinaryDependencyFilepaths(Arrays.asList(packageFragmentRoots));
-			return dependencyFilepaths;
-		} catch (final JavaModelException e) {
+			if(project.hasNature(JavaCore.NATURE_ID)){
+				final IPackageFragmentRoot[] packageFragmentRoots = JavaCore.create(project).getPackageFragmentRoots();
+				final List<URL> dependencyFilepaths = getBinaryDependencyFilepaths(Arrays.asList(packageFragmentRoots));
+				return dependencyFilepaths;
+			}
+		} catch (final CoreException e) {
 			// if exception thrown when getting filepaths to source and binary dependencies, assume
 			// there are no dependencies
 		}
+
 		return Arrays.asList();
 	}
 

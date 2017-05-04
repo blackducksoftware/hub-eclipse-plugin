@@ -102,6 +102,7 @@ public class InspectionJob extends Job {
 			}
 			return Status.OK_STATUS;
 		} catch (final Exception e) {
+			e.printStackTrace();
 			return Status.CANCEL_STATUS;
 		}
 	}
