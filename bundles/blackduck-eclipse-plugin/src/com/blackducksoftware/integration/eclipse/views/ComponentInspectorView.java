@@ -109,7 +109,7 @@ public class ComponentInspectorView extends ViewPart {
 		tableViewer.getTable().setHeaderVisible(true);
 		tableViewer.getTable().setLinesVisible(true);
 		tableViewer.getTable().setLayoutData(new GridData(GridData.FILL_BOTH));
-		tableViewer.addDoubleClickListener(new TableDoubleClickListener(componentInspectorViewService, hubConnectionService));
+		tableViewer.addDoubleClickListener(new TableDoubleClickListener(hubConnectionService));
 		contentProvider = new ComponentTableContentProvider(tableViewer);
 		contentProvider.addFilter(componentFilter);
 		tableViewer.setContentProvider(contentProvider);

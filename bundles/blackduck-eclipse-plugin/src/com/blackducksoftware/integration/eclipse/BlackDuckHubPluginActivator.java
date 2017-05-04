@@ -29,7 +29,7 @@ import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
-import com.blackducksoftware.integration.eclipse.internal.listeners.NewProjectListener;
+import com.blackducksoftware.integration.eclipse.internal.listeners.NewOrMovedProjectListener;
 import com.blackducksoftware.integration.eclipse.internal.listeners.ProjectComponentsChangedListener;
 import com.blackducksoftware.integration.eclipse.internal.listeners.ProjectDeletedListener;
 import com.blackducksoftware.integration.eclipse.internal.listeners.ProjectMarkedForInspectionListener;
@@ -50,7 +50,7 @@ public class BlackDuckHubPluginActivator extends AbstractUIPlugin {
 
 	private ProjectDeletedListener projectDeletedListener;
 
-	private NewProjectListener newProjectListener;
+	private NewOrMovedProjectListener newProjectListener;
 
 	private ProjectComponentsChangedListener projectComponentsChangedListener;
 
@@ -64,15 +64,15 @@ public class BlackDuckHubPluginActivator extends AbstractUIPlugin {
 			//TODO: Log properly
 		}
 		plugin = this;
-		hubConnectionService = new HubConnectionService();
-		inspectorService = new ComponentInspectorService(inspectorViewService, hubConnectionService);
 		inspectorViewService = new ComponentInspectorViewService();
+		hubConnectionService = new HubConnectionService(inspectorViewService);
+		inspectorService = new ComponentInspectorService(inspectorViewService, hubConnectionService);
 		this.reconnectToHub();
 		projectMarkedForInspectionListener = new ProjectMarkedForInspectionListener(inspectorService, inspectorViewService);
 		plugin.getPreferenceStore().addPropertyChangeListener(projectMarkedForInspectionListener);
 		projectComponentsChangedListener = new ProjectComponentsChangedListener(inspectorService);
 		JavaCore.addElementChangedListener(projectComponentsChangedListener);
-		newProjectListener = new NewProjectListener(inspectorService);
+		newProjectListener = new NewOrMovedProjectListener(inspectorService);
 		ResourcesPlugin.getWorkspace().addResourceChangeListener(newProjectListener);
 		projectDeletedListener = new ProjectDeletedListener(inspectorService);
 		ResourcesPlugin.getWorkspace().addResourceChangeListener(projectDeletedListener, IResourceChangeEvent.PRE_DELETE);

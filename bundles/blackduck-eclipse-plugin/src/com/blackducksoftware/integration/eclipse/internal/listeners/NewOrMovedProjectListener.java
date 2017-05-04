@@ -33,14 +33,14 @@ import com.blackducksoftware.integration.eclipse.services.ProjectInformationServ
 import com.blackducksoftware.integration.eclipse.services.inspector.ComponentInspectorPreferencesService;
 import com.blackducksoftware.integration.eclipse.services.inspector.ComponentInspectorService;
 
-public class NewProjectListener implements IResourceChangeListener {
+public class NewOrMovedProjectListener implements IResourceChangeListener {
 	private final ComponentInspectorService componentInspectorService;
 
 	private final ProjectInformationService projectInformationService;
 
 	private final ComponentInspectorPreferencesService componentInspectorPreferenceService;
 
-	public NewProjectListener(final ComponentInspectorService componentInspectorService) {
+	public NewOrMovedProjectListener(final ComponentInspectorService componentInspectorService) {
 		super();
 		this.componentInspectorService = componentInspectorService;
 		projectInformationService = new ProjectInformationService();
@@ -55,9 +55,10 @@ public class NewProjectListener implements IResourceChangeListener {
 		}
 		final IResourceDelta[] childrenDeltas = eventDelta.getAffectedChildren();
 		for (final IResourceDelta delta : childrenDeltas) {
-			final String projectName = this.extractProjectNameIfMovedOrAdded(delta);
-			if (projectName != null && projectInformationService.isProjectSupported(projectName)) {
-				if ((delta.getFlags() == IResourceDelta.MOVED_FROM) && delta.getMovedFromPath() != null) {
+			final IResource project = delta.getResource();
+			if (project instanceof IProject && (delta.getKind() == IResourceDelta.ADDED || delta.getKind() == IResourceDelta.CHANGED)) {
+				final String projectName = project.getName();
+				if (projectInformationService.isProjectSupported(projectName) && delta.getFlags() == IResourceDelta.MOVED_FROM) {
 					final String oldProjectName = delta.getMovedFromPath().toFile().getName();
 					if (componentInspectorPreferenceService.isProjectMarkedForInspection(oldProjectName)) {
 						componentInspectorPreferenceService.activateProject(projectName);
@@ -69,15 +70,5 @@ public class NewProjectListener implements IResourceChangeListener {
 
 			}
 		}
-	}
-
-	private String extractProjectNameIfMovedOrAdded(final IResourceDelta delta) {
-		final IResource resource = delta.getResource();
-		if (resource != null && resource instanceof IProject) {
-			if (delta.getKind() == IResourceDelta.ADDED || delta.getKind() == IResourceDelta.CHANGED) {
-				return resource.getName();
-			}
-		}
-		return null;
 	}
 }
