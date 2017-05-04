@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <!-- Menus -->
+   <extension
+         point="org.eclipse.ui.menus">
+      <!-- Context (right-click) menu on Package Explorer --> 
+      <!-- Items on Package Explorer context menu -->
+      <menuContribution
+            allPopups="false"
+            locationURI="popup:blackduck-PackageExplorer?after=additions">
+         <!-- Menu item that opens vulnerability view -->
+         <!-- Menu item that opens Black Duck preference page -->
+         <command
+               commandId="com.blackducksoftware.integration.eclipse.contextmenu.hub.OpenBlackDuckHubSettings"
+               label="Hub Settings..."
+               style="push"
+      		   icon="resources/icons/ducky.png">
+         </command>
+         <!-- Menu item that opens project-specific preference dialog -->
+      </menuContribution>
+      <!-- Context (right-click) menu on Project Explorer -->
+      <!-- Items on Project Explorer context menu -->
+      <menuContribution
+            allPopups="false"
+            locationURI="popup:blackduck-ProjectExplorer?after=additions">
+         <!-- Menu item that opens vulnerability view -->
+         <!-- Menu item that opens Black Duck preference page -->
+         <command
+               commandId="com.blackducksoftware.integration.eclipse.contextmenu.hub.OpenBlackDuckHubSettings"
+               label="Hub Settings..."
+               style="push"
+      		   icon="resources/icons/ducky.png">
+         </command>
+         <!-- Menu item that opens project-specific preference dialog -->
+      </menuContribution>
+   </extension>
+   <!-- Commands linked to Package/Project Explorer context menu items via commandId tag (id > commandId) -->
+   <!-- defaultHandler.execute() is the method that is called when these commands execute -->
+   <!-- Views -->
+   <!-- Preference Pages -->
+   <extension
+         point="org.eclipse.ui.commands">
+      <!-- Corresponds to "Open Black Duck Vulnerability View" menu item -->
+      <!-- Corresponds to "Black Duck Settings..." menu item -->
+      <command
+            defaultHandler="com.blackducksoftware.integration.eclipse.contextmenu.hub.handlers.OpenBlackDuckHubSettings"
+            id="com.blackducksoftware.integration.eclipse.contextmenu.hub.OpenBlackDuckHubSettings"
+            name="Open Black Duck Hub Settings">
+      </command>
+      <!-- Corresponds to "Project Preferences..." menu item -->
+   </extension>
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <!-- Parent Black Duck preference page -->
+      <page
+            class="com.blackducksoftware.integration.eclipse.hub.preferencepages.HubPreferences"
+            id="com.blackducksoftware.integration.eclipse.preferencepages"
+            name="Black Duck Hub">
+      </page>
+      <!-- Preference page indicating which projects Black Duck scan is activated for -->
+      <!-- Preference page with Black Duck default settings -->
+      <!-- Preference page with Hub authorization settings -->
+      
+   </extension>
+</plugin>

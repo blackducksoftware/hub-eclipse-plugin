@@ -21,7 +21,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package com.blackducksoftware.integration.eclipse.services.hub;
+package com.blackducksoftware.integration.eclipse.hub.services;
 
 import java.net.MalformedURLException;
 import java.net.URL;
