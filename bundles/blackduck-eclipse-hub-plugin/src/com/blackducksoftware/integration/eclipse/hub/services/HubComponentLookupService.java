@@ -21,13 +21,14 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package com.blackducksoftware.integration.eclipse.services.hub;
+package com.blackducksoftware.integration.eclipse.hub.services;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.List;
 
 import com.blackducksoftware.integration.eclipse.internal.ComponentModel;
+import com.blackducksoftware.integration.eclipse.services.ComponentLookupService;
 import com.blackducksoftware.integration.exception.IntegrationException;
 import com.blackducksoftware.integration.hub.buildtool.Gav;
 import com.blackducksoftware.integration.hub.dataservice.license.LicenseDataService;
@@ -38,7 +39,7 @@ import com.blackducksoftware.integration.hub.model.view.ComplexLicenseView;
 import com.blackducksoftware.integration.hub.model.view.VulnerabilityView;
 import com.blackducksoftware.integration.util.TimedLRUCache;
 
-public class ComponentLookupService {
+public class HubComponentLookupService extends ComponentLookupService{
 	public final VulnerabilityDataService vulnerabilityDataService;
 
 	public final LicenseDataService licenseDataService;
@@ -49,12 +50,14 @@ public class ComponentLookupService {
 
 	private final int CACHE_TTL = 3600000;
 
-	public ComponentLookupService(final LicenseDataService licenseDataService, final VulnerabilityDataService vulnerabilityDataService){
+	public HubComponentLookupService(final HubConnectionService connectionService){
+		super(connectionService);
 		this.componentLoadingCache = new TimedLRUCache<>(CACHE_CAPACITY, CACHE_TTL);
-		this.licenseDataService = licenseDataService;
-		this.vulnerabilityDataService = vulnerabilityDataService;
+		this.licenseDataService = connectionService.getLicenseDataService();
+		this.vulnerabilityDataService = connectionService.getVulnerabilityDataService();
 	}
 
+	@Override
 	public ComponentModel lookupComponent(final Gav gav) throws IOException, URISyntaxException, IntegrationException {
 		ComponentModel component = componentLoadingCache.get(gav);
 		if(component == null){
@@ -76,6 +79,7 @@ public class ComponentLookupService {
 		return component;
 	}
 
+	@Override
 	public int[] getVulnerabilitySeverityCount(final List<VulnerabilityView> vulnerabilities) {
 		int high = 0;
 		int medium = 0;

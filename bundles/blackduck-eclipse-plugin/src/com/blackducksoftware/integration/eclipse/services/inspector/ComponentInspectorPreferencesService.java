@@ -23,7 +23,7 @@
  */
 package com.blackducksoftware.integration.eclipse.services.inspector;
 
-import com.blackducksoftware.integration.eclipse.BlackDuckHubPluginActivator;
+import com.blackducksoftware.integration.eclipse.BlackDuckPluginActivator;
 import com.blackducksoftware.integration.eclipse.services.BlackDuckPreferencesService;
 
 public class ComponentInspectorPreferencesService {
@@ -34,7 +34,7 @@ public class ComponentInspectorPreferencesService {
 	private final BlackDuckPreferencesService blackDuckPreferencesService;
 
 	public ComponentInspectorPreferencesService(){
-		blackDuckPreferencesService = new BlackDuckPreferencesService(BlackDuckHubPluginActivator.getDefault());
+		blackDuckPreferencesService = new BlackDuckPreferencesService(BlackDuckPluginActivator.getDefault());
 		blackDuckPreferencesService.setPreferenceDefault(INSPECT_BY_DEFAULT, "true");
 	}
 

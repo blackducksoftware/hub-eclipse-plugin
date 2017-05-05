@@ -32,7 +32,7 @@ import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.handlers.HandlerUtil;
 
-import com.blackducksoftware.integration.eclipse.BlackDuckHubPluginActivator;
+import com.blackducksoftware.integration.eclipse.BlackDuckPluginActivator;
 import com.blackducksoftware.integration.eclipse.views.ComponentInspectorView;
 
 public class OpenComponentInspectorView extends AbstractHandler {
@@ -45,7 +45,7 @@ public class OpenComponentInspectorView extends AbstractHandler {
 		} catch (final PartInitException e) {
 			ErrorDialog.openError(HandlerUtil.getActiveShell(event), "Error Opening Black Duck Component Inspector View",
 					"An expection occurred while opening the Black Duck Component Inspector view",
-					new Status(IStatus.ERROR, BlackDuckHubPluginActivator.PLUGIN_ID, e.getMessage(), e));
+					new Status(IStatus.ERROR, BlackDuckPluginActivator.PLUGIN_ID, e.getMessage(), e));
 		}
 		return null;
 	}

@@ -63,12 +63,6 @@
       		  <!-- only visible when right clicking on Java project -->
          </command>
          <!-- Menu item that opens Black Duck preference page -->
-         <command
-               commandId="com.blackducksoftware.integration.eclipse.contextmenu.hub.OpenBlackDuckHubSettings"
-               label="Hub Settings..."
-               style="push"
-      		   icon="resources/icons/ducky.png">
-         </command>
          <!-- Menu item that opens project-specific preference dialog -->
       </menuContribution>
       <!-- Context (right-click) menu on Project Explorer -->
@@ -130,12 +124,6 @@
       		  <!-- only visible when right clicking on Java project -->
          </command>
          <!-- Menu item that opens Black Duck preference page -->
-         <command
-               commandId="com.blackducksoftware.integration.eclipse.contextmenu.hub.OpenBlackDuckHubSettings"
-               label="Hub Settings..."
-               style="push"
-      		   icon="resources/icons/ducky.png">
-         </command>
          <!-- Menu item that opens project-specific preference dialog -->
       </menuContribution>
    </extension>
@@ -153,11 +141,6 @@
       </command>
       <!-- Corresponds to "Black Duck Settings..." menu item -->
       <command
-            defaultHandler="com.blackducksoftware.integration.eclipse.contextmenu.handlers.hub.OpenBlackDuckHubSettings"
-            id="com.blackducksoftware.integration.eclipse.contextmenu.hub.OpenBlackDuckHubSettings"
-            name="Open Black Duck Hub Settings">
-      </command>
-      <command
             defaultHandler="com.blackducksoftware.integration.eclipse.contextmenu.handlers.InspectSelectedProject"
             id="com.blackducksoftware.integration.eclipse.contextmenu.InspectSelectedProject"
             name="Inspect Selected Project">
@@ -168,7 +151,7 @@
          point="org.eclipse.ui.views">
       <!-- Items in the same category show up in the same folder in the "Show View" dialog -->
       <category
-      		name="Black Duck Hub"
+      		name="Black Duck"
       		id="com.blackducksoftware.integration.eclipse.views"
       >
       </category>
@@ -185,11 +168,6 @@
    <extension
          point="org.eclipse.ui.preferencePages">
       <!-- Parent Black Duck preference page -->
-      <page
-            class="com.blackducksoftware.integration.eclipse.preferencepages.hub.HubPreferences"
-            id="com.blackducksoftware.integration.eclipse.preferencepages"
-            name="Black Duck Hub">
-      </page>
       <page
             category="com.blackducksoftware.integration.eclipse.preferencepages"
             class="com.blackducksoftware.integration.eclipse.preferencepages.ComponentInspectorPreferences"

@@ -29,7 +29,7 @@ import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 
-import com.blackducksoftware.integration.eclipse.BlackDuckHubPluginActivator;
+import com.blackducksoftware.integration.eclipse.BlackDuckPluginActivator;
 import com.blackducksoftware.integration.eclipse.services.WorkspaceInformationService;
 import com.blackducksoftware.integration.eclipse.services.inspector.ComponentInspectorPreferencesService;
 import com.blackducksoftware.integration.eclipse.services.inspector.ComponentInspectorService;
@@ -39,7 +39,7 @@ public class InspectSelectedProject extends AbstractHandler {
 	public Object execute(final ExecutionEvent event) throws ExecutionException {
 		final WorkspaceInformationService workspaceService = new WorkspaceInformationService();
 		final ComponentInspectorPreferencesService componentInspectorPreferencesService = new ComponentInspectorPreferencesService();
-		final ComponentInspectorService componentInspectorService = BlackDuckHubPluginActivator.getDefault().getInspectorService();
+		final ComponentInspectorService componentInspectorService = BlackDuckPluginActivator.getDefault().getInspectorService();
 		final List<String> selectedProjects = workspaceService.getAllSelectedProjects();
 		for (final String selectedProject : selectedProjects) {
 			if (!componentInspectorPreferencesService.isProjectMarkedForInspection(selectedProject)) {

@@ -37,8 +37,9 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.browser.IWebBrowser;
 import org.eclipse.ui.progress.UIJob;
 
-import com.blackducksoftware.integration.eclipse.BlackDuckHubPluginActivator;
+import com.blackducksoftware.integration.eclipse.BlackDuckPluginActivator;
 import com.blackducksoftware.integration.eclipse.internal.ComponentModel;
+import com.blackducksoftware.integration.eclipse.services.ConnectionService;
 import com.blackducksoftware.integration.eclipse.services.inspector.ComponentInspectorViewService;
 import com.blackducksoftware.integration.exception.EncryptionException;
 import com.blackducksoftware.integration.exception.IntegrationException;
@@ -60,7 +61,7 @@ import com.blackducksoftware.integration.log.IntBufferedLogger;
 import com.blackducksoftware.integration.log.IntLogger;
 import com.blackducksoftware.integration.phone.home.enums.ThirdPartyName;
 
-public class HubConnectionService {
+public class HubConnectionService extends ConnectionService {
 	private HubServicesFactory hubServicesFactory;
 
 	private final IntLogger logger;
@@ -86,6 +87,7 @@ public class HubConnectionService {
 	public static final String JOB_GENERATE_URL = "Opening component in the Hub...";
 
 	public HubConnectionService(final ComponentInspectorViewService componentInspectorViewService){
+		super(componentInspectorViewService);
 		this.logger = new IntBufferedLogger();
 		this.componentInspectorViewService = componentInspectorViewService;
 		this.reloadConnection();
@@ -106,6 +108,7 @@ public class HubConnectionService {
 		return connection;
 	}
 
+	@Override
 	public void reloadConnection(){
 		this.hubPreferencesService = new HubPreferencesService();
 		this.restConnection = this.getHubConnectionFromPreferences();
@@ -181,7 +184,7 @@ public class HubConnectionService {
 		final String hubVersion = hubVersionRequestService.getHubVersion();
 		final IProduct eclipseProduct = Platform.getProduct();
 		final String eclipseVersion = eclipseProduct.getDefiningBundle().getVersion().toString();
-		final String pluginVersion = Platform.getBundle(BlackDuckHubPluginActivator.PLUGIN_ID).getVersion().toString();
+		final String pluginVersion = Platform.getBundle(BlackDuckPluginActivator.PLUGIN_ID).getVersion().toString();
 		final HubServerConfig hubServerConfig = hubPreferencesService.getHubServerConfig();
 		final IntegrationInfo integrationInfo = new IntegrationInfo(ThirdPartyName.ECLIPSE, eclipseVersion, pluginVersion);
 		phoneHomeService.phoneHome(hubServerConfig, integrationInfo, hubVersion);
@@ -203,12 +206,7 @@ public class HubConnectionService {
 					final String versionID = link.substring(link.lastIndexOf("/") + 1);
 					link = getRestConnection().hubBaseUrl.toString();
 					link = link + "/#versions/id:" + versionID + "/view:overview";
-					IWebBrowser browser;
-					if (PlatformUI.getWorkbench().getBrowserSupport().isInternalWebBrowserAvailable()) {
-						browser = PlatformUI.getWorkbench().getBrowserSupport().createBrowser(BlackDuckHubPluginActivator.PLUGIN_ID);
-					} else {
-						browser = PlatformUI.getWorkbench().getBrowserSupport().getExternalBrowser();
-					}
+					final IWebBrowser browser = getBrowser();
 					browser.openURL(new URL(link));
 				} catch (PartInitException | MalformedURLException | IntegrationException e) {
 					componentInspectorViewService.openError("Could not open Component in Hub instance",
@@ -221,6 +219,26 @@ public class HubConnectionService {
 
 		};
 		job.schedule();
+	}
+
+	private IWebBrowser getBrowser() throws PartInitException{
+		if (PlatformUI.getWorkbench().getBrowserSupport().isInternalWebBrowserAvailable()) {
+			return PlatformUI.getWorkbench().getBrowserSupport().createBrowser(BlackDuckPluginActivator.PLUGIN_ID);
+		} else {
+			return PlatformUI.getWorkbench().getBrowserSupport().getExternalBrowser();
+		}
+	}
+
+	@Override
+	public void shutDown(){
+		try{
+			final IWebBrowser browser = getBrowser();
+			if(browser.getId().equals(BlackDuckPluginActivator.PLUGIN_ID)){
+				browser.close();
+			}
+		}catch(final Exception e){
+			//TODO: Log correctly
+		}
 	}
 
 }

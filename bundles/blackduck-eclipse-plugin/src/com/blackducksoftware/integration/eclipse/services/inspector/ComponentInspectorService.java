@@ -32,16 +32,14 @@ import com.blackducksoftware.integration.eclipse.internal.ComponentModel;
 import com.blackducksoftware.integration.eclipse.internal.InspectionJob;
 import com.blackducksoftware.integration.eclipse.internal.datastructures.InspectionJobQueue;
 import com.blackducksoftware.integration.eclipse.internal.listeners.InspectionJobChangeListener;
-import com.blackducksoftware.integration.eclipse.services.hub.ComponentLookupService;
-import com.blackducksoftware.integration.eclipse.services.hub.HubConnectionService;
+import com.blackducksoftware.integration.eclipse.services.ComponentLookupService;
+import com.blackducksoftware.integration.eclipse.services.ConnectionService;
 import com.blackducksoftware.integration.hub.buildtool.Gav;
-import com.blackducksoftware.integration.hub.dataservice.license.LicenseDataService;
-import com.blackducksoftware.integration.hub.dataservice.vulnerability.VulnerabilityDataService;
 
 public class ComponentInspectorService {
 	private final InspectionJobQueue inspectionQueue;
 
-	private final HubConnectionService hubConnectionService;
+	private final ConnectionService connectionService;
 
 	private final ComponentInspectorCacheService inspectorCacheService;
 
@@ -49,13 +47,11 @@ public class ComponentInspectorService {
 
 	private final ComponentInspectorPreferencesService inspectorPreferencesService;
 
-	public ComponentInspectorService(final ComponentInspectorViewService inspectorViewService, final HubConnectionService hubConnectionService){
+	public ComponentInspectorService(final ComponentInspectorViewService inspectorViewService, final ConnectionService connectionService){
 		final InspectionJobChangeListener inspectionJobChangeListener = new InspectionJobChangeListener(inspectorViewService);
 		ComponentLookupService componentLookupService;
-		if(hubConnectionService.hasActiveHubConnection()){
-			final LicenseDataService licenseDataService = hubConnectionService.getLicenseDataService();
-			final VulnerabilityDataService vulnerabilityDataService = hubConnectionService.getVulnerabilityDataService();
-			componentLookupService = new ComponentLookupService(licenseDataService, vulnerabilityDataService);
+		if(connectionService.hasActiveConnection()){
+			componentLookupService = new ComponentLookupService(connectionService);
 		}else{
 			componentLookupService = null;
 		}
@@ -63,7 +59,7 @@ public class ComponentInspectorService {
 		this.inspectorCacheService = new ComponentInspectorCacheService(inspectorViewService, componentLookupService);
 		this.inspectionQueue = new InspectionJobQueue(inspectionJobChangeListener);
 		this.inspectorViewService = inspectorViewService;
-		this.hubConnectionService = hubConnectionService;
+		this.connectionService = connectionService;
 	}
 
 	public void initializeProjectComponents(final String projectName) {
@@ -84,7 +80,7 @@ public class ComponentInspectorService {
 	}
 
 	public boolean inspectProject(final String projectName){
-		if (!hubConnectionService.hasActiveHubConnection()
+		if (!connectionService.hasActiveConnection()
 				|| !inspectorPreferencesService.isProjectMarkedForInspection(projectName)) {
 			return false;
 		}

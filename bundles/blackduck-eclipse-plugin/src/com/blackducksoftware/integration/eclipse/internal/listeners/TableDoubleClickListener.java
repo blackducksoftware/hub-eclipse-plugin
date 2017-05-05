@@ -21,32 +21,23 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package com.blackducksoftware.integration.eclipse.internal.listeners.hub;
+package com.blackducksoftware.integration.eclipse.internal.listeners;
 
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
-import org.eclipse.jface.viewers.IStructuredSelection;
 
-import com.blackducksoftware.integration.eclipse.internal.ComponentModel;
-import com.blackducksoftware.integration.eclipse.services.hub.HubConnectionService;
+import com.blackducksoftware.integration.eclipse.services.ConnectionService;
 
 public class TableDoubleClickListener implements IDoubleClickListener {
-	private final HubConnectionService hubConnectionService;
+	private final ConnectionService connectionService;
 
-	public TableDoubleClickListener(final HubConnectionService hubConnectionService){
-		this.hubConnectionService = hubConnectionService;
+	public TableDoubleClickListener(final ConnectionService connectionService){
+		this.connectionService = connectionService;
 	}
 
 	@Override
 	public void doubleClick(final DoubleClickEvent event) {
-		final IStructuredSelection selection = (IStructuredSelection) event.getSelection();
-		if (selection.getFirstElement() instanceof ComponentModel) {
-			final ComponentModel selectedObject = (ComponentModel) selection.getFirstElement();
-			if (!selectedObject.getComponentIsKnown()) {
-				return;
-			}
-			hubConnectionService.openHubComponentPageInBrowser(selectedObject);
-		}
+		//TODO: KB Implementation
 	}
 
 }

@@ -30,10 +30,10 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 
-import com.blackducksoftware.integration.eclipse.BlackDuckHubPluginActivator;
+import com.blackducksoftware.integration.eclipse.BlackDuckPluginActivator;
 import com.blackducksoftware.integration.eclipse.internal.ComponentModel;
+import com.blackducksoftware.integration.eclipse.services.ConnectionService;
 import com.blackducksoftware.integration.eclipse.services.ProjectInformationService;
-import com.blackducksoftware.integration.eclipse.services.hub.HubConnectionService;
 import com.blackducksoftware.integration.eclipse.services.inspector.ComponentInspectorPreferencesService;
 import com.blackducksoftware.integration.eclipse.services.inspector.ComponentInspectorService;
 import com.blackducksoftware.integration.eclipse.views.ComponentInspectorView;
@@ -47,7 +47,7 @@ public class ComponentTableStatusCLabel extends CLabel{
 
 	private final ComponentInspectorService componentInspectorService;
 
-	private final HubConnectionService hubConnectionService;
+	private final ConnectionService connectionService;
 
 	public static final String NO_SELECTED_PROJECT_STATUS = "No open project selected";
 
@@ -67,12 +67,12 @@ public class ComponentTableStatusCLabel extends CLabel{
 
 	public static final String PROJECT_NOT_SUPPORTED_STATUS = "Cannot inspect selected project - either it is not a Java project or no Maven or Gradle nature was detected";
 
-	public ComponentTableStatusCLabel(final Composite parent, final int style, final TableViewer componentInspectorTableViewer, final ComponentInspectorService componentInspectorService, final HubConnectionService hubConnectionService) {
+	public ComponentTableStatusCLabel(final Composite parent, final int style, final TableViewer componentInspectorTableViewer, final ComponentInspectorService componentInspectorService, final ConnectionService connectionService) {
 		super(parent, style);
 		this.componentInspectorPreferencesService = new ComponentInspectorPreferencesService();
 		this.projectInformationService = new ProjectInformationService();
 		this.componentInspectorTableViewer = componentInspectorTableViewer;
-		this.hubConnectionService = hubConnectionService;
+		this.connectionService = connectionService;
 		this.componentInspectorService = componentInspectorService;
 		this.setText(NO_SELECTED_PROJECT_STATUS);
 	}
@@ -84,7 +84,7 @@ public class ComponentTableStatusCLabel extends CLabel{
 			this.setStatusMessage(NO_SELECTED_PROJECT_STATUS);
 		}else{
 			if(componentInspectorPreferencesService.isProjectMarkedForInspection(projectName)){
-				if(hubConnectionService.hasActiveHubConnection()){
+				if(connectionService.hasActiveConnection()){
 					if (componentInspectorService.isProjectInspectionRunning(projectName)) {
 						this.setStatusMessage(PROJECT_INSPECTION_RUNNING_STATUS);
 					} else if (componentInspectorService.isProjectInspectionScheduled(projectName)) {
@@ -117,16 +117,16 @@ public class ComponentTableStatusCLabel extends CLabel{
 					ImageDescriptor newImageDescriptor = null;
 					switch (message) {
 					case PROJECT_INSPECTION_RUNNING_STATUS:
-						newImageDescriptor = BlackDuckHubPluginActivator.imageDescriptorFromPlugin(BlackDuckHubPluginActivator.PLUGIN_ID, ComponentInspectorView.WAITING_PNG_PATH);
+						newImageDescriptor = BlackDuckPluginActivator.imageDescriptorFromPlugin(BlackDuckPluginActivator.PLUGIN_ID, ComponentInspectorView.WAITING_PNG_PATH);
 						break;
 					case PROJECT_INSPECTION_SCHEDULED_STATUS:
-						newImageDescriptor = BlackDuckHubPluginActivator.imageDescriptorFromPlugin(BlackDuckHubPluginActivator.PLUGIN_ID, ComponentInspectorView.WAITING_PNG_PATH);
+						newImageDescriptor = BlackDuckPluginActivator.imageDescriptorFromPlugin(BlackDuckPluginActivator.PLUGIN_ID, ComponentInspectorView.WAITING_PNG_PATH);
 						break;
 					case CONNECTION_DISCONNECTED_STATUS:
-						newImageDescriptor = BlackDuckHubPluginActivator.imageDescriptorFromPlugin(BlackDuckHubPluginActivator.PLUGIN_ID, ComponentInspectorView.DISCONNECT_PNG_PATH);
+						newImageDescriptor = BlackDuckPluginActivator.imageDescriptorFromPlugin(BlackDuckPluginActivator.PLUGIN_ID, ComponentInspectorView.DISCONNECT_PNG_PATH);
 						break;
 					case PROJECT_NEEDS_INSPECTION_STATUS:
-						newImageDescriptor = BlackDuckHubPluginActivator.imageDescriptorFromPlugin(BlackDuckHubPluginActivator.PLUGIN_ID, ComponentInspectorView.WARNING_PNG_PATH);
+						newImageDescriptor = BlackDuckPluginActivator.imageDescriptorFromPlugin(BlackDuckPluginActivator.PLUGIN_ID, ComponentInspectorView.WARNING_PNG_PATH);
 						break;
 					default:
 						break;

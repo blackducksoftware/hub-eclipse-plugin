@@ -21,7 +21,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package com.blackducksoftware.integration.eclipse.hub.services;
+package com.blackducksoftware.integration.eclipse.services;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -30,50 +30,24 @@ import java.util.List;
 import com.blackducksoftware.integration.eclipse.internal.ComponentModel;
 import com.blackducksoftware.integration.exception.IntegrationException;
 import com.blackducksoftware.integration.hub.buildtool.Gav;
-import com.blackducksoftware.integration.hub.dataservice.license.LicenseDataService;
-import com.blackducksoftware.integration.hub.dataservice.vulnerability.VulnerabilityDataService;
-import com.blackducksoftware.integration.hub.exception.HubIntegrationException;
 import com.blackducksoftware.integration.hub.model.enumeration.VulnerabilitySeverityEnum;
-import com.blackducksoftware.integration.hub.model.view.ComplexLicenseView;
 import com.blackducksoftware.integration.hub.model.view.VulnerabilityView;
 import com.blackducksoftware.integration.util.TimedLRUCache;
 
 public class ComponentLookupService {
-	public final VulnerabilityDataService vulnerabilityDataService;
-
-	public final LicenseDataService licenseDataService;
-
 	private final TimedLRUCache<Gav, ComponentModel> componentLoadingCache;
 
 	private final int CACHE_CAPACITY = 10000;
 
 	private final int CACHE_TTL = 3600000;
 
-	public ComponentLookupService(final LicenseDataService licenseDataService, final VulnerabilityDataService vulnerabilityDataService){
+	public ComponentLookupService(final ConnectionService connectionService){
 		this.componentLoadingCache = new TimedLRUCache<>(CACHE_CAPACITY, CACHE_TTL);
-		this.licenseDataService = licenseDataService;
-		this.vulnerabilityDataService = vulnerabilityDataService;
 	}
 
 	public ComponentModel lookupComponent(final Gav gav) throws IOException, URISyntaxException, IntegrationException {
-		ComponentModel component = componentLoadingCache.get(gav);
-		if(component == null){
-			List<VulnerabilityView> vulnerabilities = null;
-			ComplexLicenseView complexLicense = null;
-			try {
-				vulnerabilities = vulnerabilityDataService.getVulnsFromComponentVersion(gav.getNamespace().toLowerCase(), gav.getGroupId(),
-						gav.getArtifactId(), gav.getVersion());
-
-				complexLicense = licenseDataService.getComplexLicenseItemFromComponent(gav.getNamespace().toLowerCase(), gav.getGroupId(),
-						gav.getArtifactId(), gav.getVersion());
-			} catch (final HubIntegrationException e) {
-				// Do nothing
-			}
-			final int[] vulnerabilitySeverityCount = getVulnerabilitySeverityCount(vulnerabilities);
-			final boolean componentKnown = (vulnerabilities != null);
-			component = new ComponentModel(gav, complexLicense, vulnerabilitySeverityCount, componentKnown);
-		}
-		return component;
+		//TODO: Get component from KB
+		return componentLoadingCache.get(gav);
 	}
 
 	public int[] getVulnerabilitySeverityCount(final List<VulnerabilityView> vulnerabilities) {

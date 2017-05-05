@@ -32,7 +32,7 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Display;
 
-import com.blackducksoftware.integration.eclipse.BlackDuckHubPluginActivator;
+import com.blackducksoftware.integration.eclipse.BlackDuckPluginActivator;
 import com.blackducksoftware.integration.eclipse.internal.ComponentModel;
 import com.blackducksoftware.integration.eclipse.views.ComponentInspectorView;
 import com.blackducksoftware.integration.hub.buildtool.Gav;
@@ -61,7 +61,7 @@ public class NameColumnLabelProvider extends ComponentTableColumnLabelProvider {
 		if (input instanceof ComponentModel) {
 			final ComponentModel validObject = ((ComponentModel) input);
 			if (!validObject.getComponentIsKnown() || !validObject.getLicenseIsKnown()) {
-				final ImageDescriptor descriptor = BlackDuckHubPluginActivator.imageDescriptorFromPlugin(BlackDuckHubPluginActivator.PLUGIN_ID, ComponentInspectorView.WARNING_PNG_PATH);
+				final ImageDescriptor descriptor = BlackDuckPluginActivator.imageDescriptorFromPlugin(BlackDuckPluginActivator.PLUGIN_ID, ComponentInspectorView.WARNING_PNG_PATH);
 				return descriptor == null ? null : descriptor.createImage();
 			}
 		}

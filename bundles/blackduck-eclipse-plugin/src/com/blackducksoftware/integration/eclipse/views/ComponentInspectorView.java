@@ -42,12 +42,12 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.part.ViewPart;
 
-import com.blackducksoftware.integration.eclipse.BlackDuckHubPluginActivator;
+import com.blackducksoftware.integration.eclipse.BlackDuckPluginActivator;
 import com.blackducksoftware.integration.eclipse.internal.ComponentModel;
 import com.blackducksoftware.integration.eclipse.internal.listeners.EditorSelectionListener;
-import com.blackducksoftware.integration.eclipse.internal.listeners.hub.TableDoubleClickListener;
+import com.blackducksoftware.integration.eclipse.internal.listeners.TableDoubleClickListener;
+import com.blackducksoftware.integration.eclipse.services.ConnectionService;
 import com.blackducksoftware.integration.eclipse.services.WorkspaceInformationService;
-import com.blackducksoftware.integration.eclipse.services.hub.HubConnectionService;
 import com.blackducksoftware.integration.eclipse.services.inspector.ComponentInspectorService;
 import com.blackducksoftware.integration.eclipse.services.inspector.ComponentInspectorViewService;
 import com.blackducksoftware.integration.eclipse.views.providers.ComponentTableContentProvider;
@@ -82,15 +82,15 @@ public class ComponentInspectorView extends ViewPart {
 
 	private final ComponentInspectorViewService componentInspectorViewService;
 
-	private final HubConnectionService hubConnectionService;
+	private final ConnectionService connectionService;
 
 	private final ComponentInspectorService componentInspectorService;
 
 	public ComponentInspectorView(){
 		super();
-		componentInspectorViewService = BlackDuckHubPluginActivator.getDefault().getInspectorViewService();
-		hubConnectionService = BlackDuckHubPluginActivator.getDefault().getHubConnectionService();
-		componentInspectorService = BlackDuckHubPluginActivator.getDefault().getInspectorService();
+		componentInspectorViewService = BlackDuckPluginActivator.getDefault().getInspectorViewService();
+		connectionService = BlackDuckPluginActivator.getDefault().getConnectionService();
+		componentInspectorService = BlackDuckPluginActivator.getDefault().getInspectorService();
 	}
 
 	@Override
@@ -109,7 +109,7 @@ public class ComponentInspectorView extends ViewPart {
 		tableViewer.getTable().setHeaderVisible(true);
 		tableViewer.getTable().setLinesVisible(true);
 		tableViewer.getTable().setLayoutData(new GridData(GridData.FILL_BOTH));
-		tableViewer.addDoubleClickListener(new TableDoubleClickListener(hubConnectionService));
+		tableViewer.addDoubleClickListener(new TableDoubleClickListener(connectionService));
 		contentProvider = new ComponentTableContentProvider(tableViewer);
 		contentProvider.addFilter(componentFilter);
 		tableViewer.setContentProvider(contentProvider);
@@ -117,13 +117,13 @@ public class ComponentInspectorView extends ViewPart {
 		getSite().getPage().addSelectionListener(editorSelectionListener);
 		this.createColumns();
 		this.refreshInput();
-		tableStatus = new ComponentTableStatusCLabel(parent, SWT.LEFT, tableViewer, componentInspectorService, hubConnectionService);
+		tableStatus = new ComponentTableStatusCLabel(parent, SWT.LEFT, tableViewer, componentInspectorService, connectionService);
 		tableStatus.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 	}
 
 	@Override
 	public Image getTitleImage() {
-		final ImageDescriptor descriptor = BlackDuckHubPluginActivator.imageDescriptorFromPlugin(BlackDuckHubPluginActivator.PLUGIN_ID, DUCKY_PNG_PATH);
+		final ImageDescriptor descriptor = BlackDuckPluginActivator.imageDescriptorFromPlugin(BlackDuckPluginActivator.PLUGIN_ID, DUCKY_PNG_PATH);
 		return descriptor == null ? null : descriptor.createImage();
 	}
 
@@ -220,7 +220,7 @@ public class ComponentInspectorView extends ViewPart {
 	}
 
 	public void openError(final String dialogTitle, final String message, final Throwable e) {
-		ErrorDialog.openError(this.getSite().getShell(), dialogTitle, message, new Status(IStatus.ERROR, BlackDuckHubPluginActivator.PLUGIN_ID, e.getMessage(), e));
+		ErrorDialog.openError(this.getSite().getShell(), dialogTitle, message, new Status(IStatus.ERROR, BlackDuckPluginActivator.PLUGIN_ID, e.getMessage(), e));
 	}
 
 }

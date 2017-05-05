@@ -34,7 +34,7 @@ import java.util.Map;
 
 import com.blackducksoftware.integration.eclipse.internal.ComponentModel;
 import com.blackducksoftware.integration.eclipse.internal.ComponentModelVulnerabilityFirstComparator;
-import com.blackducksoftware.integration.eclipse.services.hub.ComponentLookupService;
+import com.blackducksoftware.integration.eclipse.services.ComponentLookupService;
 import com.blackducksoftware.integration.exception.IntegrationException;
 import com.blackducksoftware.integration.hub.buildtool.Gav;
 

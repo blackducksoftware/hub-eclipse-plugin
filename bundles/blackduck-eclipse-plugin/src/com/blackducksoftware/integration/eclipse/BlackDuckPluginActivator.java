@@ -33,20 +33,20 @@ import com.blackducksoftware.integration.eclipse.internal.listeners.NewOrMovedPr
 import com.blackducksoftware.integration.eclipse.internal.listeners.ProjectComponentsChangedListener;
 import com.blackducksoftware.integration.eclipse.internal.listeners.ProjectDeletedListener;
 import com.blackducksoftware.integration.eclipse.internal.listeners.ProjectMarkedForInspectionListener;
-import com.blackducksoftware.integration.eclipse.services.hub.HubConnectionService;
+import com.blackducksoftware.integration.eclipse.services.ConnectionService;
 import com.blackducksoftware.integration.eclipse.services.inspector.ComponentInspectorService;
 import com.blackducksoftware.integration.eclipse.services.inspector.ComponentInspectorViewService;
 
-public class BlackDuckHubPluginActivator extends AbstractUIPlugin {
+public class BlackDuckPluginActivator extends AbstractUIPlugin {
 	public static final String PLUGIN_ID = "com.blackducksoftware.integration.eclipse.plugin";
 
-	private static BlackDuckHubPluginActivator plugin;
+	private static BlackDuckPluginActivator plugin;
 
 	private ComponentInspectorService inspectorService;
 
 	private ComponentInspectorViewService inspectorViewService;
 
-	private HubConnectionService hubConnectionService;
+	private ConnectionService connectionService;
 
 	private ProjectDeletedListener projectDeletedListener;
 
@@ -65,8 +65,8 @@ public class BlackDuckHubPluginActivator extends AbstractUIPlugin {
 		}
 		plugin = this;
 		inspectorViewService = new ComponentInspectorViewService();
-		hubConnectionService = new HubConnectionService(inspectorViewService);
-		inspectorService = new ComponentInspectorService(inspectorViewService, hubConnectionService);
+		connectionService = new ConnectionService(inspectorViewService);
+		inspectorService = new ComponentInspectorService(inspectorViewService, connectionService);
 		this.reconnectToHub();
 		projectMarkedForInspectionListener = new ProjectMarkedForInspectionListener(inspectorService, inspectorViewService);
 		plugin.getPreferenceStore().addPropertyChangeListener(projectMarkedForInspectionListener);
@@ -79,7 +79,7 @@ public class BlackDuckHubPluginActivator extends AbstractUIPlugin {
 	}
 
 	public void reconnectToHub() {
-		hubConnectionService.reloadConnection();
+		connectionService.reloadConnection();
 	}
 
 	@Override
@@ -87,6 +87,7 @@ public class BlackDuckHubPluginActivator extends AbstractUIPlugin {
 		plugin.getPreferenceStore().removePropertyChangeListener(projectMarkedForInspectionListener);
 		plugin = null;
 		inspectorService.shutDown();
+		connectionService.shutDown();
 		ResourcesPlugin.getWorkspace().removeResourceChangeListener(newProjectListener);
 		ResourcesPlugin.getWorkspace().removeResourceChangeListener(projectDeletedListener);
 		JavaCore.removeElementChangedListener(projectComponentsChangedListener);
@@ -97,7 +98,7 @@ public class BlackDuckHubPluginActivator extends AbstractUIPlugin {
 		}
 	}
 
-	public static BlackDuckHubPluginActivator getDefault() {
+	public static BlackDuckPluginActivator getDefault() {
 		return plugin;
 	}
 
@@ -109,8 +110,8 @@ public class BlackDuckHubPluginActivator extends AbstractUIPlugin {
 		return inspectorViewService;
 	}
 
-	public HubConnectionService getHubConnectionService(){
-		return hubConnectionService;
+	public ConnectionService getConnectionService(){
+		return connectionService;
 	}
 
 }

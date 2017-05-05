@@ -31,8 +31,8 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.dialogs.PreferencesUtil;
 import org.eclipse.ui.handlers.HandlerUtil;
 
+import com.blackducksoftware.integration.eclipse.hub.preferencepages.HubPreferences;
 import com.blackducksoftware.integration.eclipse.preferencepages.ComponentInspectorPreferences;
-import com.blackducksoftware.integration.eclipse.preferencepages.hub.HubPreferences;
 
 public class OpenBlackDuckHubSettings extends AbstractHandler {
 	@Override

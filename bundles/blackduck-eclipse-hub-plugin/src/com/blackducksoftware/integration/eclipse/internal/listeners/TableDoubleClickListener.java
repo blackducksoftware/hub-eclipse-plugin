@@ -21,14 +21,14 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package com.blackducksoftware.integration.eclipse.internal.hub.listeners;
+package com.blackducksoftware.integration.eclipse.internal.listeners;
 
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 
+import com.blackducksoftware.integration.eclipse.hub.services.HubConnectionService;
 import com.blackducksoftware.integration.eclipse.internal.ComponentModel;
-import com.blackducksoftware.integration.eclipse.services.hub.HubConnectionService;
 
 public class TableDoubleClickListener implements IDoubleClickListener {
 	private final HubConnectionService hubConnectionService;
