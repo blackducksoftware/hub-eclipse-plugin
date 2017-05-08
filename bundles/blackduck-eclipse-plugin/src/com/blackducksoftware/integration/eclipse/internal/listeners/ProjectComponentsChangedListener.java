@@ -42,9 +42,9 @@ public class ProjectComponentsChangedListener implements IElementChangedListener
 
 	private final ComponentInformationService componentInformationService;
 
-	public ProjectComponentsChangedListener(final ComponentInspectorService inspectorService) {
+	public ProjectComponentsChangedListener(final ComponentInspectorService inspectorService, final ComponentInformationService componentInformationService) {
 		this.inspectorService = inspectorService;
-		this.componentInformationService = new ComponentInformationService();
+		this.componentInformationService = componentInformationService;
 	}
 
 	@Override

@@ -33,20 +33,21 @@ import com.blackducksoftware.integration.eclipse.internal.listeners.NewOrMovedPr
 import com.blackducksoftware.integration.eclipse.internal.listeners.ProjectComponentsChangedListener;
 import com.blackducksoftware.integration.eclipse.internal.listeners.ProjectDeletedListener;
 import com.blackducksoftware.integration.eclipse.internal.listeners.ProjectMarkedForInspectionListener;
-import com.blackducksoftware.integration.eclipse.services.ConnectionService;
+import com.blackducksoftware.integration.eclipse.services.BlackDuckEclipseServicesFactory;
+import com.blackducksoftware.integration.eclipse.services.IConnectionService;
 import com.blackducksoftware.integration.eclipse.services.inspector.ComponentInspectorService;
 import com.blackducksoftware.integration.eclipse.services.inspector.ComponentInspectorViewService;
 
-public class BlackDuckPluginActivator extends AbstractUIPlugin {
+public class BlackDuckEclipseActivator extends AbstractUIPlugin {
 	public static final String PLUGIN_ID = "com.blackducksoftware.integration.eclipse.plugin";
 
-	private static BlackDuckPluginActivator plugin;
+	private static BlackDuckEclipseActivator plugin;
 
-	private ComponentInspectorService inspectorService;
+	private ComponentInspectorService componentInspectorService;
 
-	private ComponentInspectorViewService inspectorViewService;
+	private ComponentInspectorViewService componentInspectorViewService;
 
-	private ConnectionService connectionService;
+	private IConnectionService connectionService;
 
 	private ProjectDeletedListener projectDeletedListener;
 
@@ -64,17 +65,17 @@ public class BlackDuckPluginActivator extends AbstractUIPlugin {
 			//TODO: Log properly
 		}
 		plugin = this;
-		inspectorViewService = new ComponentInspectorViewService();
-		connectionService = new ConnectionService(inspectorViewService);
-		inspectorService = new ComponentInspectorService(inspectorViewService, connectionService);
+		componentInspectorViewService = BlackDuckEclipseServicesFactory.getInstance().getComponentInspectorViewService();
+		connectionService = BlackDuckEclipseServicesFactory.getInstance().getConnectionService();
+		componentInspectorService = BlackDuckEclipseServicesFactory.getInstance().getComponentInspectorService();
 		this.reconnectToHub();
-		projectMarkedForInspectionListener = new ProjectMarkedForInspectionListener(inspectorService, inspectorViewService);
+		projectMarkedForInspectionListener = new ProjectMarkedForInspectionListener(componentInspectorService, componentInspectorViewService);
 		plugin.getPreferenceStore().addPropertyChangeListener(projectMarkedForInspectionListener);
-		projectComponentsChangedListener = new ProjectComponentsChangedListener(inspectorService);
+		projectComponentsChangedListener = new ProjectComponentsChangedListener(componentInspectorService, null);
 		JavaCore.addElementChangedListener(projectComponentsChangedListener);
-		newProjectListener = new NewOrMovedProjectListener(inspectorService);
+		newProjectListener = new NewOrMovedProjectListener(componentInspectorService, null, null);
 		ResourcesPlugin.getWorkspace().addResourceChangeListener(newProjectListener);
-		projectDeletedListener = new ProjectDeletedListener(inspectorService);
+		projectDeletedListener = new ProjectDeletedListener(componentInspectorService);
 		ResourcesPlugin.getWorkspace().addResourceChangeListener(projectDeletedListener, IResourceChangeEvent.PRE_DELETE);
 	}
 
@@ -86,7 +87,7 @@ public class BlackDuckPluginActivator extends AbstractUIPlugin {
 	public void stop(final BundleContext context) {
 		plugin.getPreferenceStore().removePropertyChangeListener(projectMarkedForInspectionListener);
 		plugin = null;
-		inspectorService.shutDown();
+		componentInspectorService.shutDown();
 		connectionService.shutDown();
 		ResourcesPlugin.getWorkspace().removeResourceChangeListener(newProjectListener);
 		ResourcesPlugin.getWorkspace().removeResourceChangeListener(projectDeletedListener);
@@ -98,20 +99,8 @@ public class BlackDuckPluginActivator extends AbstractUIPlugin {
 		}
 	}
 
-	public static BlackDuckPluginActivator getDefault() {
+	public static BlackDuckEclipseActivator getDefault() {
 		return plugin;
-	}
-
-	public ComponentInspectorService getInspectorService() {
-		return inspectorService;
-	}
-
-	public ComponentInspectorViewService getInspectorViewService(){
-		return inspectorViewService;
-	}
-
-	public ConnectionService getConnectionService(){
-		return connectionService;
 	}
 
 }

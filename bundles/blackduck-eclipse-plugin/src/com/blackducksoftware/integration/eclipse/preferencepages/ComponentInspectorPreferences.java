@@ -42,7 +42,8 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 
-import com.blackducksoftware.integration.eclipse.BlackDuckPluginActivator;
+import com.blackducksoftware.integration.eclipse.BlackDuckEclipseActivator;
+import com.blackducksoftware.integration.eclipse.services.BlackDuckEclipseServicesFactory;
 import com.blackducksoftware.integration.eclipse.services.WorkspaceInformationService;
 import com.blackducksoftware.integration.eclipse.services.inspector.ComponentInspectorPreferencesService;
 
@@ -85,9 +86,9 @@ public class ComponentInspectorPreferences extends PreferencePage implements IWo
 	@Override
 	public void init(final IWorkbench workbench) {
 		this.noDefaultButton();
-		this.setPreferenceStore(BlackDuckPluginActivator.getDefault().getPreferenceStore());
-		inspectorPreferencesService = new ComponentInspectorPreferencesService();
-		workspaceInformationService = new WorkspaceInformationService();
+		this.setPreferenceStore(BlackDuckEclipseActivator.getDefault().getPreferenceStore());
+		inspectorPreferencesService = BlackDuckEclipseServicesFactory.getInstance().getComponentInspectorPreferencesService();
+		workspaceInformationService = BlackDuckEclipseServicesFactory.getInstance().getWorkspaceInformationService();
 
 	}
 

@@ -50,8 +50,8 @@ public class ProjectInformationService {
 
 	private final ComponentInformationService componentInformationService;
 
-	public ProjectInformationService() {
-		this.componentInformationService = new ComponentInformationService();
+	public ProjectInformationService(final ComponentInformationService componentInformationService) {
+		this.componentInformationService = componentInformationService;
 	}
 
 	public int getNumBinaryDependencies(final List<IPackageFragmentRoot> packageFragmentRoots) {

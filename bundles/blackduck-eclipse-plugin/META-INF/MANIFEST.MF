@@ -26,7 +26,7 @@ Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.equinox.security,
  org.eclipse.equinox.preferences,
  org.apache.commons.lang3
-Bundle-Activator: com.blackducksoftware.integration.eclipse.BlackDuckPluginActivator
+Bundle-Activator: com.blackducksoftware.integration.eclipse.BlackDuckEclipseActivator
 Export-Package: com.blackducksoftware.integration.eclipse,
  com.blackducksoftware.integration.eclipse.contextmenu.handlers,
  com.blackducksoftware.integration.eclipse.preferencepages,

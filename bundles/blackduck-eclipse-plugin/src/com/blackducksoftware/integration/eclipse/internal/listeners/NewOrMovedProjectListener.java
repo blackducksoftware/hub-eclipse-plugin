@@ -38,13 +38,13 @@ public class NewOrMovedProjectListener implements IResourceChangeListener {
 
 	private final ProjectInformationService projectInformationService;
 
-	private final ComponentInspectorPreferencesService componentInspectorPreferenceService;
+	private final ComponentInspectorPreferencesService componentInspectorPreferencesService;
 
-	public NewOrMovedProjectListener(final ComponentInspectorService componentInspectorService) {
+	public NewOrMovedProjectListener(final ComponentInspectorService componentInspectorService, final ProjectInformationService projectInformationService, final ComponentInspectorPreferencesService componentInspectorPreferencesService) {
 		super();
 		this.componentInspectorService = componentInspectorService;
-		projectInformationService = new ProjectInformationService();
-		componentInspectorPreferenceService = new ComponentInspectorPreferencesService();
+		this.projectInformationService = projectInformationService;
+		this.componentInspectorPreferencesService = componentInspectorPreferencesService;
 	}
 
 	@Override
@@ -60,11 +60,11 @@ public class NewOrMovedProjectListener implements IResourceChangeListener {
 				final String projectName = project.getName();
 				if (projectInformationService.isProjectSupported(projectName) && delta.getFlags() == IResourceDelta.MOVED_FROM) {
 					final String oldProjectName = delta.getMovedFromPath().toFile().getName();
-					if (componentInspectorPreferenceService.isProjectMarkedForInspection(oldProjectName)) {
-						componentInspectorPreferenceService.activateProject(projectName);
+					if (componentInspectorPreferencesService.isProjectMarkedForInspection(oldProjectName)) {
+						componentInspectorPreferencesService.activateProject(projectName);
 					}
 				}
-				if (componentInspectorPreferenceService.isProjectMarkedForInspection(projectName)) {
+				if (componentInspectorPreferencesService.isProjectMarkedForInspection(projectName)) {
 					componentInspectorService.inspectProject(projectName);
 				}
 

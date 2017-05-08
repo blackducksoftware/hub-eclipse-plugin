@@ -25,19 +25,29 @@ package com.blackducksoftware.integration.eclipse.internal.listeners;
 
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
+import org.eclipse.jface.viewers.IStructuredSelection;
 
-import com.blackducksoftware.integration.eclipse.services.ConnectionService;
+import com.blackducksoftware.integration.eclipse.internal.ComponentModel;
+import com.blackducksoftware.integration.eclipse.services.BlackDuckEclipseServicesFactory;
+import com.blackducksoftware.integration.eclipse.services.IConnectionService;
 
 public class TableDoubleClickListener implements IDoubleClickListener {
-	private final ConnectionService connectionService;
+	private final IConnectionService connectionService;
 
-	public TableDoubleClickListener(final ConnectionService connectionService){
-		this.connectionService = connectionService;
+	public TableDoubleClickListener(){
+		this.connectionService = BlackDuckEclipseServicesFactory.getInstance().getConnectionService();
 	}
 
 	@Override
 	public void doubleClick(final DoubleClickEvent event) {
-		//TODO: KB Implementation
+		final IStructuredSelection selection = (IStructuredSelection) event.getSelection();
+		if (selection.getFirstElement() instanceof ComponentModel) {
+			final ComponentModel selectedObject = (ComponentModel) selection.getFirstElement();
+			if (!selectedObject.getComponentIsKnown()) {
+				return;
+			}
+			connectionService.displayExpandedComponentInformation(selectedObject);
+		}
 	}
 
 }

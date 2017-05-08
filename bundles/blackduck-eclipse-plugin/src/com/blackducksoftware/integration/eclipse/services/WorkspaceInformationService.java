@@ -46,8 +46,8 @@ import org.eclipse.ui.PlatformUI;
 public class WorkspaceInformationService {
 	private final ProjectInformationService projectInformationService;
 
-	public WorkspaceInformationService(){
-		this.projectInformationService = new ProjectInformationService();
+	public WorkspaceInformationService(final ProjectInformationService projectInformationService){
+		this.projectInformationService = projectInformationService;
 	}
 
 	public Set<IProject> getAllSupportedProjects() {

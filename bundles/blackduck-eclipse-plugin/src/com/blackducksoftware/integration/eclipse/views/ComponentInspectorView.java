@@ -42,11 +42,11 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.part.ViewPart;
 
-import com.blackducksoftware.integration.eclipse.BlackDuckPluginActivator;
+import com.blackducksoftware.integration.eclipse.BlackDuckEclipseActivator;
 import com.blackducksoftware.integration.eclipse.internal.ComponentModel;
 import com.blackducksoftware.integration.eclipse.internal.listeners.EditorSelectionListener;
 import com.blackducksoftware.integration.eclipse.internal.listeners.TableDoubleClickListener;
-import com.blackducksoftware.integration.eclipse.services.ConnectionService;
+import com.blackducksoftware.integration.eclipse.services.BlackDuckEclipseServicesFactory;
 import com.blackducksoftware.integration.eclipse.services.WorkspaceInformationService;
 import com.blackducksoftware.integration.eclipse.services.inspector.ComponentInspectorService;
 import com.blackducksoftware.integration.eclipse.services.inspector.ComponentInspectorViewService;
@@ -82,15 +82,15 @@ public class ComponentInspectorView extends ViewPart {
 
 	private final ComponentInspectorViewService componentInspectorViewService;
 
-	private final ConnectionService connectionService;
-
 	private final ComponentInspectorService componentInspectorService;
+
+	private final WorkspaceInformationService workspaceInformationService;
 
 	public ComponentInspectorView(){
 		super();
-		componentInspectorViewService = BlackDuckPluginActivator.getDefault().getInspectorViewService();
-		connectionService = BlackDuckPluginActivator.getDefault().getConnectionService();
-		componentInspectorService = BlackDuckPluginActivator.getDefault().getInspectorService();
+		componentInspectorViewService = BlackDuckEclipseServicesFactory.getInstance().getComponentInspectorViewService();
+		componentInspectorService = BlackDuckEclipseServicesFactory.getInstance().getComponentInspectorService();
+		workspaceInformationService = BlackDuckEclipseServicesFactory.getInstance().getWorkspaceInformationService();
 	}
 
 	@Override
@@ -100,7 +100,6 @@ public class ComponentInspectorView extends ViewPart {
 		parentLayout.marginWidth = 0;
 		parentLayout.marginHeight = 0;
 		parent.setLayout(parentLayout);
-		final WorkspaceInformationService workspaceInformationService = new WorkspaceInformationService();
 		lastSelectedProjectName = workspaceInformationService.getSelectedProject();
 		this.setUpHeaderComposite(parent);
 		final ComponentModelFilter componentFilter = new ComponentModelFilter(filterBox);
@@ -109,21 +108,21 @@ public class ComponentInspectorView extends ViewPart {
 		tableViewer.getTable().setHeaderVisible(true);
 		tableViewer.getTable().setLinesVisible(true);
 		tableViewer.getTable().setLayoutData(new GridData(GridData.FILL_BOTH));
-		tableViewer.addDoubleClickListener(new TableDoubleClickListener(connectionService));
+		tableViewer.addDoubleClickListener(new TableDoubleClickListener());
 		contentProvider = new ComponentTableContentProvider(tableViewer);
 		contentProvider.addFilter(componentFilter);
 		tableViewer.setContentProvider(contentProvider);
-		editorSelectionListener = new EditorSelectionListener(componentInspectorViewService);
+		editorSelectionListener = new EditorSelectionListener(componentInspectorViewService, workspaceInformationService);
 		getSite().getPage().addSelectionListener(editorSelectionListener);
 		this.createColumns();
 		this.refreshInput();
-		tableStatus = new ComponentTableStatusCLabel(parent, SWT.LEFT, tableViewer, componentInspectorService, connectionService);
+		tableStatus = new ComponentTableStatusCLabel(parent, SWT.LEFT, tableViewer, componentInspectorService);
 		tableStatus.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 	}
 
 	@Override
 	public Image getTitleImage() {
-		final ImageDescriptor descriptor = BlackDuckPluginActivator.imageDescriptorFromPlugin(BlackDuckPluginActivator.PLUGIN_ID, DUCKY_PNG_PATH);
+		final ImageDescriptor descriptor = BlackDuckEclipseActivator.imageDescriptorFromPlugin(BlackDuckEclipseActivator.PLUGIN_ID, DUCKY_PNG_PATH);
 		return descriptor == null ? null : descriptor.createImage();
 	}
 
@@ -220,7 +219,7 @@ public class ComponentInspectorView extends ViewPart {
 	}
 
 	public void openError(final String dialogTitle, final String message, final Throwable e) {
-		ErrorDialog.openError(this.getSite().getShell(), dialogTitle, message, new Status(IStatus.ERROR, BlackDuckPluginActivator.PLUGIN_ID, e.getMessage(), e));
+		ErrorDialog.openError(this.getSite().getShell(), dialogTitle, message, new Status(IStatus.ERROR, BlackDuckEclipseActivator.PLUGIN_ID, e.getMessage(), e));
 	}
 
 }

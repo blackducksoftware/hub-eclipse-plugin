@@ -41,7 +41,7 @@ public class ComponentLookupService {
 
 	private final int CACHE_TTL = 3600000;
 
-	public ComponentLookupService(final ConnectionService connectionService){
+	public ComponentLookupService(final IConnectionService connectionService){
 		this.componentLoadingCache = new TimedLRUCache<>(CACHE_CAPACITY, CACHE_TTL);
 	}
 

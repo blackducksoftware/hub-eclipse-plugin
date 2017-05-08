@@ -25,7 +25,7 @@ package com.blackducksoftware.integration.eclipse.hub.services;
 
 import java.net.URL;
 
-import com.blackducksoftware.integration.eclipse.BlackDuckPluginActivator;
+import com.blackducksoftware.integration.eclipse.services.BlackDuckEclipseServicesFactory;
 import com.blackducksoftware.integration.eclipse.services.BlackDuckPreferencesService;
 import com.blackducksoftware.integration.exception.EncryptionException;
 import com.blackducksoftware.integration.hub.builder.HubCredentialsBuilder;
@@ -61,7 +61,7 @@ public class HubPreferencesService {
 	public static final String DEFAULT_HUB_TIMEOUT = "120";
 
 	public HubPreferencesService(){
-		blackDuckPreferencesService = new BlackDuckPreferencesService(BlackDuckPluginActivator.getDefault());
+		this.blackDuckPreferencesService = BlackDuckEclipseServicesFactory.getInstance().getBlackDuckPreferencesService();
 	}
 
 	public String getPreference(final String preference){

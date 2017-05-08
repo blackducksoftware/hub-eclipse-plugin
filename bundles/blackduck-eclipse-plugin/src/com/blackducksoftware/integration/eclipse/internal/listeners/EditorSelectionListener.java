@@ -39,14 +39,16 @@ import com.blackducksoftware.integration.eclipse.services.inspector.ComponentIns
 public class EditorSelectionListener implements ISelectionListener {
 	private final ComponentInspectorViewService componentInspectorViewService;
 
-	public EditorSelectionListener(final ComponentInspectorViewService componentInspectorViewService){
+	private final WorkspaceInformationService workspaceInformationService;
+
+	public EditorSelectionListener(final ComponentInspectorViewService componentInspectorViewService, final WorkspaceInformationService workspaceInformationService){
 		super();
 		this.componentInspectorViewService = componentInspectorViewService;
+		this.workspaceInformationService = workspaceInformationService;
 	}
 
 	@Override
 	public void selectionChanged(final IWorkbenchPart part, final ISelection sel) {
-		final WorkspaceInformationService workspaceInformationService = new WorkspaceInformationService();
 		if (!(sel instanceof IStructuredSelection)) {
 			return;
 		}

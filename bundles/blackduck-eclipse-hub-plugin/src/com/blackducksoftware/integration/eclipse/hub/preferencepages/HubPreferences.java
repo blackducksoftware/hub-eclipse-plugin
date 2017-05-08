@@ -40,7 +40,8 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 
-import com.blackducksoftware.integration.eclipse.BlackDuckPluginActivator;
+import com.blackducksoftware.integration.eclipse.BlackDuckEclipseActivator;
+import com.blackducksoftware.integration.eclipse.hub.services.BlackDuckEclipseHubServicesFactory;
 import com.blackducksoftware.integration.eclipse.hub.services.HubPreferencesService;
 import com.blackducksoftware.integration.eclipse.services.inspector.ComponentInspectorViewService;
 import com.blackducksoftware.integration.hub.builder.HubServerConfigBuilder;
@@ -98,7 +99,7 @@ public class HubPreferences extends PreferencePage implements IWorkbenchPreferen
 	@Override
 	public void init(final IWorkbench workbench) {
 		hubPreferencesService = new HubPreferencesService();
-		this.setPreferenceStore(BlackDuckPluginActivator.getDefault().getPreferenceStore());
+		this.setPreferenceStore(BlackDuckEclipseActivator.getDefault().getPreferenceStore());
 		this.noDefaultButton();
 	}
 
@@ -249,9 +250,9 @@ public class HubPreferences extends PreferencePage implements IWorkbenchPreferen
 		hubPreferencesService.saveHubProxyPort(proxyPortField.getStringValue());
 		hubPreferencesService.saveHubProxyUsername(proxyUsernameField.getStringValue());
 		hubPreferencesService.saveHubProxyPassword(proxyPasswordField.getText());
-		final BlackDuckPluginActivator plugin = BlackDuckPluginActivator.getDefault();
+		final BlackDuckEclipseActivator plugin = BlackDuckEclipseActivator.getDefault();
 		plugin.reconnectToHub();
-		final ComponentInspectorViewService inspectorViewService = plugin.getInspectorViewService();
+		final ComponentInspectorViewService inspectorViewService = BlackDuckEclipseHubServicesFactory.getInstance().getComponentInspectorViewService();
 		inspectorViewService.resetDisplay();
 	}
 

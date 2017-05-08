@@ -32,6 +32,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.core.runtime.jobs.Job;
 
+import com.blackducksoftware.integration.eclipse.services.BlackDuckEclipseServicesFactory;
 import com.blackducksoftware.integration.eclipse.services.ComponentInformationService;
 import com.blackducksoftware.integration.eclipse.services.ProjectInformationService;
 import com.blackducksoftware.integration.eclipse.services.inspector.ComponentInspectorPreferencesService;
@@ -57,12 +58,15 @@ public class InspectionJob extends Job {
 
 	private final ComponentInformationService componentInformationService;
 
-	public InspectionJob(final String projectName, final ComponentInspectorService componentInspectorService) {
+	private final ComponentInspectorPreferencesService componentInspectorPreferencesService;
+
+	public InspectionJob(final String projectName, final ComponentInspectorService componentInspectorService, final ComponentInspectorPreferencesService componentInspectorPreferencesService) {
 		super(JOB_INSPECT_PROJECT_PREFACE + projectName);
 		this.projectName = projectName;
 		this.componentInspectorService = componentInspectorService;
-		this.projectInformationService = new ProjectInformationService();
-		this.componentInformationService = new ComponentInformationService();
+		this.projectInformationService = BlackDuckEclipseServicesFactory.getInstance().getProjectInformationService();
+		this.componentInformationService = BlackDuckEclipseServicesFactory.getInstance().getComponentInformationService();
+		this.componentInspectorPreferencesService = componentInspectorPreferencesService;
 		this.setPriority(Job.BUILD);
 	}
 
@@ -79,8 +83,7 @@ public class InspectionJob extends Job {
 	@Override
 	protected IStatus run(final IProgressMonitor monitor) {
 		try {
-			final ComponentInspectorPreferencesService inspectorPreferencesService = new ComponentInspectorPreferencesService();
-			if (!inspectorPreferencesService.isProjectMarkedForInspection(projectName)) {
+			if (!componentInspectorPreferencesService.isProjectMarkedForInspection(projectName)) {
 				return Status.OK_STATUS;
 			}
 			componentInspectorService.initializeProjectComponents(projectName);

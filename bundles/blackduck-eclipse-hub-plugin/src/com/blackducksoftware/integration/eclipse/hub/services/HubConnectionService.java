@@ -37,9 +37,9 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.browser.IWebBrowser;
 import org.eclipse.ui.progress.UIJob;
 
-import com.blackducksoftware.integration.eclipse.BlackDuckPluginActivator;
+import com.blackducksoftware.integration.eclipse.BlackDuckEclipseActivator;
 import com.blackducksoftware.integration.eclipse.internal.ComponentModel;
-import com.blackducksoftware.integration.eclipse.services.ConnectionService;
+import com.blackducksoftware.integration.eclipse.services.IConnectionService;
 import com.blackducksoftware.integration.eclipse.services.inspector.ComponentInspectorViewService;
 import com.blackducksoftware.integration.exception.EncryptionException;
 import com.blackducksoftware.integration.exception.IntegrationException;
@@ -61,7 +61,7 @@ import com.blackducksoftware.integration.log.IntBufferedLogger;
 import com.blackducksoftware.integration.log.IntLogger;
 import com.blackducksoftware.integration.phone.home.enums.ThirdPartyName;
 
-public class HubConnectionService extends ConnectionService {
+public class HubConnectionService implements IConnectionService {
 	private HubServicesFactory hubServicesFactory;
 
 	private final IntLogger logger;
@@ -87,7 +87,6 @@ public class HubConnectionService extends ConnectionService {
 	public static final String JOB_GENERATE_URL = "Opening component in the Hub...";
 
 	public HubConnectionService(final ComponentInspectorViewService componentInspectorViewService){
-		super(componentInspectorViewService);
 		this.logger = new IntBufferedLogger();
 		this.componentInspectorViewService = componentInspectorViewService;
 		this.reloadConnection();
@@ -171,12 +170,13 @@ public class HubConnectionService extends ConnectionService {
 		return restConnection;
 	}
 
-	public boolean hasActiveHubConnection() {
+	@Override
+	public boolean hasActiveConnection() {
 		return restConnection != null;
 	}
 
 	public void phoneHome() throws IntegrationException {
-		if (!this.hasActiveHubConnection()) {
+		if (!this.hasActiveConnection()) {
 			return;
 		}
 		final PhoneHomeDataService phoneHomeService = this.getPhoneHomeDataService();
@@ -184,13 +184,14 @@ public class HubConnectionService extends ConnectionService {
 		final String hubVersion = hubVersionRequestService.getHubVersion();
 		final IProduct eclipseProduct = Platform.getProduct();
 		final String eclipseVersion = eclipseProduct.getDefiningBundle().getVersion().toString();
-		final String pluginVersion = Platform.getBundle(BlackDuckPluginActivator.PLUGIN_ID).getVersion().toString();
+		final String pluginVersion = Platform.getBundle(BlackDuckEclipseActivator.PLUGIN_ID).getVersion().toString();
 		final HubServerConfig hubServerConfig = hubPreferencesService.getHubServerConfig();
 		final IntegrationInfo integrationInfo = new IntegrationInfo(ThirdPartyName.ECLIPSE, eclipseVersion, pluginVersion);
 		phoneHomeService.phoneHome(hubServerConfig, integrationInfo, hubVersion);
 	}
 
-	public void openHubComponentPageInBrowser(final ComponentModel component){
+	@Override
+	public void displayExpandedComponentInformation(final ComponentModel component){
 		final ComponentDataService componentDataService = this.getComponentDataService();
 		final Job job = new UIJob(JOB_GENERATE_URL) {
 			@Override
@@ -223,7 +224,7 @@ public class HubConnectionService extends ConnectionService {
 
 	private IWebBrowser getBrowser() throws PartInitException{
 		if (PlatformUI.getWorkbench().getBrowserSupport().isInternalWebBrowserAvailable()) {
-			return PlatformUI.getWorkbench().getBrowserSupport().createBrowser(BlackDuckPluginActivator.PLUGIN_ID);
+			return PlatformUI.getWorkbench().getBrowserSupport().createBrowser(BlackDuckEclipseActivator.PLUGIN_ID);
 		} else {
 			return PlatformUI.getWorkbench().getBrowserSupport().getExternalBrowser();
 		}
@@ -233,7 +234,7 @@ public class HubConnectionService extends ConnectionService {
 	public void shutDown(){
 		try{
 			final IWebBrowser browser = getBrowser();
-			if(browser.getId().equals(BlackDuckPluginActivator.PLUGIN_ID)){
+			if(browser.getId().equals(BlackDuckEclipseActivator.PLUGIN_ID)){
 				browser.close();
 			}
 		}catch(final Exception e){

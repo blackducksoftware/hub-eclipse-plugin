@@ -26,6 +26,7 @@ package com.blackducksoftware.integration.eclipse.internal.listeners;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 
+import com.blackducksoftware.integration.eclipse.services.BlackDuckEclipseServicesFactory;
 import com.blackducksoftware.integration.eclipse.services.inspector.ComponentInspectorPreferencesService;
 import com.blackducksoftware.integration.eclipse.services.inspector.ComponentInspectorService;
 import com.blackducksoftware.integration.eclipse.services.inspector.ComponentInspectorViewService;
@@ -42,7 +43,7 @@ public class ProjectMarkedForInspectionListener implements IPropertyChangeListen
 
 	@Override
 	public void propertyChange(final PropertyChangeEvent event) {
-		final ComponentInspectorPreferencesService inspectorPreferencesService = new ComponentInspectorPreferencesService();
+		final ComponentInspectorPreferencesService inspectorPreferencesService = BlackDuckEclipseServicesFactory.getInstance().getComponentInspectorPreferencesService();
 		final String projectName = event.getProperty();
 		if (inspectorPreferencesService.isProjectMarkedForInspection(projectName)) {
 			inspectorService.inspectProject(projectName);
