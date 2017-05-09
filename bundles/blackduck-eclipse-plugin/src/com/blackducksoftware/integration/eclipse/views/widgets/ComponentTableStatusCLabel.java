@@ -33,7 +33,7 @@ import org.eclipse.swt.widgets.Display;
 import com.blackducksoftware.integration.eclipse.BlackDuckEclipseActivator;
 import com.blackducksoftware.integration.eclipse.internal.ComponentModel;
 import com.blackducksoftware.integration.eclipse.services.BlackDuckEclipseServicesFactory;
-import com.blackducksoftware.integration.eclipse.services.IConnectionService;
+import com.blackducksoftware.integration.eclipse.services.AbstractConnectionService;
 import com.blackducksoftware.integration.eclipse.services.ProjectInformationService;
 import com.blackducksoftware.integration.eclipse.services.inspector.ComponentInspectorPreferencesService;
 import com.blackducksoftware.integration.eclipse.services.inspector.ComponentInspectorService;
@@ -48,7 +48,7 @@ public class ComponentTableStatusCLabel extends CLabel{
 
 	private final ComponentInspectorService componentInspectorService;
 
-	private final IConnectionService connectionService;
+	private final AbstractConnectionService connectionService;
 
 	public static final String NO_SELECTED_PROJECT_STATUS = "No open project selected";
 

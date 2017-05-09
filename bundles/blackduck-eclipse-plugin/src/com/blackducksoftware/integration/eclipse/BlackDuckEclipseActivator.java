@@ -33,8 +33,8 @@ import com.blackducksoftware.integration.eclipse.internal.listeners.NewOrMovedPr
 import com.blackducksoftware.integration.eclipse.internal.listeners.ProjectComponentsChangedListener;
 import com.blackducksoftware.integration.eclipse.internal.listeners.ProjectDeletedListener;
 import com.blackducksoftware.integration.eclipse.internal.listeners.ProjectMarkedForInspectionListener;
+import com.blackducksoftware.integration.eclipse.services.AbstractConnectionService;
 import com.blackducksoftware.integration.eclipse.services.BlackDuckEclipseServicesFactory;
-import com.blackducksoftware.integration.eclipse.services.IConnectionService;
 import com.blackducksoftware.integration.eclipse.services.inspector.ComponentInspectorService;
 import com.blackducksoftware.integration.eclipse.services.inspector.ComponentInspectorViewService;
 
@@ -47,7 +47,7 @@ public class BlackDuckEclipseActivator extends AbstractUIPlugin {
 
 	private ComponentInspectorViewService componentInspectorViewService;
 
-	private IConnectionService connectionService;
+	private AbstractConnectionService connectionService;
 
 	private ProjectDeletedListener projectDeletedListener;
 
@@ -68,7 +68,6 @@ public class BlackDuckEclipseActivator extends AbstractUIPlugin {
 		componentInspectorViewService = BlackDuckEclipseServicesFactory.getInstance().getComponentInspectorViewService();
 		connectionService = BlackDuckEclipseServicesFactory.getInstance().getConnectionService();
 		componentInspectorService = BlackDuckEclipseServicesFactory.getInstance().getComponentInspectorService();
-		this.reconnectToHub();
 		projectMarkedForInspectionListener = new ProjectMarkedForInspectionListener(componentInspectorService, componentInspectorViewService);
 		plugin.getPreferenceStore().addPropertyChangeListener(projectMarkedForInspectionListener);
 		projectComponentsChangedListener = new ProjectComponentsChangedListener(componentInspectorService, null);

@@ -34,7 +34,7 @@ import java.util.Map;
 
 import com.blackducksoftware.integration.eclipse.internal.ComponentModel;
 import com.blackducksoftware.integration.eclipse.internal.ComponentModelVulnerabilityFirstComparator;
-import com.blackducksoftware.integration.eclipse.services.ComponentLookupService;
+import com.blackducksoftware.integration.eclipse.services.AbstractComponentLookupService;
 import com.blackducksoftware.integration.exception.IntegrationException;
 import com.blackducksoftware.integration.hub.buildtool.Gav;
 
@@ -43,9 +43,9 @@ public class ComponentInspectorCacheService {
 
 	private final ComponentInspectorViewService componentInspectorViewService;
 
-	private final ComponentLookupService componentLookupService;
+	private final AbstractComponentLookupService componentLookupService;
 
-	public ComponentInspectorCacheService(final ComponentInspectorViewService componentInspectorViewService, final ComponentLookupService componentLookupService) {
+	public ComponentInspectorCacheService(final ComponentInspectorViewService componentInspectorViewService, final AbstractComponentLookupService componentLookupService) {
 		this.componentInspectorViewService = componentInspectorViewService;
 		this.componentLookupService = componentLookupService;
 		this.inspectorCache = new HashMap<>();

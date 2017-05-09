@@ -13,5 +13,7 @@
 
   <modules>
     <module>blackduck-eclipse-plugin</module>
+    <module>blackduck-eclipse-free-data-connector</module>
+    <module>blackduck-eclipse-hub-data-connector</module>
   </modules>
 </project>

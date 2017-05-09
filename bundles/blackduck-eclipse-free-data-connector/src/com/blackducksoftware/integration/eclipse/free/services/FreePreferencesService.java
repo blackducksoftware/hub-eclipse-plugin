@@ -1,5 +1,5 @@
 /**
- * com.blackducksoftware.integration.eclipse.plugin
+ * com.blackducksoftware.integration.eclipse.free.connector
  *
  * Copyright (C) 2017 Black Duck Software, Inc.
  * http://www.blackducksoftware.com/
@@ -21,7 +21,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package com.blackducksoftware.integration.eclipse.hub.services;
+package com.blackducksoftware.integration.eclipse.free.services;
 
 import java.net.URL;
 
@@ -35,7 +35,7 @@ import com.blackducksoftware.integration.hub.global.HubCredentials;
 import com.blackducksoftware.integration.hub.global.HubProxyInfo;
 import com.blackducksoftware.integration.hub.global.HubServerConfig;
 
-public class HubPreferencesService {
+public class FreePreferencesService {
 	private final BlackDuckPreferencesService blackDuckPreferencesService;
 
 	public static final String HUB_USERNAME = "hubUsername";
@@ -60,7 +60,7 @@ public class HubPreferencesService {
 
 	public static final String DEFAULT_HUB_TIMEOUT = "120";
 
-	public HubPreferencesService(){
+	public FreePreferencesService(){
 		this.blackDuckPreferencesService = BlackDuckEclipseServicesFactory.getInstance().getBlackDuckPreferencesService();
 	}
 

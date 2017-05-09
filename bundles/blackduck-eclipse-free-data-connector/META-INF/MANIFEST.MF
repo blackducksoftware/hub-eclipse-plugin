@@ -1,7 +1,8 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Black Duck Hub Connector Plugin for Eclipse
-Bundle-SymbolicName: com.blackducksoftware.integration.eclipse.hub.plugin;singleton:=true
+Bundle-Name: Free Data Connector
+Bundle-SymbolicName: com.blackducksoftware.integration.eclipse.free.connector;singleton:=true
 Bundle-Version: 1.0.0.qualifier
+Bundle-Vendor: Black Duck Software Inc.
 Fragment-Host: com.blackducksoftware.integration.eclipse.plugin;bundle-version="1.0.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8

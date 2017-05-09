@@ -1,5 +1,5 @@
 /**
- * com.blackducksoftware.integration.eclipse.plugin
+ * com.blackducksoftware.integration.eclipse.free.connector
  *
  * Copyright (C) 2017 Black Duck Software, Inc.
  * http://www.blackducksoftware.com/
@@ -21,7 +21,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package com.blackducksoftware.integration.eclipse.hub.services;
+package com.blackducksoftware.integration.eclipse.free.services;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -39,7 +39,7 @@ import org.eclipse.ui.progress.UIJob;
 
 import com.blackducksoftware.integration.eclipse.BlackDuckEclipseActivator;
 import com.blackducksoftware.integration.eclipse.internal.ComponentModel;
-import com.blackducksoftware.integration.eclipse.services.IConnectionService;
+import com.blackducksoftware.integration.eclipse.services.AbstractConnectionService;
 import com.blackducksoftware.integration.eclipse.services.inspector.ComponentInspectorViewService;
 import com.blackducksoftware.integration.exception.EncryptionException;
 import com.blackducksoftware.integration.exception.IntegrationException;
@@ -61,7 +61,7 @@ import com.blackducksoftware.integration.log.IntBufferedLogger;
 import com.blackducksoftware.integration.log.IntLogger;
 import com.blackducksoftware.integration.phone.home.enums.ThirdPartyName;
 
-public class HubConnectionService implements IConnectionService {
+public class FreeConnectionService extends AbstractConnectionService {
 	private HubServicesFactory hubServicesFactory;
 
 	private final IntLogger logger;
@@ -80,13 +80,13 @@ public class HubConnectionService implements IConnectionService {
 
 	private HubVersionRequestService hubVersionRequestService;
 
-	private HubPreferencesService hubPreferencesService;
+	private FreePreferencesService hubPreferencesService;
 
 	private final ComponentInspectorViewService componentInspectorViewService;
 
 	public static final String JOB_GENERATE_URL = "Opening component in the Hub...";
 
-	public HubConnectionService(final ComponentInspectorViewService componentInspectorViewService){
+	public FreeConnectionService(final ComponentInspectorViewService componentInspectorViewService){
 		this.logger = new IntBufferedLogger();
 		this.componentInspectorViewService = componentInspectorViewService;
 		this.reloadConnection();
@@ -109,7 +109,7 @@ public class HubConnectionService implements IConnectionService {
 
 	@Override
 	public void reloadConnection(){
-		this.hubPreferencesService = new HubPreferencesService();
+		this.hubPreferencesService = new FreePreferencesService();
 		this.restConnection = this.getHubConnectionFromPreferences();
 		this.hubServicesFactory = new HubServicesFactory(restConnection);
 		try {

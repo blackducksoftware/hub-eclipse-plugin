@@ -32,14 +32,13 @@ import com.blackducksoftware.integration.eclipse.internal.ComponentModel;
 import com.blackducksoftware.integration.eclipse.internal.InspectionJob;
 import com.blackducksoftware.integration.eclipse.internal.datastructures.InspectionJobQueue;
 import com.blackducksoftware.integration.eclipse.internal.listeners.InspectionJobChangeListener;
-import com.blackducksoftware.integration.eclipse.services.BlackDuckEclipseServicesFactory;
-import com.blackducksoftware.integration.eclipse.services.IConnectionService;
+import com.blackducksoftware.integration.eclipse.services.AbstractConnectionService;
 import com.blackducksoftware.integration.hub.buildtool.Gav;
 
 public class ComponentInspectorService {
 	private final InspectionJobQueue inspectionQueue;
 
-	private final IConnectionService connectionService;
+	private final AbstractConnectionService connectionService;
 
 	private final ComponentInspectorCacheService inspectorCacheService;
 
@@ -47,10 +46,10 @@ public class ComponentInspectorService {
 
 	private final ComponentInspectorPreferencesService inspectorPreferencesService;
 
-	public ComponentInspectorService(final ComponentInspectorViewService inspectorViewService, final IConnectionService connectionService){
+	public ComponentInspectorService(final ComponentInspectorViewService inspectorViewService, final AbstractConnectionService connectionService, final ComponentInspectorPreferencesService componentInspectorPreferencesService, final ComponentInspectorCacheService componentInspectorCacheService){
 		final InspectionJobChangeListener inspectionJobChangeListener = new InspectionJobChangeListener(inspectorViewService);
-		this.inspectorPreferencesService = BlackDuckEclipseServicesFactory.getInstance().getComponentInspectorPreferencesService();
-		this.inspectorCacheService = BlackDuckEclipseServicesFactory.getInstance().getComponentInspectorCacheService();
+		this.inspectorPreferencesService = componentInspectorPreferencesService;
+		this.inspectorCacheService = componentInspectorCacheService;
 		this.inspectionQueue = new InspectionJobQueue(inspectionJobChangeListener);
 		this.inspectorViewService = inspectorViewService;
 		this.connectionService = connectionService;

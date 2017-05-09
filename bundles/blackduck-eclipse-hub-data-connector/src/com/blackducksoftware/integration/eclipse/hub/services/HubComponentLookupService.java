@@ -1,5 +1,5 @@
 /**
- * com.blackducksoftware.integration.eclipse.plugin
+ * com.blackducksoftware.integration.eclipse.hub.connector
  *
  * Copyright (C) 2017 Black Duck Software, Inc.
  * http://www.blackducksoftware.com/
@@ -21,35 +21,65 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package com.blackducksoftware.integration.eclipse.services;
+package com.blackducksoftware.integration.eclipse.hub.services;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.List;
 
 import com.blackducksoftware.integration.eclipse.internal.ComponentModel;
+import com.blackducksoftware.integration.eclipse.services.AbstractComponentLookupService;
 import com.blackducksoftware.integration.exception.IntegrationException;
 import com.blackducksoftware.integration.hub.buildtool.Gav;
+import com.blackducksoftware.integration.hub.dataservice.license.LicenseDataService;
+import com.blackducksoftware.integration.hub.dataservice.vulnerability.VulnerabilityDataService;
+import com.blackducksoftware.integration.hub.exception.HubIntegrationException;
 import com.blackducksoftware.integration.hub.model.enumeration.VulnerabilitySeverityEnum;
+import com.blackducksoftware.integration.hub.model.view.ComplexLicenseView;
 import com.blackducksoftware.integration.hub.model.view.VulnerabilityView;
 import com.blackducksoftware.integration.util.TimedLRUCache;
 
-public class ComponentLookupService {
+public class HubComponentLookupService extends AbstractComponentLookupService{
+	public final VulnerabilityDataService vulnerabilityDataService;
+
+	public final LicenseDataService licenseDataService;
+
 	private final TimedLRUCache<Gav, ComponentModel> componentLoadingCache;
 
 	private final int CACHE_CAPACITY = 10000;
 
 	private final int CACHE_TTL = 3600000;
 
-	public ComponentLookupService(final IConnectionService connectionService){
+	public HubComponentLookupService(final HubConnectionService connectionService){
+		super(connectionService);
 		this.componentLoadingCache = new TimedLRUCache<>(CACHE_CAPACITY, CACHE_TTL);
+		this.licenseDataService = connectionService.getLicenseDataService();
+		this.vulnerabilityDataService = connectionService.getVulnerabilityDataService();
 	}
 
+	@Override
 	public ComponentModel lookupComponent(final Gav gav) throws IOException, URISyntaxException, IntegrationException {
-		//TODO: Get component from KB
-		return componentLoadingCache.get(gav);
+		ComponentModel component = componentLoadingCache.get(gav);
+		if(component == null){
+			List<VulnerabilityView> vulnerabilities = null;
+			ComplexLicenseView complexLicense = null;
+			try {
+				vulnerabilities = vulnerabilityDataService.getVulnsFromComponentVersion(gav.getNamespace().toLowerCase(), gav.getGroupId(),
+						gav.getArtifactId(), gav.getVersion());
+
+				complexLicense = licenseDataService.getComplexLicenseItemFromComponent(gav.getNamespace().toLowerCase(), gav.getGroupId(),
+						gav.getArtifactId(), gav.getVersion());
+			} catch (final HubIntegrationException e) {
+				// Do nothing
+			}
+			final int[] vulnerabilitySeverityCount = getVulnerabilitySeverityCount(vulnerabilities);
+			final boolean componentKnown = (vulnerabilities != null);
+			component = new ComponentModel(gav, complexLicense, vulnerabilitySeverityCount, componentKnown);
+		}
+		return component;
 	}
 
+	@Override
 	public int[] getVulnerabilitySeverityCount(final List<VulnerabilityView> vulnerabilities) {
 		int high = 0;
 		int medium = 0;

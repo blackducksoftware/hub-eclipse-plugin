@@ -1,5 +1,5 @@
 /**
- * com.blackducksoftware.integration.eclipse.plugin
+ * com.blackducksoftware.integration.eclipse.free.connector
  *
  * Copyright (C) 2017 Black Duck Software, Inc.
  * http://www.blackducksoftware.com/
@@ -21,14 +21,14 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package com.blackducksoftware.integration.eclipse.hub.services;
+package com.blackducksoftware.integration.eclipse.free.services;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.List;
 
 import com.blackducksoftware.integration.eclipse.internal.ComponentModel;
-import com.blackducksoftware.integration.eclipse.services.ComponentLookupService;
+import com.blackducksoftware.integration.eclipse.services.AbstractComponentLookupService;
 import com.blackducksoftware.integration.exception.IntegrationException;
 import com.blackducksoftware.integration.hub.buildtool.Gav;
 import com.blackducksoftware.integration.hub.dataservice.license.LicenseDataService;
@@ -39,7 +39,7 @@ import com.blackducksoftware.integration.hub.model.view.ComplexLicenseView;
 import com.blackducksoftware.integration.hub.model.view.VulnerabilityView;
 import com.blackducksoftware.integration.util.TimedLRUCache;
 
-public class HubComponentLookupService extends ComponentLookupService{
+public class FreeComponentLookupService extends AbstractComponentLookupService{
 	public final VulnerabilityDataService vulnerabilityDataService;
 
 	public final LicenseDataService licenseDataService;
@@ -50,7 +50,7 @@ public class HubComponentLookupService extends ComponentLookupService{
 
 	private final int CACHE_TTL = 3600000;
 
-	public HubComponentLookupService(final HubConnectionService connectionService){
+	public FreeComponentLookupService(final FreeConnectionService connectionService){
 		super(connectionService);
 		this.componentLoadingCache = new TimedLRUCache<>(CACHE_CAPACITY, CACHE_TTL);
 		this.licenseDataService = connectionService.getLicenseDataService();
