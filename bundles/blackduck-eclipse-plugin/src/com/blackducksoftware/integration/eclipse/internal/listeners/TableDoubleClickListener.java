@@ -29,13 +29,13 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 
 import com.blackducksoftware.integration.eclipse.internal.ComponentModel;
 import com.blackducksoftware.integration.eclipse.services.BlackDuckEclipseServicesFactory;
-import com.blackducksoftware.integration.eclipse.services.AbstractConnectionService;
+import com.blackducksoftware.integration.eclipse.services.base.AbstractConnectionService;
 
 public class TableDoubleClickListener implements IDoubleClickListener {
 	private final AbstractConnectionService connectionService;
 
 	public TableDoubleClickListener(){
-		this.connectionService = BlackDuckEclipseServicesFactory.getInstance().getConnectionService();
+		this.connectionService = BlackDuckEclipseServicesFactory.getInstance().getHubConnectionService();
 	}
 
 	@Override

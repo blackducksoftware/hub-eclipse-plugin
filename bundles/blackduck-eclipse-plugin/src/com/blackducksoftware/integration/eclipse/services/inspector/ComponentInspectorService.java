@@ -32,7 +32,7 @@ import com.blackducksoftware.integration.eclipse.internal.ComponentModel;
 import com.blackducksoftware.integration.eclipse.internal.InspectionJob;
 import com.blackducksoftware.integration.eclipse.internal.datastructures.InspectionJobQueue;
 import com.blackducksoftware.integration.eclipse.internal.listeners.InspectionJobChangeListener;
-import com.blackducksoftware.integration.eclipse.services.AbstractConnectionService;
+import com.blackducksoftware.integration.eclipse.services.base.AbstractConnectionService;
 import com.blackducksoftware.integration.hub.buildtool.Gav;
 
 public class ComponentInspectorService {

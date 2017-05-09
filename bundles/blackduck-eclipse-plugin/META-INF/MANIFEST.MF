@@ -36,3 +36,4 @@ Export-Package: com.blackducksoftware.integration.eclipse,
  com.blackducksoftware.integration.eclipse.views.providers,
  com.blackducksoftware.integration.eclipse.views.widgets
 Bundle-Vendor: BlackDuck Software Inc.
+Service-Component: component.xml

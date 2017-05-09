@@ -21,14 +21,14 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package com.blackducksoftware.integration.eclipse.free.services;
+package com.blackducksoftware.integration.eclipse.services.connection.free;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.List;
 
 import com.blackducksoftware.integration.eclipse.internal.ComponentModel;
-import com.blackducksoftware.integration.eclipse.services.AbstractComponentLookupService;
+import com.blackducksoftware.integration.eclipse.services.base.AbstractComponentLookupService;
 import com.blackducksoftware.integration.exception.IntegrationException;
 import com.blackducksoftware.integration.hub.buildtool.Gav;
 import com.blackducksoftware.integration.hub.dataservice.license.LicenseDataService;

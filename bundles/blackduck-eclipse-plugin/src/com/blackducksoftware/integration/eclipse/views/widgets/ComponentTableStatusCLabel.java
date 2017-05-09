@@ -33,8 +33,8 @@ import org.eclipse.swt.widgets.Display;
 import com.blackducksoftware.integration.eclipse.BlackDuckEclipseActivator;
 import com.blackducksoftware.integration.eclipse.internal.ComponentModel;
 import com.blackducksoftware.integration.eclipse.services.BlackDuckEclipseServicesFactory;
-import com.blackducksoftware.integration.eclipse.services.AbstractConnectionService;
 import com.blackducksoftware.integration.eclipse.services.ProjectInformationService;
+import com.blackducksoftware.integration.eclipse.services.base.AbstractConnectionService;
 import com.blackducksoftware.integration.eclipse.services.inspector.ComponentInspectorPreferencesService;
 import com.blackducksoftware.integration.eclipse.services.inspector.ComponentInspectorService;
 import com.blackducksoftware.integration.eclipse.views.ComponentInspectorView;
@@ -73,7 +73,7 @@ public class ComponentTableStatusCLabel extends CLabel{
 		this.componentInspectorPreferencesService = BlackDuckEclipseServicesFactory.getInstance().getComponentInspectorPreferencesService();
 		this.projectInformationService = BlackDuckEclipseServicesFactory.getInstance().getProjectInformationService();
 		this.componentInspectorTableViewer = componentInspectorTableViewer;
-		this.connectionService = BlackDuckEclipseServicesFactory.getInstance().getConnectionService();
+		this.connectionService = BlackDuckEclipseServicesFactory.getInstance().getHubConnectionService();
 		this.componentInspectorService = componentInspectorService;
 		this.setText(NO_SELECTED_PROJECT_STATUS);
 	}

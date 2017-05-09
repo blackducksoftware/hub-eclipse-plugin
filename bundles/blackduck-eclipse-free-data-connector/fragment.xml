@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<?eclipse version="3.4"?>
-<fragment>
-   <!-- Menus -->
-   <!-- Commands linked to Package/Project Explorer context menu items via commandId tag (id > commandId) -->
-   <!-- defaultHandler.execute() is the method that is called when these commands execute -->
-   <!-- Views -->
-   <!-- Preference Pages -->
-</fragment>

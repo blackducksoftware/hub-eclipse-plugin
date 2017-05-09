@@ -21,7 +21,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package com.blackducksoftware.integration.eclipse.hub.services;
+package com.blackducksoftware.integration.eclipse.services.connection.hub;
 
 import java.net.URL;
 

@@ -21,7 +21,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package com.blackducksoftware.integration.eclipse.hub.preferencepages;
+package com.blackducksoftware.integration.eclipse.preferencepages.hub;
 
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.preference.StringFieldEditor;
@@ -41,8 +41,8 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 
 import com.blackducksoftware.integration.eclipse.BlackDuckEclipseActivator;
-import com.blackducksoftware.integration.eclipse.hub.services.BlackDuckEclipseHubServicesFactory;
-import com.blackducksoftware.integration.eclipse.hub.services.HubPreferencesService;
+import com.blackducksoftware.integration.eclipse.services.BlackDuckEclipseServicesFactory;
+import com.blackducksoftware.integration.eclipse.services.connection.hub.HubPreferencesService;
 import com.blackducksoftware.integration.eclipse.services.inspector.ComponentInspectorViewService;
 import com.blackducksoftware.integration.hub.builder.HubServerConfigBuilder;
 import com.blackducksoftware.integration.hub.exception.HubIntegrationException;
@@ -251,8 +251,8 @@ public class HubPreferences extends PreferencePage implements IWorkbenchPreferen
 		hubPreferencesService.saveHubProxyUsername(proxyUsernameField.getStringValue());
 		hubPreferencesService.saveHubProxyPassword(proxyPasswordField.getText());
 		final BlackDuckEclipseActivator plugin = BlackDuckEclipseActivator.getDefault();
-		plugin.reconnectToHub();
-		final ComponentInspectorViewService inspectorViewService = BlackDuckEclipseHubServicesFactory.getInstance().getComponentInspectorViewService();
+		plugin.refreshConnection();
+		final ComponentInspectorViewService inspectorViewService = BlackDuckEclipseServicesFactory.getInstance().getComponentInspectorViewService();
 		inspectorViewService.resetDisplay();
 	}
 

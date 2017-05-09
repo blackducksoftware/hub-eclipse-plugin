@@ -24,54 +24,72 @@
 package com.blackducksoftware.integration.eclipse.services;
 
 import com.blackducksoftware.integration.eclipse.BlackDuckEclipseActivator;
+import com.blackducksoftware.integration.eclipse.services.base.AbstractComponentLookupService;
+import com.blackducksoftware.integration.eclipse.services.connection.free.FreeComponentLookupService;
+import com.blackducksoftware.integration.eclipse.services.connection.free.FreeConnectionService;
+import com.blackducksoftware.integration.eclipse.services.connection.hub.HubComponentLookupService;
+import com.blackducksoftware.integration.eclipse.services.connection.hub.HubConnectionService;
+import com.blackducksoftware.integration.eclipse.services.connection.hub.HubPreferencesService;
 import com.blackducksoftware.integration.eclipse.services.inspector.ComponentInspectorCacheService;
 import com.blackducksoftware.integration.eclipse.services.inspector.ComponentInspectorPreferencesService;
 import com.blackducksoftware.integration.eclipse.services.inspector.ComponentInspectorService;
 import com.blackducksoftware.integration.eclipse.services.inspector.ComponentInspectorViewService;
 
 public class BlackDuckEclipseServicesFactory {
-	protected static BlackDuckEclipseServicesFactory instance = new BlackDuckEclipseServicesFactory();
+	private final static BlackDuckEclipseServicesFactory instance = new BlackDuckEclipseServicesFactory();
 
-	protected AbstractConnectionService connectionService;
+	private final HubConnectionService hubConnectionService;
 
-	protected ComponentInspectorViewService componentInspectorViewService;
+	private final ComponentInspectorViewService componentInspectorViewService;
 
-	protected ComponentInformationService componentInformationService;
+	private final ComponentInformationService componentInformationService;
 
-	protected ProjectInformationService projectInformationService;
+	private final ProjectInformationService projectInformationService;
 
-	protected WorkspaceInformationService workspaceInformationService;
+	private final WorkspaceInformationService workspaceInformationService;
 
-	protected AbstractComponentLookupService componentLookupService;
+	private final HubComponentLookupService hubComponentLookupService;
 
-	protected BlackDuckPreferencesService blackDuckPreferencesService;
+	private final BlackDuckPreferencesService blackDuckPreferencesService;
 
-	protected ComponentInspectorPreferencesService componentInspectorPreferencesService;
+	private final ComponentInspectorPreferencesService componentInspectorPreferencesService;
 
-	protected ComponentInspectorService componentInspectorService;
+	private final ComponentInspectorService componentInspectorService;
 
-	protected ComponentInspectorCacheService componentInspectorCacheService;
+	private final ComponentInspectorCacheService componentInspectorCacheService;
+
+	private final HubPreferencesService hubPreferencesService;
+
+	private final FreeConnectionService freeConnectionService;
+
+	private final FreeComponentLookupService freeComponentLookupService;
 
 	protected BlackDuckEclipseServicesFactory(){
-		//TODO: Implement some default connection service?
-		this.connectionService = null;
+		this.hubPreferencesService = new HubPreferencesService();
 		this.componentInspectorViewService = new ComponentInspectorViewService();
+		this.hubConnectionService = new HubConnectionService(componentInspectorViewService);
+		this.freeConnectionService = new FreeConnectionService(componentInspectorViewService);
 		this.componentInformationService = new ComponentInformationService();
 		this.projectInformationService = new ProjectInformationService(componentInformationService);
 		this.workspaceInformationService = new WorkspaceInformationService(projectInformationService);
-		this.componentLookupService = null;
+		this.hubComponentLookupService = new HubComponentLookupService(hubConnectionService);
 		this.blackDuckPreferencesService = new BlackDuckPreferencesService(BlackDuckEclipseActivator.getDefault());
 		this.componentInspectorPreferencesService = new ComponentInspectorPreferencesService(blackDuckPreferencesService);
-		this.componentInspectorCacheService = new ComponentInspectorCacheService(componentInspectorViewService, componentLookupService);
-		this.componentInspectorService = new ComponentInspectorService(componentInspectorViewService, connectionService, componentInspectorPreferencesService, componentInspectorCacheService);
+		this.componentInspectorCacheService = new ComponentInspectorCacheService(componentInspectorViewService, hubComponentLookupService);
+		this.componentInspectorService = new ComponentInspectorService(componentInspectorViewService, hubConnectionService, componentInspectorPreferencesService, componentInspectorCacheService);
+		this.freeComponentLookupService = new FreeComponentLookupService(freeConnectionService);
 	}
 
 	public static BlackDuckEclipseServicesFactory getInstance(){
 		return instance;
 	}
 
-	public AbstractConnectionService getConnectionService() {
-		return connectionService;
+	public HubConnectionService getHubConnectionService() {
+		return hubConnectionService;
+	}
+
+	public FreeConnectionService getFreeConnectionService() {
+		return freeConnectionService;
 	}
 
 	public BlackDuckPreferencesService getBlackDuckPreferencesService() {
@@ -102,12 +120,20 @@ public class BlackDuckEclipseServicesFactory {
 		return componentInspectorPreferencesService;
 	}
 
-	public AbstractComponentLookupService getComponentLookupService() {
-		return componentLookupService;
+	public AbstractComponentLookupService getHubComponentLookupService() {
+		return hubComponentLookupService;
 	}
 
 	public ComponentInspectorCacheService getComponentInspectorCacheService() {
 		return componentInspectorCacheService;
+	}
+
+	public HubPreferencesService getHubPreferencesService(){
+		return hubPreferencesService;
+	}
+
+	public FreeComponentLookupService getFreeComponentLookupService() {
+		return freeComponentLookupService;
 	}
 
 }

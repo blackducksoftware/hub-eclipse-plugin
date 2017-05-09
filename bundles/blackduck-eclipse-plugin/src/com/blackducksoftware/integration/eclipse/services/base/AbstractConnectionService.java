@@ -21,7 +21,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package com.blackducksoftware.integration.eclipse.services;
+package com.blackducksoftware.integration.eclipse.services.base;
 
 import com.blackducksoftware.integration.eclipse.internal.ComponentModel;
 
