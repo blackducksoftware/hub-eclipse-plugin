@@ -72,11 +72,11 @@ public class BlackDuckEclipseServicesFactory {
 		this.projectInformationService = new ProjectInformationService(componentInformationService);
 		this.workspaceInformationService = new WorkspaceInformationService(projectInformationService);
 		this.hubComponentLookupService = new HubComponentLookupService(hubConnectionService);
+		this.freeComponentLookupService = new FreeComponentLookupService(freeConnectionService);
 		this.blackDuckPreferencesService = new BlackDuckPreferencesService(BlackDuckEclipseActivator.getDefault());
 		this.componentInspectorPreferencesService = new ComponentInspectorPreferencesService(blackDuckPreferencesService);
-		this.componentInspectorCacheService = new ComponentInspectorCacheService(componentInspectorViewService, hubComponentLookupService);
-		this.componentInspectorService = new ComponentInspectorService(componentInspectorViewService, hubConnectionService, componentInspectorPreferencesService, componentInspectorCacheService);
-		this.freeComponentLookupService = new FreeComponentLookupService(freeConnectionService);
+		this.componentInspectorCacheService = new ComponentInspectorCacheService(componentInspectorViewService, hubComponentLookupService, freeComponentLookupService);
+		this.componentInspectorService = new ComponentInspectorService(componentInspectorViewService, hubConnectionService, freeConnectionService, componentInspectorPreferencesService, componentInspectorCacheService);
 	}
 
 	public static BlackDuckEclipseServicesFactory getInstance(){

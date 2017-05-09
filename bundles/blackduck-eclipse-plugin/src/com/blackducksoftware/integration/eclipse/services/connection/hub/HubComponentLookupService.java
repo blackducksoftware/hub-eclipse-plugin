@@ -34,7 +34,6 @@ import com.blackducksoftware.integration.hub.buildtool.Gav;
 import com.blackducksoftware.integration.hub.dataservice.license.LicenseDataService;
 import com.blackducksoftware.integration.hub.dataservice.vulnerability.VulnerabilityDataService;
 import com.blackducksoftware.integration.hub.exception.HubIntegrationException;
-import com.blackducksoftware.integration.hub.model.enumeration.VulnerabilitySeverityEnum;
 import com.blackducksoftware.integration.hub.model.view.ComplexLicenseView;
 import com.blackducksoftware.integration.hub.model.view.VulnerabilityView;
 import com.blackducksoftware.integration.util.TimedLRUCache;
@@ -77,32 +76,6 @@ public class HubComponentLookupService extends AbstractComponentLookupService{
 			component = new ComponentModel(gav, complexLicense, vulnerabilitySeverityCount, componentKnown);
 		}
 		return component;
-	}
-
-	@Override
-	public int[] getVulnerabilitySeverityCount(final List<VulnerabilityView> vulnerabilities) {
-		int high = 0;
-		int medium = 0;
-		int low = 0;
-		if (vulnerabilities == null) {
-			return new int[] { 0, 0, 0 };
-		}
-		for (final VulnerabilityView vuln : vulnerabilities) {
-			switch (VulnerabilitySeverityEnum.valueOf(vuln.getSeverity())) {
-			case HIGH:
-				high++;
-				break;
-			case MEDIUM:
-				medium++;
-				break;
-			case LOW:
-				low++;
-				break;
-			default:
-				break;
-			}
-		}
-		return new int[] { high, medium, low };
 	}
 
 }

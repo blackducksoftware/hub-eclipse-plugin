@@ -51,6 +51,8 @@ public class BlackDuckEclipseActivator extends AbstractUIPlugin {
 
 	private ComponentInspectorViewService componentInspectorViewService;
 
+	private ComponentInspectorPreferencesService componentInspectorPreferencesService;
+
 	private HubConnectionService hubConnectionService;
 
 	private FreeConnectionService freeConnectionService;
@@ -66,8 +68,6 @@ public class BlackDuckEclipseActivator extends AbstractUIPlugin {
 	private ProjectInformationService projectInformationService;
 
 	private ComponentInformationService componentInformationService;
-
-	private ComponentInspectorPreferencesService componentInspectorPreferencesService;
 
 	@Override
 	public void start(final BundleContext context) {

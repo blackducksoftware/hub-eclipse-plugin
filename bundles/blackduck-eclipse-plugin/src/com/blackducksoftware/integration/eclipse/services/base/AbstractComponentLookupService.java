@@ -41,11 +41,18 @@ public abstract class AbstractComponentLookupService {
 
 	private final int CACHE_TTL = 3600000;
 
+	private final AbstractConnectionService connectionService;
+
 	public AbstractComponentLookupService(final AbstractConnectionService connectionService){
 		this.componentLoadingCache = new TimedLRUCache<>(CACHE_CAPACITY, CACHE_TTL);
+		this.connectionService = connectionService;
 	}
 
 	public abstract ComponentModel lookupComponent(final Gav gav)  throws IOException, URISyntaxException, IntegrationException;
+
+	public boolean hasActiveConnection(){
+		return connectionService.hasActiveConnection();
+	}
 
 	public int[] getVulnerabilitySeverityCount(final List<VulnerabilityView> vulnerabilities) {
 		int high = 0;

@@ -34,7 +34,8 @@ import java.util.Map;
 
 import com.blackducksoftware.integration.eclipse.internal.ComponentModel;
 import com.blackducksoftware.integration.eclipse.internal.ComponentModelVulnerabilityFirstComparator;
-import com.blackducksoftware.integration.eclipse.services.base.AbstractComponentLookupService;
+import com.blackducksoftware.integration.eclipse.services.connection.free.FreeComponentLookupService;
+import com.blackducksoftware.integration.eclipse.services.connection.hub.HubComponentLookupService;
 import com.blackducksoftware.integration.exception.IntegrationException;
 import com.blackducksoftware.integration.hub.buildtool.Gav;
 
@@ -43,11 +44,14 @@ public class ComponentInspectorCacheService {
 
 	private final ComponentInspectorViewService componentInspectorViewService;
 
-	private final AbstractComponentLookupService componentLookupService;
+	private final HubComponentLookupService hubComponentLookupService;
 
-	public ComponentInspectorCacheService(final ComponentInspectorViewService componentInspectorViewService, final AbstractComponentLookupService componentLookupService) {
+	private final FreeComponentLookupService freeComponentLookupService;
+
+	public ComponentInspectorCacheService(final ComponentInspectorViewService componentInspectorViewService, final HubComponentLookupService hubComponentLookupService, final FreeComponentLookupService freeComponentLookupService) {
 		this.componentInspectorViewService = componentInspectorViewService;
-		this.componentLookupService = componentLookupService;
+		this.hubComponentLookupService = hubComponentLookupService;
+		this.freeComponentLookupService = freeComponentLookupService;
 		this.inspectorCache = new HashMap<>();
 	}
 
@@ -63,7 +67,12 @@ public class ComponentInspectorCacheService {
 		final List<ComponentModel> components = inspectorCache.get(projectName);
 		if (components != null) {
 			try {
-				final ComponentModel newComponent = componentLookupService.lookupComponent(gav);
+				final ComponentModel newComponent;
+				if(hubComponentLookupService.hasActiveConnection()){
+					newComponent = hubComponentLookupService.lookupComponent(gav);
+				} else {
+					newComponent = freeComponentLookupService.lookupComponent(gav);
+				}
 				components.add(newComponent);
 				components.sort(new ComponentModelVulnerabilityFirstComparator());
 				inspectorCache.put(projectName, components);
