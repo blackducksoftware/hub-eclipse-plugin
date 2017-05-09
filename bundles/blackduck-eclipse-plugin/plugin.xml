@@ -9,7 +9,7 @@
             allPopups="false"
             locationURI="popup:org.eclipse.jdt.ui.PackageExplorer?after=additions">
          <menu
-               id="blackduck-PackageExplorer"
+               id="com.blackducksoftware.integration.eclipse.menu.PackageExplorer"
                label="Black Duck">
          </menu>
       </menuContribution>
@@ -62,6 +62,12 @@
       		   icon="resources/icons/ducky.png">
       		  <!-- only visible when right clicking on Java project -->
          </command>
+         <command
+               commandId="com.blackducksoftware.integration.eclipse.contextmenu.hub.OpenBlackDuckHubSettings"
+               icon="resources/icons/ducky.png"
+               label="Hub Settings..."
+               style="push">
+         </command>
          <!-- Menu item that opens Black Duck preference page -->
          <!-- Menu item that opens project-specific preference dialog -->
       </menuContribution>
@@ -70,7 +76,7 @@
       		allPopups="false"
       		locationURI="popup:org.eclipse.ui.navigator.ProjectExplorer#PopupMenu?after=additions">
          <menu
-               id="blackduck-ProjectExplorer"
+               id="com.blackducksoftware.integration.eclipse.menu.ProjectExplorer"
                label="Black Duck">
          </menu>
       </menuContribution>
@@ -123,6 +129,12 @@
       		   icon="resources/icons/ducky.png">
       		  <!-- only visible when right clicking on Java project -->
          </command>
+         <command
+               commandId="com.blackducksoftware.integration.eclipse.contextmenu.hub.OpenBlackDuckHubSettings"
+               icon="resources/icons/ducky.png"
+               label="Hub Settings..."
+               style="push">
+         </command>
          <!-- Menu item that opens Black Duck preference page -->
          <!-- Menu item that opens project-specific preference dialog -->
       </menuContribution>
@@ -144,6 +156,11 @@
             defaultHandler="com.blackducksoftware.integration.eclipse.contextmenu.handlers.InspectSelectedProject"
             id="com.blackducksoftware.integration.eclipse.contextmenu.InspectSelectedProject"
             name="Inspect Selected Project">
+      </command>
+      <command
+            defaultHandler="com.blackducksoftware.integration.eclipse.contextmenu.handlers.hub.OpenBlackDuckHubSettings"
+            id="com.blackducksoftware.integration.eclipse.contextmenu.hub.OpenBlackDuckHubSettings"
+            name="Open Hub Settings">
       </command>
       <!-- Corresponds to "Project Preferences..." menu item -->
    </extension>
@@ -169,10 +186,15 @@
          point="org.eclipse.ui.preferencePages">
       <!-- Parent Black Duck preference page -->
       <page
-            category="com.blackducksoftware.integration.eclipse.preferencepages"
+            category="com.blackducksoftware.integration.eclipse.preferencepages.hub.HubPreferences"
             class="com.blackducksoftware.integration.eclipse.preferencepages.ComponentInspectorPreferences"
-            id="com.blackducksoftware.integration.eclipse.preferencepages.ComponentInspectorSettings"
+            id="com.blackducksoftware.integration.eclipse.preferencepages.ComponentInspectorPreferences"
             name="Component Inspector Settings">
+      </page>
+      <page
+            class="com.blackducksoftware.integration.eclipse.preferencepages.hub.HubPreferences"
+            id="com.blackducksoftware.integration.eclipse.preferencepages.hub.HubPreferences"
+            name="Black Duck Hub">
       </page>
       <!-- Preference page indicating which projects Black Duck scan is activated for -->
       <!-- Preference page with Black Duck default settings -->

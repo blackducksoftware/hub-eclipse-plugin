@@ -228,20 +228,4 @@ Unless required by applicable law or agreed to in writing, software distributed 
          version="0.0.0"
          unpack="false"/>
 
-   <plugin
-         id="com.blackducksoftware.integration.eclipse.free.connector"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         fragment="true"
-         unpack="false"/>
-
-   <plugin
-         id="com.blackducksoftware.integration.eclipse.hub.connector"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         fragment="true"
-         unpack="false"/>
-
 </feature>
