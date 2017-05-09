@@ -36,7 +36,8 @@ import com.blackducksoftware.integration.eclipse.internal.listeners.ProjectMarke
 import com.blackducksoftware.integration.eclipse.services.BlackDuckEclipseServicesFactory;
 import com.blackducksoftware.integration.eclipse.services.ComponentInformationService;
 import com.blackducksoftware.integration.eclipse.services.ProjectInformationService;
-import com.blackducksoftware.integration.eclipse.services.base.AbstractConnectionService;
+import com.blackducksoftware.integration.eclipse.services.connection.free.FreeConnectionService;
+import com.blackducksoftware.integration.eclipse.services.connection.hub.HubConnectionService;
 import com.blackducksoftware.integration.eclipse.services.inspector.ComponentInspectorPreferencesService;
 import com.blackducksoftware.integration.eclipse.services.inspector.ComponentInspectorService;
 import com.blackducksoftware.integration.eclipse.services.inspector.ComponentInspectorViewService;
@@ -50,7 +51,9 @@ public class BlackDuckEclipseActivator extends AbstractUIPlugin {
 
 	private ComponentInspectorViewService componentInspectorViewService;
 
-	private AbstractConnectionService connectionService;
+	private HubConnectionService hubConnectionService;
+
+	private FreeConnectionService freeConnectionService;
 
 	private ProjectDeletedListener projectDeletedListener;
 
@@ -74,7 +77,8 @@ public class BlackDuckEclipseActivator extends AbstractUIPlugin {
 			//TODO: Log properly
 		}
 		plugin = this;
-		connectionService = BlackDuckEclipseServicesFactory.getInstance().getHubConnectionService();
+		hubConnectionService = BlackDuckEclipseServicesFactory.getInstance().getHubConnectionService();
+		freeConnectionService = BlackDuckEclipseServicesFactory.getInstance().getFreeConnectionService();
 		componentInspectorViewService = BlackDuckEclipseServicesFactory.getInstance().getComponentInspectorViewService();
 		componentInspectorService = BlackDuckEclipseServicesFactory.getInstance().getComponentInspectorService();
 		projectInformationService = BlackDuckEclipseServicesFactory.getInstance().getProjectInformationService();
@@ -91,7 +95,8 @@ public class BlackDuckEclipseActivator extends AbstractUIPlugin {
 	}
 
 	public void refreshConnection() {
-		connectionService.reloadConnection();
+		hubConnectionService.reloadConnection();
+		freeConnectionService.reloadConnection();
 	}
 
 	@Override
@@ -99,7 +104,8 @@ public class BlackDuckEclipseActivator extends AbstractUIPlugin {
 		plugin.getPreferenceStore().removePropertyChangeListener(projectMarkedForInspectionListener);
 		plugin = null;
 		componentInspectorService.shutDown();
-		connectionService.shutDown();
+		hubConnectionService.shutDown();
+		freeConnectionService.shutDown();
 		ResourcesPlugin.getWorkspace().removeResourceChangeListener(newProjectListener);
 		ResourcesPlugin.getWorkspace().removeResourceChangeListener(projectDeletedListener);
 		JavaCore.removeElementChangedListener(projectComponentsChangedListener);

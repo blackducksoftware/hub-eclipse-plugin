@@ -29,13 +29,16 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 
 import com.blackducksoftware.integration.eclipse.internal.ComponentModel;
 import com.blackducksoftware.integration.eclipse.services.BlackDuckEclipseServicesFactory;
-import com.blackducksoftware.integration.eclipse.services.base.AbstractConnectionService;
+import com.blackducksoftware.integration.eclipse.services.connection.free.FreeConnectionService;
+import com.blackducksoftware.integration.eclipse.services.connection.hub.HubConnectionService;
 
 public class TableDoubleClickListener implements IDoubleClickListener {
-	private final AbstractConnectionService connectionService;
+	private final HubConnectionService hubConnectionService;
+	private final FreeConnectionService freeConnectionService;
 
 	public TableDoubleClickListener(){
-		this.connectionService = BlackDuckEclipseServicesFactory.getInstance().getHubConnectionService();
+		this.hubConnectionService = BlackDuckEclipseServicesFactory.getInstance().getHubConnectionService();
+		this.freeConnectionService = BlackDuckEclipseServicesFactory.getInstance().getFreeConnectionService();
 	}
 
 	@Override
@@ -46,7 +49,11 @@ public class TableDoubleClickListener implements IDoubleClickListener {
 			if (!selectedObject.getComponentIsKnown()) {
 				return;
 			}
-			connectionService.displayExpandedComponentInformation(selectedObject);
+			if(hubConnectionService.hasActiveConnection()){
+				hubConnectionService.displayExpandedComponentInformation(selectedObject);
+			}else{
+				freeConnectionService.displayExpandedComponentInformation(selectedObject);
+			}
 		}
 	}
 

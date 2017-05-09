@@ -24,7 +24,6 @@
 package com.blackducksoftware.integration.eclipse.services;
 
 import com.blackducksoftware.integration.eclipse.BlackDuckEclipseActivator;
-import com.blackducksoftware.integration.eclipse.services.base.AbstractComponentLookupService;
 import com.blackducksoftware.integration.eclipse.services.connection.free.FreeComponentLookupService;
 import com.blackducksoftware.integration.eclipse.services.connection.free.FreeConnectionService;
 import com.blackducksoftware.integration.eclipse.services.connection.hub.HubComponentLookupService;
@@ -120,7 +119,7 @@ public class BlackDuckEclipseServicesFactory {
 		return componentInspectorPreferencesService;
 	}
 
-	public AbstractComponentLookupService getHubComponentLookupService() {
+	public HubComponentLookupService getHubComponentLookupService() {
 		return hubComponentLookupService;
 	}
 
