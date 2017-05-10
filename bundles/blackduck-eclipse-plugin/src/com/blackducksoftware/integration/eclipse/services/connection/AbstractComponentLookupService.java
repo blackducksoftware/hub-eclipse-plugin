@@ -21,17 +21,14 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package com.blackducksoftware.integration.eclipse.services.base;
+package com.blackducksoftware.integration.eclipse.services.connection;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.util.List;
 
 import com.blackducksoftware.integration.eclipse.internal.ComponentModel;
 import com.blackducksoftware.integration.exception.IntegrationException;
 import com.blackducksoftware.integration.hub.buildtool.Gav;
-import com.blackducksoftware.integration.hub.model.enumeration.VulnerabilitySeverityEnum;
-import com.blackducksoftware.integration.hub.model.view.VulnerabilityView;
 import com.blackducksoftware.integration.util.TimedLRUCache;
 
 public abstract class AbstractComponentLookupService {
@@ -52,31 +49,6 @@ public abstract class AbstractComponentLookupService {
 
 	public boolean hasActiveConnection(){
 		return connectionService.hasActiveConnection();
-	}
-
-	public int[] getVulnerabilitySeverityCount(final List<VulnerabilityView> vulnerabilities) {
-		int high = 0;
-		int medium = 0;
-		int low = 0;
-		if (vulnerabilities == null) {
-			return new int[] { 0, 0, 0 };
-		}
-		for (final VulnerabilityView vuln : vulnerabilities) {
-			switch (VulnerabilitySeverityEnum.valueOf(vuln.getSeverity())) {
-			case HIGH:
-				high++;
-				break;
-			case MEDIUM:
-				medium++;
-				break;
-			case LOW:
-				low++;
-				break;
-			default:
-				break;
-			}
-		}
-		return new int[] { high, medium, low };
 	}
 
 }

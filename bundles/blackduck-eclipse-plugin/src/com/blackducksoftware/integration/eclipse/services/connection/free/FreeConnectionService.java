@@ -23,64 +23,30 @@
  */
 package com.blackducksoftware.integration.eclipse.services.connection.free;
 
-import java.net.MalformedURLException;
-import java.net.URL;
-
-import org.eclipse.core.runtime.IProduct;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.ui.PartInitException;
-import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.browser.IWebBrowser;
-import org.eclipse.ui.progress.UIJob;
-
-import com.blackducksoftware.integration.eclipse.BlackDuckEclipseActivator;
 import com.blackducksoftware.integration.eclipse.internal.ComponentModel;
-import com.blackducksoftware.integration.eclipse.services.base.AbstractConnectionService;
+import com.blackducksoftware.integration.eclipse.internal.connection.free.dataservices.KBLicenseDataService;
+import com.blackducksoftware.integration.eclipse.internal.connection.free.dataservices.KBVulnerabilityDataService;
+import com.blackducksoftware.integration.eclipse.services.connection.AbstractConnectionService;
 import com.blackducksoftware.integration.eclipse.services.inspector.ComponentInspectorViewService;
 import com.blackducksoftware.integration.exception.EncryptionException;
 import com.blackducksoftware.integration.exception.IntegrationException;
-import com.blackducksoftware.integration.hub.api.item.MetaService;
-import com.blackducksoftware.integration.hub.api.nonpublic.HubVersionRequestService;
-import com.blackducksoftware.integration.hub.buildtool.Gav;
-import com.blackducksoftware.integration.hub.dataservice.component.ComponentDataService;
-import com.blackducksoftware.integration.hub.dataservice.license.LicenseDataService;
-import com.blackducksoftware.integration.hub.dataservice.phonehome.PhoneHomeDataService;
-import com.blackducksoftware.integration.hub.dataservice.vulnerability.VulnerabilityDataService;
 import com.blackducksoftware.integration.hub.exception.HubIntegrationException;
 import com.blackducksoftware.integration.hub.global.HubServerConfig;
-import com.blackducksoftware.integration.hub.model.view.ComponentVersionView;
-import com.blackducksoftware.integration.hub.phonehome.IntegrationInfo;
 import com.blackducksoftware.integration.hub.rest.CredentialsRestConnection;
 import com.blackducksoftware.integration.hub.rest.RestConnection;
-import com.blackducksoftware.integration.hub.service.HubServicesFactory;
 import com.blackducksoftware.integration.log.IntBufferedLogger;
 import com.blackducksoftware.integration.log.IntLogger;
-import com.blackducksoftware.integration.phone.home.enums.ThirdPartyName;
 
 public class FreeConnectionService extends AbstractConnectionService {
-	private HubServicesFactory hubServicesFactory;
-
 	private final IntLogger logger;
 
 	private RestConnection restConnection;
 
-	private LicenseDataService licenseDataService;
+	private KBLicenseDataService licenseDataService;
 
-	private VulnerabilityDataService vulnerabilityDataService;
+	private KBVulnerabilityDataService vulnerabilityDataService;
 
-	private ComponentDataService componentDataService;
-
-	private MetaService metaService;
-
-	private PhoneHomeDataService phoneHomeDataService;
-
-	private HubVersionRequestService hubVersionRequestService;
-
-	private FreePreferencesService hubPreferencesService;
+	private FreePreferencesService freePreferencesService;
 
 	private final ComponentInspectorViewService componentInspectorViewService;
 
@@ -93,7 +59,7 @@ public class FreeConnectionService extends AbstractConnectionService {
 	}
 
 	private RestConnection getHubConnectionFromPreferences() {
-		final HubServerConfig hubServerConfig = hubPreferencesService.getHubServerConfig();
+		final HubServerConfig hubServerConfig = freePreferencesService.getHubServerConfig();
 		if(hubServerConfig == null){
 			return null;
 		}
@@ -109,14 +75,8 @@ public class FreeConnectionService extends AbstractConnectionService {
 
 	@Override
 	public void reloadConnection(){
-		this.hubPreferencesService = new FreePreferencesService();
+		this.freePreferencesService = new FreePreferencesService();
 		this.restConnection = this.getHubConnectionFromPreferences();
-		this.hubServicesFactory = new HubServicesFactory(restConnection);
-		try {
-			this.phoneHome();
-		} catch (final IntegrationException e) {
-			//Do nothing
-		}
 	}
 
 	public CredentialsRestConnection getCredentialsRestConnection(final HubServerConfig config)
@@ -124,46 +84,18 @@ public class FreeConnectionService extends AbstractConnectionService {
 		return new CredentialsRestConnection(logger, config.getHubUrl(), config.getGlobalCredentials().getUsername(), config.getGlobalCredentials().getDecryptedPassword(), config.getTimeout());
 	}
 
-	public LicenseDataService getLicenseDataService() {
+	public KBLicenseDataService getLicenseDataService() {
 		if (licenseDataService == null) {
-			licenseDataService = hubServicesFactory.createLicenseDataService();
+			licenseDataService = new KBLicenseDataService(null);
 		}
 		return licenseDataService;
 	}
 
-	public VulnerabilityDataService getVulnerabilityDataService() {
+	public KBVulnerabilityDataService getVulnerabilityDataService() {
 		if (vulnerabilityDataService == null) {
-			vulnerabilityDataService = hubServicesFactory.createVulnerabilityDataService(logger);
+			vulnerabilityDataService = new KBVulnerabilityDataService();
 		}
 		return vulnerabilityDataService;
-	}
-
-	public ComponentDataService getComponentDataService() {
-		if (componentDataService == null) {
-			componentDataService = hubServicesFactory.createComponentDataService(logger);
-		}
-		return componentDataService;
-	}
-
-	public MetaService getMetaService() {
-		if (metaService == null) {
-			metaService = hubServicesFactory.createMetaService(logger);
-		}
-		return metaService;
-	}
-
-	public PhoneHomeDataService getPhoneHomeDataService() {
-		if (phoneHomeDataService == null) {
-			phoneHomeDataService = hubServicesFactory.createPhoneHomeDataService(logger);
-		}
-		return phoneHomeDataService;
-	}
-
-	public HubVersionRequestService getHubVersionRequestService() {
-		if (hubVersionRequestService == null) {
-			hubVersionRequestService = hubServicesFactory.createHubVersionRequestService();
-		}
-		return hubVersionRequestService;
 	}
 
 	public RestConnection getRestConnection() {
@@ -175,71 +107,14 @@ public class FreeConnectionService extends AbstractConnectionService {
 		return restConnection != null;
 	}
 
-	public void phoneHome() throws IntegrationException {
-		if (!this.hasActiveConnection()) {
-			return;
-		}
-		final PhoneHomeDataService phoneHomeService = this.getPhoneHomeDataService();
-		final HubVersionRequestService hubVersionRequestService = hubServicesFactory.createHubVersionRequestService();
-		final String hubVersion = hubVersionRequestService.getHubVersion();
-		final IProduct eclipseProduct = Platform.getProduct();
-		final String eclipseVersion = eclipseProduct.getDefiningBundle().getVersion().toString();
-		final String pluginVersion = Platform.getBundle(BlackDuckEclipseActivator.PLUGIN_ID).getVersion().toString();
-		final HubServerConfig hubServerConfig = hubPreferencesService.getHubServerConfig();
-		final IntegrationInfo integrationInfo = new IntegrationInfo(ThirdPartyName.ECLIPSE, eclipseVersion, pluginVersion);
-		phoneHomeService.phoneHome(hubServerConfig, integrationInfo, hubVersion);
-	}
-
 	@Override
 	public void displayExpandedComponentInformation(final ComponentModel component){
-		final ComponentDataService componentDataService = this.getComponentDataService();
-		final Job job = new UIJob(JOB_GENERATE_URL) {
-			@Override
-			public IStatus runInUIThread(final IProgressMonitor monitor) {
-				final Gav gav = component.getGav();
-				String link;
-				try {
-					final ComponentVersionView selectedComponentVersion = componentDataService.getExactComponentVersionFromComponent(
-							gav.getNamespace(), gav.getGroupId(), gav.getArtifactId(), gav.getVersion());
-					// Final solution, will work once the redirect is set up
-					link = getMetaService().getHref(selectedComponentVersion);
-					// But for now...
-					final String versionID = link.substring(link.lastIndexOf("/") + 1);
-					link = getRestConnection().hubBaseUrl.toString();
-					link = link + "/#versions/id:" + versionID + "/view:overview";
-					final IWebBrowser browser = getBrowser();
-					browser.openURL(new URL(link));
-				} catch (PartInitException | MalformedURLException | IntegrationException e) {
-					componentInspectorViewService.openError("Could not open Component in Hub instance",
-							String.format("Problem opening %1$s %2$s in %3$s, are you connected to your hub instance?",
-									gav.getArtifactId(), gav.getVersion(), getRestConnection().hubBaseUrl), e);
-					return Status.CANCEL_STATUS;
-				}
-				return Status.OK_STATUS;
-			}
-
-		};
-		job.schedule();
-	}
-
-	private IWebBrowser getBrowser() throws PartInitException{
-		if (PlatformUI.getWorkbench().getBrowserSupport().isInternalWebBrowserAvailable()) {
-			return PlatformUI.getWorkbench().getBrowserSupport().createBrowser(BlackDuckEclipseActivator.PLUGIN_ID);
-		} else {
-			return PlatformUI.getWorkbench().getBrowserSupport().getExternalBrowser();
-		}
+		//TODO: Implement if necessary
 	}
 
 	@Override
 	public void shutDown(){
-		try{
-			final IWebBrowser browser = getBrowser();
-			if(browser.getId().equals(BlackDuckEclipseActivator.PLUGIN_ID)){
-				browser.close();
-			}
-		}catch(final Exception e){
-			//TODO: Log correctly
-		}
+		//TODO: Implement if necessary
 	}
 
 }
