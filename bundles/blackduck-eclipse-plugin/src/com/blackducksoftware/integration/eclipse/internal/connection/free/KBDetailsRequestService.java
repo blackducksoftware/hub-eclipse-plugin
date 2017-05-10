@@ -1,7 +1,10 @@
 package com.blackducksoftware.integration.eclipse.internal.connection.free;
 
-import static com.blackducksoftware.integration.hub.api.UrlConstants.SEGMENT_API;
-import static com.blackducksoftware.integration.hub.api.UrlConstants.SEGMENT_COMPONENTS;
+import static com.blackducksoftware.integration.eclipse.internal.connection.free.KBUrlConstants.SEGMENT_API;
+import static com.blackducksoftware.integration.eclipse.internal.connection.free.KBUrlConstants.SEGMENT_BY_EXTERNAL_ID;
+import static com.blackducksoftware.integration.eclipse.internal.connection.free.KBUrlConstants.SEGMENT_KB_DETAIL;
+import static com.blackducksoftware.integration.eclipse.internal.connection.free.KBUrlConstants.SEGMENT_RELEASE;
+import static com.blackducksoftware.integration.eclipse.internal.connection.free.KBUrlConstants.SEGMENT_V1;
 
 import java.util.Arrays;
 import java.util.List;
@@ -9,22 +12,25 @@ import java.util.List;
 import com.blackducksoftware.integration.exception.IntegrationException;
 import com.blackducksoftware.integration.hub.exception.HubIntegrationException;
 import com.blackducksoftware.integration.hub.model.response.ComponentSearchResultResponse;
-import com.blackducksoftware.integration.hub.model.view.ComponentVersionView;
+import com.blackducksoftware.integration.hub.request.HubPagedRequest;
+import com.blackducksoftware.integration.hub.rest.RestConnection;
+import com.blackducksoftware.integration.hub.service.HubResponseService;
 
-public class KBDetailsRequestService {
-	private static final List<String> COMPONENT_SEGMENTS = Arrays.asList(SEGMENT_API, SEGMENT_COMPONENTS);
+public class KBDetailsRequestService extends HubResponseService{
+	private static final List<String> DETAILS_SEGMENTS = Arrays.asList(SEGMENT_KB_DETAIL, SEGMENT_API, SEGMENT_V1, SEGMENT_RELEASE, SEGMENT_BY_EXTERNAL_ID);
 
-	public List<ComponentSearchResultResponse> getAllComponents(final String namespace, final String groupId, final String artifactId, final String version)
-			throws IntegrationException {
-		final String componentQuery = String.format("id:%s|%s|%s|%s", namespace, groupId, artifactId, version);
-		//final HubPagedRequest hubPagedRequest = getHubRequestFactory().createPagedRequest(COMPONENT_SEGMENTS, componentQuery);
+	public KBDetailsRequestService(final RestConnection restConnection) {
+		super(restConnection);
+	}
 
-		//final List<ComponentSearchResultResponse> allComponents = getAllItems(hubPagedRequest, ComponentSearchResultResponse.class);
+	public List<ComponentSearchResultResponse> getAllComponents(final String namespace, final String groupId, final String artifactId, final String version) throws IntegrationException {
+		final String componentQuery = String.format("%s/%s:%s:%s?authToken=Eng_kb_testall", namespace, groupId, artifactId, version);
+		final HubPagedRequest hubPagedRequest = getHubRequestFactory().createPagedRequest(DETAILS_SEGMENTS, componentQuery);
+		final List<ComponentSearchResultResponse> allComponents = getAllItems(hubPagedRequest, ComponentSearchResultResponse.class);
 		return null;
 	}
 
-	public KBDetailsResultResponse getExactComponentMatch(final String namespace, final String groupId, final String artifactId, final String version)
-			throws IntegrationException {
+	public KBDetailsResultResponse getExactComponentMatch(final String namespace, final String groupId, final String artifactId, final String version) throws IntegrationException {
 		final List<ComponentSearchResultResponse> allComponents = getAllComponents(namespace, groupId, artifactId, version);
 		for (final ComponentSearchResultResponse componentItem : allComponents) {
 			if (componentItem.getOriginId() != null) {
@@ -38,8 +44,4 @@ public class KBDetailsRequestService {
 		throw new HubIntegrationException("Couldn't find an exact component match.");
 	}
 
-	public ComponentVersionView getItem(final String versionUrl, final Class<ComponentVersionView> class1) {
-		// TODO Auto-generated method stub
-		return null;
-	}
 }

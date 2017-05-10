@@ -23,17 +23,17 @@
  */
 package com.blackducksoftware.integration.eclipse.services.connection.free;
 
+import java.net.MalformedURLException;
+import java.net.URL;
+
 import com.blackducksoftware.integration.eclipse.internal.ComponentModel;
 import com.blackducksoftware.integration.eclipse.internal.connection.free.dataservices.KBLicenseDataService;
 import com.blackducksoftware.integration.eclipse.internal.connection.free.dataservices.KBVulnerabilityDataService;
 import com.blackducksoftware.integration.eclipse.services.connection.AbstractConnectionService;
 import com.blackducksoftware.integration.eclipse.services.inspector.ComponentInspectorViewService;
-import com.blackducksoftware.integration.exception.EncryptionException;
 import com.blackducksoftware.integration.exception.IntegrationException;
-import com.blackducksoftware.integration.hub.exception.HubIntegrationException;
-import com.blackducksoftware.integration.hub.global.HubServerConfig;
-import com.blackducksoftware.integration.hub.rest.CredentialsRestConnection;
 import com.blackducksoftware.integration.hub.rest.RestConnection;
+import com.blackducksoftware.integration.hub.rest.UnauthenticatedRestConnection;
 import com.blackducksoftware.integration.log.IntBufferedLogger;
 import com.blackducksoftware.integration.log.IntLogger;
 
@@ -52,36 +52,29 @@ public class FreeConnectionService extends AbstractConnectionService {
 
 	public static final String JOB_GENERATE_URL = "Opening component in the Hub...";
 
+	public static final String KB_URL = "https://kbtest.blackducksoftware.com/";
+
 	public FreeConnectionService(final ComponentInspectorViewService componentInspectorViewService){
 		this.logger = new IntBufferedLogger();
 		this.componentInspectorViewService = componentInspectorViewService;
 		this.reloadConnection();
 	}
 
-	private RestConnection getHubConnectionFromPreferences() {
-		final HubServerConfig hubServerConfig = freePreferencesService.getHubServerConfig();
-		if(hubServerConfig == null){
-			return null;
-		}
-		CredentialsRestConnection connection;
-		try {
-			connection = hubServerConfig.createCredentialsRestConnection(logger);
-			connection.connect();
-		} catch (final IntegrationException e) {
-			return null;
-		}
-		return connection;
-	}
-
 	@Override
 	public void reloadConnection(){
 		this.freePreferencesService = new FreePreferencesService();
-		this.restConnection = this.getHubConnectionFromPreferences();
+		this.restConnection = this.getKBRestConnectionFromPreferences();
 	}
 
-	public CredentialsRestConnection getCredentialsRestConnection(final HubServerConfig config)
-			throws IllegalArgumentException, EncryptionException, HubIntegrationException {
-		return new CredentialsRestConnection(logger, config.getHubUrl(), config.getGlobalCredentials().getUsername(), config.getGlobalCredentials().getDecryptedPassword(), config.getTimeout());
+	private RestConnection getKBRestConnectionFromPreferences() {
+		final UnauthenticatedRestConnection connection;
+		try {
+			connection = new UnauthenticatedRestConnection(logger, new URL(KB_URL), 120);
+			connection.connect();
+		} catch (final IntegrationException | MalformedURLException e) {
+			return null;
+		}
+		return connection;
 	}
 
 	public KBLicenseDataService getLicenseDataService() {
