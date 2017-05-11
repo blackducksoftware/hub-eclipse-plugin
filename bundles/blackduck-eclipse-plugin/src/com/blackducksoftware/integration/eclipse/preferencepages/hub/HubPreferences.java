@@ -26,7 +26,11 @@ package com.blackducksoftware.integration.eclipse.preferencepages.hub;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.preference.StringFieldEditor;
 import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
@@ -97,6 +101,12 @@ public class HubPreferences extends PreferencePage implements IWorkbenchPreferen
 	private final String INTEGER_FIELD_EDITOR_ERROR_STRING = "IntegerFieldEditor.errorMessage";
 
 	@Override
+	public void createControl(final Composite parent){
+		super.createControl(parent);
+		this.getApplyButton().setEnabled(false);
+	}
+
+	@Override
 	public void init(final IWorkbench workbench) {
 		hubPreferencesService = BlackDuckEclipseServicesFactory.getInstance().getHubPreferencesService();
 		this.setPreferenceStore(BlackDuckEclipseActivator.getDefault().getPreferenceStore());
@@ -135,13 +145,16 @@ public class HubPreferences extends PreferencePage implements IWorkbenchPreferen
 	public void performApply() {
 		try {
 			this.storeValues();
+			this.getApplyButton().setEnabled(false);
 		} catch (final HubIntegrationException e) {
 		}
 	}
 
 	@Override
 	public boolean performOk() {
-		this.performApply();
+		if(this.getApplyButton().getEnabled()){
+			this.performApply();
+		}
 		return super.performOk();
 	}
 
@@ -195,11 +208,23 @@ public class HubPreferences extends PreferencePage implements IWorkbenchPreferen
 		editor.setPreferenceStore(getPreferenceStore());
 		editor.load();
 		editor.fillIntoGrid(composite, NUM_COLUMNS);
+		editor.setPropertyChangeListener(new IPropertyChangeListener(){
+			@Override
+			public void propertyChange(final PropertyChangeEvent event) {
+				setValid(true);
+				updateApplyButton();
+				final Button applyButton = getApplyButton();
+				if(applyButton.getEnabled() && hubPreferencesService.getPreference(preferenceName).equals(editor.getStringValue())){
+					applyButton.setEnabled(false);
+				} else if(!applyButton.getEnabled()) {
+					applyButton.setEnabled(true);
+				}
+			}
+		});
 		return editor;
 	}
 
-	private Text createPasswordField(final String preferenceName, final String labelText,
-			final Composite composite) {
+	private Text createPasswordField(final String preferenceName, final String labelText, final Composite composite) {
 		final Label label = new Label(composite, SWT.WRAP);
 		label.setText(labelText);
 		label.setFont(composite.getFont());
@@ -212,6 +237,19 @@ public class HubPreferences extends PreferencePage implements IWorkbenchPreferen
 		}
 		passwordField.setText(passwordFieldText);
 		passwordField.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		passwordField.addModifyListener(new ModifyListener(){
+			@Override
+			public void modifyText(final ModifyEvent e) {
+				setValid(true);
+				updateApplyButton();
+				final Button applyButton = getApplyButton();
+				if(applyButton.getEnabled() && hubPreferencesService.getPreference(preferenceName).equals(passwordField.getText())){
+					applyButton.setEnabled(false);
+				} else if(!applyButton.getEnabled()) {
+					applyButton.setEnabled(true);
+				}
+			}
+		});
 		return passwordField;
 	}
 

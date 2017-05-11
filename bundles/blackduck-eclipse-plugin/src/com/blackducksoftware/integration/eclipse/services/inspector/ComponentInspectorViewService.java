@@ -42,6 +42,7 @@ public class ComponentInspectorViewService {
 
 	public void resetDisplay(){
 		if (componentInspectorView != null) {
+			componentInspectorView.refreshStatus();
 			componentInspectorView.refreshInput();
 		}
 	}

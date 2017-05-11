@@ -36,6 +36,7 @@ import com.blackducksoftware.integration.eclipse.internal.listeners.ProjectMarke
 import com.blackducksoftware.integration.eclipse.services.BlackDuckEclipseServicesFactory;
 import com.blackducksoftware.integration.eclipse.services.ComponentInformationService;
 import com.blackducksoftware.integration.eclipse.services.ProjectInformationService;
+import com.blackducksoftware.integration.eclipse.services.WorkspaceInformationService;
 import com.blackducksoftware.integration.eclipse.services.connection.free.FreeConnectionService;
 import com.blackducksoftware.integration.eclipse.services.connection.hub.HubConnectionService;
 import com.blackducksoftware.integration.eclipse.services.inspector.ComponentInspectorPreferencesService;
@@ -95,8 +96,10 @@ public class BlackDuckEclipseActivator extends AbstractUIPlugin {
 	}
 
 	public void refreshConnection() {
+		final WorkspaceInformationService workspaceInformationService = BlackDuckEclipseServicesFactory.getInstance().getWorkspaceInformationService();
 		hubConnectionService.reloadConnection();
 		freeConnectionService.reloadConnection();
+		componentInspectorService.inspectProjects(workspaceInformationService.getSupportedProjectNames());
 	}
 
 	@Override
