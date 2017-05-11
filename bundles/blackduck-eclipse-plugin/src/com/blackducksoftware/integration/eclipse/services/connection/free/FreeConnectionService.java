@@ -27,6 +27,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 import com.blackducksoftware.integration.eclipse.internal.ComponentModel;
+import com.blackducksoftware.integration.eclipse.internal.connection.free.KBDetailsRequestService;
 import com.blackducksoftware.integration.eclipse.internal.connection.free.dataservices.KBLicenseDataService;
 import com.blackducksoftware.integration.eclipse.internal.connection.free.dataservices.KBVulnerabilityDataService;
 import com.blackducksoftware.integration.eclipse.services.connection.AbstractConnectionService;
@@ -46,9 +47,7 @@ public class FreeConnectionService extends AbstractConnectionService {
 
 	private KBVulnerabilityDataService vulnerabilityDataService;
 
-	private FreePreferencesService freePreferencesService;
-
-	private final ComponentInspectorViewService componentInspectorViewService;
+	private KBDetailsRequestService kbDetailsRequestService;
 
 	public static final String JOB_GENERATE_URL = "Opening component in the Hub...";
 
@@ -56,14 +55,13 @@ public class FreeConnectionService extends AbstractConnectionService {
 
 	public FreeConnectionService(final ComponentInspectorViewService componentInspectorViewService){
 		this.logger = new IntBufferedLogger();
-		this.componentInspectorViewService = componentInspectorViewService;
 		this.reloadConnection();
 	}
 
 	@Override
 	public void reloadConnection(){
-		this.freePreferencesService = new FreePreferencesService();
 		this.restConnection = this.getKBRestConnectionFromPreferences();
+		this.kbDetailsRequestService = new KBDetailsRequestService(restConnection);
 	}
 
 	private RestConnection getKBRestConnectionFromPreferences() {
@@ -79,14 +77,14 @@ public class FreeConnectionService extends AbstractConnectionService {
 
 	public KBLicenseDataService getLicenseDataService() {
 		if (licenseDataService == null) {
-			licenseDataService = new KBLicenseDataService(null);
+			licenseDataService = new KBLicenseDataService(kbDetailsRequestService);
 		}
 		return licenseDataService;
 	}
 
 	public KBVulnerabilityDataService getVulnerabilityDataService() {
 		if (vulnerabilityDataService == null) {
-			vulnerabilityDataService = new KBVulnerabilityDataService();
+			vulnerabilityDataService = new KBVulnerabilityDataService(kbDetailsRequestService);
 		}
 		return vulnerabilityDataService;
 	}

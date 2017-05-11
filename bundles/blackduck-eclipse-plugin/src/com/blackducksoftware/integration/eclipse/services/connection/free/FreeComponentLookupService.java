@@ -57,7 +57,7 @@ public class FreeComponentLookupService extends AbstractComponentLookupService{
 			ComplexLicenseView complexLicense = null;
 			int premiumVulnerabilities = -1;
 			try {
-				vulnerabilities = vulnerabilityDataService.getVulnsFromComponentVersion(gav.getNamespace().toLowerCase(), gav.getGroupId(),
+				vulnerabilities = vulnerabilityDataService.getCVEsFromComponentVersion(gav.getNamespace().toLowerCase(), gav.getGroupId(),
 						gav.getArtifactId(), gav.getVersion());
 				premiumVulnerabilities = vulnerabilityDataService.getPremiumVulnerabilityCount(gav.getNamespace().toLowerCase(), gav.getGroupId(),
 						gav.getArtifactId(), gav.getVersion());
@@ -81,7 +81,7 @@ public class FreeComponentLookupService extends AbstractComponentLookupService{
 			return new int[] { 0, 0, 0, premiumVulnerabilities };
 		}
 		for (final CVEVulnerabilityView vuln : vulnerabilities) {
-			switch (VulnerabilitySeverityEnum.valueOf(vuln.severity)) {
+			switch (VulnerabilitySeverityEnum.valueOf(vuln.severity.toUpperCase())) {
 			case HIGH:
 				high++;
 				break;
