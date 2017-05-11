@@ -1,5 +1,5 @@
 /**
- * com.blackducksoftware.integration.eclipse.hub.connector
+ * com.blackducksoftware.integration.eclipse.plugin
  *
  * Copyright (C) 2017 Black Duck Software, Inc.
  * http://www.blackducksoftware.com/
@@ -98,7 +98,7 @@ public class HubPreferences extends PreferencePage implements IWorkbenchPreferen
 
 	@Override
 	public void init(final IWorkbench workbench) {
-		hubPreferencesService = new HubPreferencesService();
+		hubPreferencesService = BlackDuckEclipseServicesFactory.getInstance().getHubPreferencesService();
 		this.setPreferenceStore(BlackDuckEclipseActivator.getDefault().getPreferenceStore());
 		this.noDefaultButton();
 	}

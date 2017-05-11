@@ -1,5 +1,5 @@
 /**
- * com.blackducksoftware.integration.eclipse.free.connector
+ * com.blackducksoftware.integration.eclipse.plugin
  *
  * Copyright (C) 2017 Black Duck Software, Inc.
  * http://www.blackducksoftware.com/
@@ -39,18 +39,14 @@ import com.blackducksoftware.integration.hub.model.enumeration.VulnerabilitySeve
 import com.blackducksoftware.integration.hub.model.view.ComplexLicenseView;
 
 public class FreeComponentLookupService extends AbstractComponentLookupService{
-	public final KBVulnerabilityDataService vulnerabilityDataService;
-
-	public final KBLicenseDataService licenseDataService;
-
 	public FreeComponentLookupService(final FreeConnectionService connectionService){
 		super(connectionService);
-		this.licenseDataService = connectionService.getLicenseDataService();
-		this.vulnerabilityDataService = connectionService.getVulnerabilityDataService();
 	}
 
 	@Override
 	public ComponentModel lookupComponent(final Gav gav) throws IOException, URISyntaxException, IntegrationException {
+		final KBLicenseDataService licenseDataService = ((FreeConnectionService) connectionService).getLicenseDataService();
+		final KBVulnerabilityDataService vulnerabilityDataService = ((FreeConnectionService) connectionService).getVulnerabilityDataService();
 		ComponentModel component = componentLoadingCache.get(gav);
 		if(component == null){
 			List<CVEVulnerabilityView> vulnerabilities = null;

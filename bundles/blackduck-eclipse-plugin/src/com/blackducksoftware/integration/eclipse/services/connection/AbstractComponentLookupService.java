@@ -38,7 +38,7 @@ public abstract class AbstractComponentLookupService {
 
 	private final int CACHE_TTL = 3600000;
 
-	private final AbstractConnectionService connectionService;
+	protected final AbstractConnectionService connectionService;
 
 	public AbstractComponentLookupService(final AbstractConnectionService connectionService){
 		this.componentLoadingCache = new TimedLRUCache<>(CACHE_CAPACITY, CACHE_TTL);

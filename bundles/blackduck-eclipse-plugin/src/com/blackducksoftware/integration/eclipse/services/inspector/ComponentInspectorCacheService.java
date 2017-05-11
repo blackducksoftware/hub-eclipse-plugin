@@ -83,6 +83,7 @@ public class ComponentInspectorCacheService {
 				 * thrown, info associated with that gav is inaccessible, and so don't put any
 				 * information related to said gav into hashmap associated with the project
 				 */
+				e.printStackTrace();
 			}
 		}
 	}

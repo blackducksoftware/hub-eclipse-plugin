@@ -13,7 +13,5 @@
 
   <modules>
     <module>blackduck-eclipse-plugin</module>
-    
-    
   </modules>
 </project>

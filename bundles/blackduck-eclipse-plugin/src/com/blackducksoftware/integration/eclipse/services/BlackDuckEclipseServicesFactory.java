@@ -26,6 +26,7 @@ package com.blackducksoftware.integration.eclipse.services;
 import com.blackducksoftware.integration.eclipse.BlackDuckEclipseActivator;
 import com.blackducksoftware.integration.eclipse.services.connection.free.FreeComponentLookupService;
 import com.blackducksoftware.integration.eclipse.services.connection.free.FreeConnectionService;
+import com.blackducksoftware.integration.eclipse.services.connection.free.FreePreferencesService;
 import com.blackducksoftware.integration.eclipse.services.connection.hub.HubComponentLookupService;
 import com.blackducksoftware.integration.eclipse.services.connection.hub.HubConnectionService;
 import com.blackducksoftware.integration.eclipse.services.connection.hub.HubPreferencesService;
@@ -35,7 +36,7 @@ import com.blackducksoftware.integration.eclipse.services.inspector.ComponentIns
 import com.blackducksoftware.integration.eclipse.services.inspector.ComponentInspectorViewService;
 
 public class BlackDuckEclipseServicesFactory {
-	private final static BlackDuckEclipseServicesFactory instance = new BlackDuckEclipseServicesFactory();
+	private static BlackDuckEclipseServicesFactory instance = new BlackDuckEclipseServicesFactory();
 
 	private final HubConnectionService hubConnectionService;
 
@@ -49,8 +50,6 @@ public class BlackDuckEclipseServicesFactory {
 
 	private final HubComponentLookupService hubComponentLookupService;
 
-	private final BlackDuckPreferencesService blackDuckPreferencesService;
-
 	private final ComponentInspectorPreferencesService componentInspectorPreferencesService;
 
 	private final ComponentInspectorService componentInspectorService;
@@ -63,18 +62,22 @@ public class BlackDuckEclipseServicesFactory {
 
 	private final FreeComponentLookupService freeComponentLookupService;
 
+	private final FreePreferencesService freePreferencesService;
+
 	protected BlackDuckEclipseServicesFactory(){
-		this.hubPreferencesService = new HubPreferencesService();
-		this.componentInspectorViewService = new ComponentInspectorViewService();
-		this.hubConnectionService = new HubConnectionService(componentInspectorViewService);
-		this.freeConnectionService = new FreeConnectionService(componentInspectorViewService);
+		instance = this;
+		final BlackDuckPreferencesService blackDuckPreferencesService = new BlackDuckPreferencesService(BlackDuckEclipseActivator.getDefault());
+		this.hubPreferencesService = new HubPreferencesService(blackDuckPreferencesService);
+		this.freePreferencesService = new FreePreferencesService(blackDuckPreferencesService);
+		this.componentInspectorPreferencesService = new ComponentInspectorPreferencesService(blackDuckPreferencesService);
 		this.componentInformationService = new ComponentInformationService();
 		this.projectInformationService = new ProjectInformationService(componentInformationService);
 		this.workspaceInformationService = new WorkspaceInformationService(projectInformationService);
+		this.componentInspectorViewService = new ComponentInspectorViewService();
+		this.hubConnectionService = new HubConnectionService(componentInspectorViewService);
+		this.freeConnectionService = new FreeConnectionService(componentInspectorViewService);
 		this.hubComponentLookupService = new HubComponentLookupService(hubConnectionService);
 		this.freeComponentLookupService = new FreeComponentLookupService(freeConnectionService);
-		this.blackDuckPreferencesService = new BlackDuckPreferencesService(BlackDuckEclipseActivator.getDefault());
-		this.componentInspectorPreferencesService = new ComponentInspectorPreferencesService(blackDuckPreferencesService);
 		this.componentInspectorCacheService = new ComponentInspectorCacheService(componentInspectorViewService, hubComponentLookupService, freeComponentLookupService);
 		this.componentInspectorService = new ComponentInspectorService(componentInspectorViewService, hubConnectionService, freeConnectionService, componentInspectorPreferencesService, componentInspectorCacheService);
 	}
@@ -89,10 +92,6 @@ public class BlackDuckEclipseServicesFactory {
 
 	public FreeConnectionService getFreeConnectionService() {
 		return freeConnectionService;
-	}
-
-	public BlackDuckPreferencesService getBlackDuckPreferencesService() {
-		return blackDuckPreferencesService;
 	}
 
 	public ComponentInformationService getComponentInformationService() {
@@ -129,6 +128,10 @@ public class BlackDuckEclipseServicesFactory {
 
 	public HubPreferencesService getHubPreferencesService(){
 		return hubPreferencesService;
+	}
+
+	public FreePreferencesService getFreePreferencesService(){
+		return freePreferencesService;
 	}
 
 	public FreeComponentLookupService getFreeComponentLookupService() {

@@ -1,5 +1,5 @@
 /**
- * com.blackducksoftware.integration.eclipse.hub.connector
+ * com.blackducksoftware.integration.eclipse.plugin
  *
  * Copyright (C) 2017 Black Duck Software, Inc.
  * http://www.blackducksoftware.com/
@@ -39,18 +39,14 @@ import com.blackducksoftware.integration.hub.model.view.ComplexLicenseView;
 import com.blackducksoftware.integration.hub.model.view.VulnerabilityView;
 
 public class HubComponentLookupService extends AbstractComponentLookupService{
-	public final VulnerabilityDataService vulnerabilityDataService;
-
-	public final LicenseDataService licenseDataService;
-
 	public HubComponentLookupService(final HubConnectionService connectionService){
 		super(connectionService);
-		this.licenseDataService = connectionService.getLicenseDataService();
-		this.vulnerabilityDataService = connectionService.getVulnerabilityDataService();
 	}
 
 	@Override
 	public ComponentModel lookupComponent(final Gav gav) throws IOException, URISyntaxException, IntegrationException {
+		final LicenseDataService licenseDataService = ((HubConnectionService) connectionService).getLicenseDataService();
+		final VulnerabilityDataService vulnerabilityDataService = ((HubConnectionService) connectionService).getVulnerabilityDataService();
 		ComponentModel component = componentLoadingCache.get(gav);
 		if(component == null){
 			List<VulnerabilityView> vulnerabilities = null;

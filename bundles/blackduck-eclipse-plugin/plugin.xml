@@ -16,7 +16,7 @@
       <!-- Items on Package Explorer context menu -->
       <menuContribution
             allPopups="false"
-            locationURI="popup:blackduck-PackageExplorer?after=additions">
+            locationURI="popup:com.blackducksoftware.integration.eclipse.menu.PackageExplorer?after=additions">
          <command
                commandId="com.blackducksoftware.integration.eclipse.contextmenu.InspectSelectedProject"
                icon="resources/icons/ducky.png"
@@ -83,7 +83,7 @@
       <!-- Items on Project Explorer context menu -->
       <menuContribution
             allPopups="false"
-            locationURI="popup:blackduck-ProjectExplorer?after=additions">
+            locationURI="popup:com.blackducksoftware.integration.eclipse.menu.ProjectExplorer?after=additions">
          <command
                commandId="com.blackducksoftware.integration.eclipse.contextmenu.InspectSelectedProject"
                icon="resources/icons/ducky.png"

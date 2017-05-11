@@ -1,5 +1,5 @@
 /**
- * com.blackducksoftware.integration.eclipse.hub.connector
+ * com.blackducksoftware.integration.eclipse.plugin
  *
  * Copyright (C) 2017 Black Duck Software, Inc.
  * http://www.blackducksoftware.com/
@@ -39,6 +39,7 @@ import org.eclipse.ui.progress.UIJob;
 
 import com.blackducksoftware.integration.eclipse.BlackDuckEclipseActivator;
 import com.blackducksoftware.integration.eclipse.internal.ComponentModel;
+import com.blackducksoftware.integration.eclipse.services.BlackDuckEclipseServicesFactory;
 import com.blackducksoftware.integration.eclipse.services.connection.AbstractConnectionService;
 import com.blackducksoftware.integration.eclipse.services.inspector.ComponentInspectorViewService;
 import com.blackducksoftware.integration.exception.EncryptionException;
@@ -80,7 +81,7 @@ public class HubConnectionService extends AbstractConnectionService {
 
 	private HubVersionRequestService hubVersionRequestService;
 
-	private HubPreferencesService hubPreferencesService;
+	private final HubPreferencesService hubPreferencesService;
 
 	private final ComponentInspectorViewService componentInspectorViewService;
 
@@ -88,6 +89,7 @@ public class HubConnectionService extends AbstractConnectionService {
 
 	public HubConnectionService(final ComponentInspectorViewService componentInspectorViewService){
 		this.logger = new IntBufferedLogger();
+		this.hubPreferencesService = BlackDuckEclipseServicesFactory.getInstance().getHubPreferencesService();
 		this.componentInspectorViewService = componentInspectorViewService;
 		this.reloadConnection();
 	}
@@ -109,7 +111,6 @@ public class HubConnectionService extends AbstractConnectionService {
 
 	@Override
 	public void reloadConnection(){
-		this.hubPreferencesService = new HubPreferencesService();
 		this.restConnection = this.getHubConnectionFromPreferences();
 		this.hubServicesFactory = new HubServicesFactory(restConnection);
 		try {
