@@ -23,6 +23,9 @@
  */
 package com.blackducksoftware.integration.eclipse.preferencepages.hub;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.preference.StringFieldEditor;
 import org.eclipse.jface.resource.JFaceResources;
@@ -98,7 +101,9 @@ public class HubPreferences extends PreferencePage implements IWorkbenchPreferen
 
 	private final int NUM_COLUMNS = 2;
 
-	private final String INTEGER_FIELD_EDITOR_ERROR_STRING = "IntegerFieldEditor.errorMessage";
+	private static final String INTEGER_FIELD_EDITOR_ERROR_STRING = "IntegerFieldEditor.errorMessage";
+
+	private Set<String> hasChanges;
 
 	@Override
 	public void createControl(final Composite parent){
@@ -115,6 +120,7 @@ public class HubPreferences extends PreferencePage implements IWorkbenchPreferen
 
 	@Override
 	protected Control createContents(final Composite parent) {
+		hasChanges = new HashSet<>();
 		final Composite authComposite = new Composite(parent, SWT.LEFT);
 		final GridLayout authCompositeLayout = new GridLayout();
 		authCompositeLayout.numColumns = NUM_COLUMNS;
@@ -145,7 +151,6 @@ public class HubPreferences extends PreferencePage implements IWorkbenchPreferen
 	public void performApply() {
 		try {
 			this.storeValues();
-			this.getApplyButton().setEnabled(false);
 		} catch (final HubIntegrationException e) {
 		}
 	}
@@ -211,14 +216,12 @@ public class HubPreferences extends PreferencePage implements IWorkbenchPreferen
 		editor.setPropertyChangeListener(new IPropertyChangeListener(){
 			@Override
 			public void propertyChange(final PropertyChangeEvent event) {
-				setValid(true);
-				updateApplyButton();
-				final Button applyButton = getApplyButton();
-				if(applyButton.getEnabled() && hubPreferencesService.getPreference(preferenceName).equals(editor.getStringValue())){
-					applyButton.setEnabled(false);
-				} else if(!applyButton.getEnabled()) {
-					applyButton.setEnabled(true);
+				if(hubPreferencesService.getPreference(preferenceName).equals(editor.getStringValue())){
+					hasChanges.remove(preferenceName);
+				} else {
+					hasChanges.add(preferenceName);
 				}
+				updateApplyButtonWithChanges();
 			}
 		});
 		return editor;
@@ -240,14 +243,20 @@ public class HubPreferences extends PreferencePage implements IWorkbenchPreferen
 		passwordField.addModifyListener(new ModifyListener(){
 			@Override
 			public void modifyText(final ModifyEvent e) {
-				setValid(true);
-				updateApplyButton();
-				final Button applyButton = getApplyButton();
-				if(applyButton.getEnabled() && hubPreferencesService.getPreference(preferenceName).equals(passwordField.getText())){
-					applyButton.setEnabled(false);
-				} else if(!applyButton.getEnabled()) {
-					applyButton.setEnabled(true);
+				if(preferenceName.equals(HubPreferencesService.HUB_PASSWORD)){
+					if(hubPreferencesService.getHubPassword().equals(passwordField.getText())){
+						hasChanges.remove(preferenceName);
+					} else {
+						hasChanges.add(preferenceName);
+					}
+				}else if(preferenceName.equals(HubPreferencesService.PROXY_PASSWORD)){
+					if(hubPreferencesService.getHubProxyPassword().equals(passwordField.getText())){
+						hasChanges.remove(preferenceName);
+					} else {
+						hasChanges.add(preferenceName);
+					}
 				}
+				updateApplyButtonWithChanges();
 			}
 		});
 		return passwordField;
@@ -280,6 +289,8 @@ public class HubPreferences extends PreferencePage implements IWorkbenchPreferen
 	}
 
 	private void storeValues() throws HubIntegrationException {
+		hasChanges = new HashSet<>();
+		this.updateApplyButtonWithChanges();
 		hubPreferencesService.saveHubUsername(hubUsernameField.getStringValue());
 		hubPreferencesService.saveHubPassword(hubPasswordField.getText());
 		hubPreferencesService.saveHubUrl(hubUrlField.getStringValue());
@@ -292,6 +303,10 @@ public class HubPreferences extends PreferencePage implements IWorkbenchPreferen
 		plugin.refreshConnection();
 		final ComponentInspectorViewService inspectorViewService = BlackDuckEclipseServicesFactory.getInstance().getComponentInspectorViewService();
 		inspectorViewService.resetDisplay();
+	}
+
+	public void updateApplyButtonWithChanges(){
+		getApplyButton().setEnabled(!hasChanges.isEmpty());
 	}
 
 }
