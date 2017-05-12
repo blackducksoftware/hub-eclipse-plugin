@@ -59,9 +59,9 @@ public class KBLicenseDataService {
 		final ComplexLicenseView wrappingComplexLicenseView = new ComplexLicenseView();
 		final Field typeField = wrappingComplexLicenseView.getClass().getDeclaredField("type");
 		typeField.setAccessible(true);
-		typeField.set(wrappingComplexLicenseView, license.type);
+		typeField.set(wrappingComplexLicenseView, license.getType());
 		final List<ComplexLicenseView> licenses = new ArrayList<>();
-		for(final LicenseView licenseView: license.detail.values()) {
+		for(final LicenseView licenseView: license.getDetail().values()) {
 			final ComplexLicenseView wrappedComplexLicenseView = new ComplexLicenseView();
 			final Field codesharingField = wrappedComplexLicenseView.getClass().getDeclaredField("codeSharing");
 			codesharingField.setAccessible(true);

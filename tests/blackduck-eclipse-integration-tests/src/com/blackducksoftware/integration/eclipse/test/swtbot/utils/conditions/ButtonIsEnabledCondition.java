@@ -1,5 +1,5 @@
 /**
- * com.blackducksoftware.integration.eclipse.plugin
+ * hub-eclipse-plugin-test
  *
  * Copyright (C) 2017 Black Duck Software, Inc.
  * http://www.blackducksoftware.com/
@@ -21,25 +21,27 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package com.blackducksoftware.integration.eclipse.internal.connection.free.model;
+package com.blackducksoftware.integration.eclipse.test.swtbot.utils.conditions;
 
-import java.util.Map;
+import org.eclipse.swtbot.swt.finder.waits.DefaultCondition;
+import org.eclipse.swtbot.swt.finder.widgets.SWTBotButton;
 
-import com.blackducksoftware.integration.hub.model.HubView;
-import com.blackducksoftware.integration.hub.model.enumeration.ComplexLicenseEnum;
-import com.blackducksoftware.integration.hub.model.view.LicenseView;
+public class ButtonIsEnabledCondition extends DefaultCondition {
 
-public class KBLicenseView extends HubView{
-	private Map<String, LicenseView> detail;
+	private final SWTBotButton button;
 
-	private ComplexLicenseEnum type;
-
-	public Map<String, LicenseView> getDetail() {
-		return detail;
+	public ButtonIsEnabledCondition(final SWTBotButton button) {
+		this.button = button;
 	}
 
-	public ComplexLicenseEnum getType() {
-		return type;
+	@Override
+	public boolean test() throws Exception {
+		return button.isEnabled();
+	}
+
+	@Override
+	public String getFailureMessage() {
+		return "Could not enable " + button.getText() + " button";
 	}
 
 }

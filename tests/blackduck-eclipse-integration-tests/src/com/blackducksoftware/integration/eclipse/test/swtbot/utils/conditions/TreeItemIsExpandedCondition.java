@@ -1,5 +1,5 @@
 /**
- * blackduck-eclipse-integration-tests
+ * hub-eclipse-plugin-test
  *
  * Copyright (C) 2017 Black Duck Software, Inc.
  * http://www.blackducksoftware.com/
@@ -21,34 +21,27 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package com.blackducksoftware.integration.eclipse.tests.integration;
+package com.blackducksoftware.integration.eclipse.test.swtbot.utils.conditions;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.not;
+import org.eclipse.swtbot.swt.finder.waits.DefaultCondition;
+import org.eclipse.swtbot.swt.finder.widgets.SWTBotTreeItem;
 
-import org.eclipse.swtbot.swt.finder.SWTBot;
-import org.eclipse.swtbot.swt.finder.junit.SWTBotJunit4ClassRunner;
-import org.eclipse.swtbot.swt.finder.widgets.SWTBotMenu;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+public class TreeItemIsExpandedCondition extends DefaultCondition {
 
-@RunWith(SWTBotJunit4ClassRunner.class)
-public class TestMenus {
+	private final SWTBotTreeItem item;
 
-	private static SWTBot bot;
-
-	@BeforeClass
-	public static void beforeClass() throws Exception {
-		// don't use SWTWorkbenchBot here which relies on Platform 3.x
-		bot = new SWTBot();
+	public TreeItemIsExpandedCondition(final SWTBotTreeItem item) {
+		this.item = item;
 	}
 
-	@Test
-	public void ensureSaveIsDisabledWhenNothingIsDirty() {
-		final SWTBotMenu menu = bot.menu("File").menu("Save");
+	@Override
+	public boolean test() throws Exception {
+		return item.isExpanded();
+	}
 
-		assertThat("Save command in menu is not enabled", not(menu.isEnabled()));
+	@Override
+	public String getFailureMessage() {
+		return "could not expand " + item.getText() + "node";
 	}
 
 }

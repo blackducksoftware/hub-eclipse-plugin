@@ -77,7 +77,7 @@ public class FreeComponentLookupService extends AbstractComponentLookupService{
 			return new int[] { 0, 0, 0, premiumVulnerabilities };
 		}
 		for (final CVEVulnerabilityView vuln : vulnerabilities) {
-			switch (VulnerabilitySeverityEnum.valueOf(vuln.severity.toUpperCase())) {
+			switch (VulnerabilitySeverityEnum.valueOf(vuln.getSeverity().toUpperCase())) {
 			case HIGH:
 				high++;
 				break;
