@@ -1,5 +1,5 @@
 /**
- * hub-eclipse-plugin-test
+ * blackduck-eclipse-integration-tests
  *
  * Copyright (C) 2017 Black Duck Software, Inc.
  * http://www.blackducksoftware.com/
