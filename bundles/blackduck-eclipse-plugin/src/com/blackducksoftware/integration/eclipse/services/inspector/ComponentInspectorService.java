@@ -25,13 +25,14 @@ package com.blackducksoftware.integration.eclipse.services.inspector;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.util.Arrays;
 import java.util.List;
 
 import com.blackducksoftware.integration.eclipse.internal.ComponentModel;
 import com.blackducksoftware.integration.eclipse.internal.InspectionJob;
 import com.blackducksoftware.integration.eclipse.internal.datastructures.InspectionJobQueue;
 import com.blackducksoftware.integration.eclipse.internal.listeners.InspectionJobChangeListener;
+import com.blackducksoftware.integration.eclipse.services.BlackDuckEclipseServicesFactory;
+import com.blackducksoftware.integration.eclipse.services.WorkspaceInformationService;
 import com.blackducksoftware.integration.eclipse.services.connection.free.FreeConnectionService;
 import com.blackducksoftware.integration.eclipse.services.connection.hub.HubConnectionService;
 import com.blackducksoftware.integration.hub.buildtool.Gav;
@@ -86,16 +87,13 @@ public class ComponentInspectorService {
 		return true;
 	}
 
-	public boolean inspectProjects(final String... projectNames) {
-		return inspectProjects(Arrays.asList(projectNames));
-	}
-
-	public boolean inspectProjects(final List<String> projectNames) {
-		boolean success = true;
-		for (final String projectName : projectNames) {
-			success = inspectProject(projectName);
-		}
-		return success;
+	public void inspectAllProjects(){
+		final WorkspaceInformationService workspaceInformationService = BlackDuckEclipseServicesFactory.getInstance().getWorkspaceInformationService();
+		workspaceInformationService.getSupportedProjectNames().forEach(projectName -> {
+			if(inspectorPreferencesService.isProjectMarkedForInspection(projectName)){
+				inspectProject(projectName);
+			}
+		});
 	}
 
 	public boolean isProjectInspectionRunning(final String projectName) {

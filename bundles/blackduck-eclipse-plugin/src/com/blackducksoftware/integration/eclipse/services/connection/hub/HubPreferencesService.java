@@ -148,6 +148,8 @@ public class HubPreferencesService {
 			}catch(final Exception e){
 				e.printStackTrace();
 			}
+		}else{
+			this.savePreference(HUB_PASSWORD, hubPassword);
 		}
 	}
 
@@ -174,8 +176,9 @@ public class HubPreferencesService {
 			}catch(final Exception e){
 				e.printStackTrace();
 			}
+		}else{
+			this.savePreference(PROXY_PASSWORD, proxyPassword);
 		}
-		this.savePreference(PROXY_PASSWORD, proxyPassword);
 	}
 
 	public void saveHubProxyHost(final String proxyHost){
