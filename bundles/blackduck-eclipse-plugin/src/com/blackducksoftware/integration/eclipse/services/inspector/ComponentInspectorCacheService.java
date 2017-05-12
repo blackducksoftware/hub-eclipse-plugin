@@ -76,7 +76,7 @@ public class ComponentInspectorCacheService {
 				components.add(newComponent);
 				components.sort(new ComponentModelVulnerabilityFirstComparator());
 				inspectorCache.put(projectName, components);
-				componentInspectorViewService.refreshComponentInspectorForProject(projectName);
+				componentInspectorViewService.resetDisplay();
 			} catch (final IntegrationException e) {
 				/*
 				 * Thrown if exception occurs when accessing key gav from cache. If an exception is
@@ -111,7 +111,7 @@ public class ComponentInspectorCacheService {
 				}
 			}
 			inspectorCache.put(projectName, models);
-			componentInspectorViewService.refreshComponentInspectorForProject(projectName);
+			componentInspectorViewService.resetDisplay();
 		}
 	}
 

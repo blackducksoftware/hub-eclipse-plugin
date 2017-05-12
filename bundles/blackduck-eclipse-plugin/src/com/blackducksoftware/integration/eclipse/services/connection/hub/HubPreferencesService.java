@@ -23,10 +23,7 @@
  */
 package com.blackducksoftware.integration.eclipse.services.connection.hub;
 
-import java.net.URL;
-
 import com.blackducksoftware.integration.eclipse.services.BlackDuckPreferencesService;
-import com.blackducksoftware.integration.exception.EncryptionException;
 import com.blackducksoftware.integration.hub.builder.HubCredentialsBuilder;
 import com.blackducksoftware.integration.hub.builder.HubProxyInfoBuilder;
 import com.blackducksoftware.integration.hub.builder.HubServerConfigBuilder;
@@ -84,7 +81,7 @@ public class HubPreferencesService {
 			try {
 				return hubCredentials.getDecryptedPassword();
 			} catch (final Exception e) {
-				e.printStackTrace();
+				//TODO: Log properly
 			}
 		}
 		return password;
@@ -123,7 +120,7 @@ public class HubPreferencesService {
 			try {
 				return hubProxyInfo.getDecryptedPassword();
 			} catch (final Exception e) {
-				e.printStackTrace();
+				//TODO: Log properly
 			}
 		}
 		return proxyPassword;
@@ -146,7 +143,7 @@ public class HubPreferencesService {
 				this.savePreference(HUB_PASSWORD, hubCredentials.getEncryptedPassword());
 				this.savePreference(HUB_PASSWORD_LENGTH, String.valueOf(hubCredentials.getActualPasswordLength()));
 			}catch(final Exception e){
-				e.printStackTrace();
+				//TODO: Log properly
 			}
 		}else{
 			this.savePreference(HUB_PASSWORD, hubPassword);
@@ -174,7 +171,7 @@ public class HubPreferencesService {
 				this.savePreference(PROXY_PASSWORD, hubProxyInfo.getEncryptedPassword());
 				this.savePreference(PROXY_PASSWORD_LENGTH, hubProxyInfo.getActualPasswordLength()+"");
 			}catch(final Exception e){
-				e.printStackTrace();
+				//TODO: Log properlys
 			}
 		}else{
 			this.savePreference(PROXY_PASSWORD, proxyPassword);
@@ -212,21 +209,6 @@ public class HubPreferencesService {
 		}catch(final Exception e){
 			return null;
 		}
-	}
-
-	public void saveHubServerConfig(final HubServerConfig hubServerConfig) throws EncryptionException{
-		final HubCredentials hubCredentials = hubServerConfig.getGlobalCredentials();
-		this.saveHubUsername(hubCredentials.getUsername());
-		this.saveHubPassword(hubCredentials.getDecryptedPassword());
-		final int timeout = hubServerConfig.getTimeout();
-		this.saveHubTimeout(String.valueOf(timeout));
-		final URL hubUrl = hubServerConfig.getHubUrl();
-		this.saveHubUrl(hubUrl.toString());
-		final HubProxyInfo hubProxyInfo = hubServerConfig.getProxyInfo();
-		this.saveHubProxyUsername(hubProxyInfo.getUsername());
-		this.saveHubProxyPassword(hubProxyInfo.getDecryptedPassword());
-		this.saveHubProxyHost(hubProxyInfo.getHost());
-		this.saveHubProxyPort(String.valueOf(hubProxyInfo.getPort()));
 	}
 
 }

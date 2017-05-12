@@ -32,18 +32,13 @@ public class ComponentInspectorViewService {
 		this.componentInspectorView = componentInspectorView;
 	}
 
-	public void refreshComponentInspectorForProject(final String projectName) {
-		if (componentInspectorView != null) {
-			if(componentInspectorView.getLastSelectedProjectName().equals(projectName)) {
-				componentInspectorView.refreshInput();
-			}
-		}
+	public ComponentInspectorView getView() {
+		return componentInspectorView;
 	}
 
-	public void resetDisplay(){
-		if (componentInspectorView != null) {
-			componentInspectorView.refreshStatus();
-			componentInspectorView.refreshInput();
+	public void setProject(final String projectName) {
+		if(componentInspectorView != null){
+			componentInspectorView.setLastSelectedProjectName(projectName);
 		}
 	}
 
@@ -55,23 +50,10 @@ public class ComponentInspectorViewService {
 		}
 	}
 
-	public void disposeComponentInspectorView() {
-		this.componentInspectorView = null;
-	}
-
-	public ComponentInspectorView getView() {
-		return componentInspectorView;
-	}
-
-	public void setProject(final String projectName) {
-		if(componentInspectorView != null){
-			componentInspectorView.setLastSelectedProjectName(projectName);
-		}
-	}
-
-	public void openError(final String string, final String format, final Exception e) {
-		if(componentInspectorView != null){
-			componentInspectorView.openError(string, format, e);
+	public void resetDisplay(){
+		if (componentInspectorView != null) {
+			componentInspectorView.refreshStatus();
+			componentInspectorView.refreshInput();
 		}
 	}
 
@@ -80,6 +62,16 @@ public class ComponentInspectorViewService {
 			if(componentInspectorView.getLastSelectedProjectName().equals(projectName)){
 				componentInspectorView.refreshStatus();
 			}
+		}
+	}
+
+	public void disposeComponentInspectorView() {
+		this.componentInspectorView = null;
+	}
+
+	public void openError(final String string, final String format, final Exception e) {
+		if(componentInspectorView != null){
+			componentInspectorView.openError(string, format, e);
 		}
 	}
 

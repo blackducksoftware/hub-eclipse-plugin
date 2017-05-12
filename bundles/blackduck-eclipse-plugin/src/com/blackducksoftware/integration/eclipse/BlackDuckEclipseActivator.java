@@ -71,11 +71,6 @@ public class BlackDuckEclipseActivator extends AbstractUIPlugin {
 
 	@Override
 	public void start(final BundleContext context) {
-		try {
-			super.start(context);
-		} catch (final Exception e) {
-			//TODO: Log properly
-		}
 		plugin = this;
 		hubConnectionService = BlackDuckEclipseServicesFactory.getInstance().getHubConnectionService();
 		freeConnectionService = BlackDuckEclipseServicesFactory.getInstance().getFreeConnectionService();
@@ -92,6 +87,11 @@ public class BlackDuckEclipseActivator extends AbstractUIPlugin {
 		ResourcesPlugin.getWorkspace().addResourceChangeListener(newProjectListener);
 		projectDeletedListener = new ProjectDeletedListener(componentInspectorService);
 		ResourcesPlugin.getWorkspace().addResourceChangeListener(projectDeletedListener, IResourceChangeEvent.PRE_DELETE);
+		try {
+			super.start(context);
+		} catch (final Exception e) {
+			//TODO: Log properly
+		}
 	}
 
 	public void refreshConnection() {
