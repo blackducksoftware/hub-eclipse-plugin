@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<?pde version="3.8"?><target name="blackduck-eclipse-target" sequenceNumber="54">
+<?pde version="3.8"?><target name="blackduck-eclipse-target" sequenceNumber="56">
 <locations>
 <location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="planner" includeSource="true" type="InstallableUnit">
 <unit id="org.eclipse.m2e.feature.feature.group" version="1.7.0.20160603-1933"/>
 <unit id="org.eclipse.m2e.logback.feature.feature.group" version="1.7.0.20160603-1933"/>
 <repository location="http://download.eclipse.org/technology/m2e/releases"/>
 </location>
-<location path="/Users/rotte/git/blackduck-eclipse/releng/target/libs/compile" type="Directory"/>
 <location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="planner" includeSource="true" type="InstallableUnit">
 <unit id="org.junit" version="4.12.0.v201504281640"/>
 <unit id="org.mockito" version="1.9.5.v201605172210"/>
@@ -19,6 +18,7 @@
 <repository location="http://download.eclipse.org/buildship/updates/e46/releases/2.x"/>
 </location>
 <location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="planner" includeSource="true" type="InstallableUnit">
+<unit id="org.eclipse.e4.core.tools.feature.source.feature.group" version="4.5.100.v20170131-1452"/>
 <unit id="org.eclipse.equinox.sdk.feature.group" version="3.12.0.v20170209-1843"/>
 <unit id="org.eclipse.swtbot.feature.group" version="2.5.0.201609021837"/>
 <unit id="org.eclipse.swtbot.ide.feature.group" version="2.5.0.201609021837"/>
