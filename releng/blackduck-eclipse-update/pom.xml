@@ -10,4 +10,70 @@
 
   <artifactId>blackduck-eclipse-update</artifactId>
   <packaging>eclipse-repository</packaging>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.eclipse.tycho.extras</groupId>
+        <artifactId>tycho-eclipserun-plugin</artifactId>
+        <version>${tycho.version}</version>
+        <executions>
+          <execution>
+            <id>add-p2-composite-repository</id>
+            <phase>package</phase>
+            <goals>
+              <goal>eclipse-run</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <!-- IMPORTANT: DO NOT split the arg line -->
+          <applicationsArgs>
+            <args>-application</args>
+            <args>org.eclipse.ant.core.antRunner</args>
+            <args>-buildfile</args>
+            <args>packaging-p2composite.ant</args>
+            <args>p2.composite.add</args>
+            <args>-Dsite.label=${p2.repository.label}</args>
+            <args>-Dproject.build.directory=${project.build.directory}</args>
+            <args>-DunqualifiedVersion=${unqualifiedVersion}</args>
+            <args>-DbuildQualifier=${buildQualifier}</args>
+          </applicationsArgs>
+          <repositories>
+            <repository>
+              <id>neon</id>
+              <layout>p2</layout>
+              <url>http://download.eclipse.org/releases/neon</url>
+            </repository>
+          </repositories>
+          <dependencies>
+            <dependency>
+              <artifactId>org.eclipse.ant.core</artifactId>
+              <type>eclipse-plugin</type>
+            </dependency>
+            <dependency>
+              <artifactId>org.apache.ant</artifactId>
+              <type>eclipse-plugin</type>
+            </dependency>
+            <dependency>
+              <artifactId>org.eclipse.equinox.p2.repository.tools</artifactId>
+              <type>eclipse-plugin</type>
+            </dependency>
+            <dependency>
+              <artifactId>org.eclipse.equinox.p2.core.feature</artifactId>
+              <type>eclipse-feature</type>
+            </dependency>
+            <dependency>
+              <artifactId>org.eclipse.equinox.p2.extras.feature</artifactId>
+              <type>eclipse-feature</type>
+            </dependency>
+            <dependency>
+              <artifactId>org.eclipse.equinox.ds</artifactId>
+              <type>eclipse-plugin</type>
+            </dependency>
+          </dependencies>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
 </project>
