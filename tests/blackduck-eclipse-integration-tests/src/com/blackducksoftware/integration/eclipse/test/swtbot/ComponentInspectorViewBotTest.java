@@ -47,7 +47,7 @@ import com.blackducksoftware.integration.eclipse.views.ComponentInspectorView;
 import com.blackducksoftware.integration.eclipse.views.widgets.ComponentTableStatusCLabel;
 
 @RunWith(SWTBotJunit4ClassRunner.class)
-public class ComponentViewBotTest {
+public class ComponentInspectorViewBotTest {
 	private static final String COMMONS_FILEUPLOAD = "commons-fileupload";
 
 	private final String[] testMavenComponents = { "commons-fileupload  1.0 ", "just-a-maven-project  0.0.1-SNAPSHOT ", "junit  3.8.1 " };
@@ -120,7 +120,7 @@ public class ComponentViewBotTest {
 	}
 
 	@Test
-	public void testConnectionDisconnected() {
+	public void testKBConnectionOK() {
 		botUtils.preferences().openHubPreferencesFromEclipseMenu();
 		botUtils.preferences().hubSettings().enterInvalidCredentials();
 		botUtils.preferences().pressOK();
@@ -129,6 +129,18 @@ public class ComponentViewBotTest {
 		botUtils.workbench().openComponentInspectorView();
 		botUtils.componentInspector().getInspectionResultsTable().setFocus();
 		assertNotNull(botUtils.componentInspector().getInspectionStatus(ComponentTableStatusCLabel.KB_CONNECTION_OK_STATUS));
+	}
+
+	@Test
+	public void testKBConnectionOKNoComponents() {
+		botUtils.preferences().openHubPreferencesFromEclipseMenu();
+		botUtils.preferences().hubSettings().enterInvalidCredentials();
+		botUtils.preferences().pressOK();
+		final SWTBotTreeItem projectNode = botUtils.workbench().getProject(TestConstants.TEST_MAVEN_EMPTY_ARTIFACT);
+		projectNode.select();
+		botUtils.workbench().openComponentInspectorView();
+		botUtils.componentInspector().getInspectionResultsTable().setFocus();
+		assertNotNull(botUtils.componentInspector().getInspectionStatus(ComponentTableStatusCLabel.KB_CONNECTION_OK_NO_COMPONENTS_STATUS));
 	}
 
 	@Test
@@ -184,7 +196,7 @@ public class ComponentViewBotTest {
 	}
 
 	@Test
-	public void testSwitchHubInstanceFromValidInstanceToOtherValidInstance() {
+	public void testSwitchHubInstance() {
 		botUtils.preferences().openHubPreferencesFromEclipseMenu();
 		botUtils.preferences().hubSettings().enterValidCredentials();
 		botUtils.preferences().pressOK();
@@ -199,7 +211,7 @@ public class ComponentViewBotTest {
 	}
 
 	@Test
-	public void testSwitchHubInstanceFromValidInstanceToOtherInvalidInstance() {
+	public void testSwitchFromHubToKB() {
 		botUtils.preferences().openHubPreferencesFromEclipseMenu();
 		botUtils.preferences().hubSettings().enterValidCredentials();
 		botUtils.preferences().pressOK();
