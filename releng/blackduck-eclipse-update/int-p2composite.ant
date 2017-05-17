@@ -1,12 +1,12 @@
 <project name="project">
   <!--
     Based on packaging-p2composite.ant by Lorenzo Bettini in his tutorial at www.lorenzobettini.it
-    site.label			The name/title/label of the created composite site
-    unqualifiedVersion 	The version without any qualifier replacement
+    root.composite.label    The name/title/label of the created composite site
+    unqualifiedVersion 	    The version without any qualifier replacement
   -->
   <target name="p2.composite.add">
     <property name="root.repository.directory" location="${root.composite.dir}" />
-    <property name="root.composite.name" value="${site.label} All Versions" />
+    <property name="root.composite.name" value="${root.composite.label} All Versions" />
     <property name="child.repository.directory" value="${root.repository.directory}/${unqualifiedVersion}/" />
     <property name="source.repository" location="${project.build.directory}/repository"/>
     <echo message="Source repository path: ${source.repository}" />
