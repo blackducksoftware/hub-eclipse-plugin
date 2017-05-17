@@ -36,7 +36,7 @@
             <args>p2.composite.add</args>
             <args>-Dsite.label=${p2.repository.label}</args>
             <args>-Dproject.build.directory=${project.build.directory}</args>
-            <args>-DunqualifiedVersion=${unqualifiedVersion}</args>
+            <args>-Droot.composite.dir=${p2.repository.dir}</args>
             <args>-DbuildQualifier=${buildQualifier}</args>
           </applicationsArgs>
           <repositories>
