@@ -1,0 +1,47 @@
+<project name="project">
+  <!--
+    Based on packaging-p2composite.ant by Lorenzo Bettini in his tutorial at www.lorenzobettini.it
+    site.label			The name/title/label of the created composite site
+    unqualifiedVersion 	The version without any qualifier replacement
+  -->
+  <target name="p2.composite.add">
+    <property name="software.download.area" location="${user.home}/p2.repositories" />
+    <property name="updates.dir" value="update-sites" />
+    <property name="root.repository.directory" location="${software.download.area}/${updates.dir}" />
+    <property name="root.composite.name" value="${site.label} All Versions" />
+    <property name="child.repository.directory" value="${root.repository.directory}/${unqualifiedVersion}/" />
+    <property name="source.repository" location="${project.build.directory}/repository"/>
+    <echo message="Source repository path: ${source.repository}" />
+    <echo message="Copying to ${child.repository.directory}..." />
+    <mkdir dir="${child.repository.directory}"/>
+    <copy todir="${child.repository.directory}" overwrite="true">
+      <fileset dir="${source.repository}" />
+    </copy>
+    <add.composite.repository.internal
+      composite.repository.location="${root.repository.directory}"
+      composite.repository.name="${root.composite.name}"
+      composite.repository.child="${unqualifiedVersion}"
+    />
+  </target>
+
+  <macrodef name="add.composite.repository.internal">
+    <attribute name="composite.repository.location" />
+    <attribute name="composite.repository.name" />
+    <attribute name="composite.repository.child" />
+    <sequential>
+      <echo message="Composite repository       : @{composite.repository.location}" />
+      <echo message="Composite name             : @{composite.repository.name}" />
+      <echo message="Adding child repository    : @{composite.repository.child}" />
+      <p2.composite.repository>
+        <repository compressed="false" location="@{composite.repository.location}" name="@{composite.repository.name}" />
+        <add>
+          <repository location="@{composite.repository.child}" />
+        </add>
+      </p2.composite.repository>
+      <echo file="@{composite.repository.location}/p2.index">version=1
+        metadata.repository.factory.order=compositeContent.xml,\!
+        artifact.repository.factory.order=compositeArtifacts.xml,\!
+      </echo>
+    </sequential>
+  </macrodef>
+</project>
