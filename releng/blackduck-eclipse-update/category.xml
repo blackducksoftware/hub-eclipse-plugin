@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<site>
-   <feature url="features/com.blackducksoftware.integration.eclipse.feature_1.0.0.qualifier.jar" id="com.blackducksoftware.integration.eclipse.feature" version="1.0.0.qualifier">
-      <category name="blackduck"/>
-   </feature>
-   <category-def name="blackduck" label="Black Duck"/>
-</site>
