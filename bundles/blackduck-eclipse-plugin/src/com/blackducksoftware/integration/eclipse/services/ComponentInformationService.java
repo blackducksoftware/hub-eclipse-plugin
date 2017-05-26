@@ -28,75 +28,69 @@ import java.net.URL;
 
 import org.eclipse.jdt.core.JavaCore;
 
-import com.blackducksoftware.integration.hub.buildtool.FilePathGavExtractor;
-import com.blackducksoftware.integration.hub.buildtool.Gav;
+import com.blackducksoftware.integration.hub.bdio.simple.model.externalid.MavenExternalId;
+import com.blackducksoftware.integration.hub.buildtool.FilePathMavenExternalIdExtractor;
 
 public class ComponentInformationService {
-	public static final String M2_REPO = "M2_REPO";
+    public static final String M2_REPO = "M2_REPO";
 
-	public static final String MAVEN_NAMESPACE = "maven";
+    private final FilePathMavenExternalIdExtractor filePathMavenExternalIdExtractor;
 
-	public static final String GRADLE_NAMESPACE = "maven";
+    public ComponentInformationService(){
+        this.filePathMavenExternalIdExtractor = new FilePathMavenExternalIdExtractor();
+    }
 
-	private final FilePathGavExtractor filePathGavExtractor;
+    public boolean isMavenDependency(final URL filePath) {
+        URL m2Repo;
+        try {
+            m2Repo = JavaCore.getClasspathVariable(M2_REPO).toFile().toURI().toURL();
+        } catch (final MalformedURLException e) {
+            e.printStackTrace();
+            return false;
+        }
+        final String[] m2RepoSegments = m2Repo.getFile().split("/");
+        final String[] filePathSegments = filePath.getFile().split("/");
+        if (filePathSegments.length < m2RepoSegments.length) {
+            return false;
+        }
+        for (int i = 0; i < m2RepoSegments.length; i++) {
+            if (!filePathSegments[i].equals(m2RepoSegments[i])) {
+                return false;
+            }
+        }
+        return true;
+    }
 
-	public ComponentInformationService(){
-		this.filePathGavExtractor = new FilePathGavExtractor();
-	}
+    public boolean isGradleDependency(final URL filePath) {
+        final String[] filePathSegments = filePath.getFile().split("/");
+        if (filePathSegments.length < 3) {
+            return false;
+        }
+        if (filePathSegments[filePathSegments.length - 3].equals("lib")
+                || filePathSegments[filePathSegments.length - 2].equals("plugins")
+                || filePathSegments[filePathSegments.length - 2].equals("lib")) {
+            return false;
+        }
+        for (final String segment : filePathSegments) {
+            if (segment.equals(".gradle")) {
+                return true;
+            }
+        }
+        return false;
+    }
 
-	public boolean isMavenDependency(final URL filePath) {
-		URL m2Repo;
-		try {
-			m2Repo = JavaCore.getClasspathVariable(M2_REPO).toFile().toURI().toURL();
-		} catch (final MalformedURLException e) {
-			e.printStackTrace();
-			return false;
-		}
-		final String[] m2RepoSegments = m2Repo.getFile().split("/");
-		final String[] filePathSegments = filePath.getFile().split("/");
-		if (filePathSegments.length < m2RepoSegments.length) {
-			return false;
-		}
-		for (int i = 0; i < m2RepoSegments.length; i++) {
-			if (!filePathSegments[i].equals(m2RepoSegments[i])) {
-				return false;
-			}
-		}
-		return true;
-	}
-
-	public boolean isGradleDependency(final URL filePath) {
-		final String[] filePathSegments = filePath.getFile().split("/");
-		if (filePathSegments.length < 3) {
-			return false;
-		}
-		if (filePathSegments[filePathSegments.length - 3].equals("lib")
-				|| filePathSegments[filePathSegments.length - 2].equals("plugins")
-				|| filePathSegments[filePathSegments.length - 2].equals("lib")) {
-			return false;
-		}
-		for (final String segment : filePathSegments) {
-			if (segment.equals(".gradle")) {
-				return true;
-			}
-		}
-		return false;
-	}
-
-	public Gav constructGavFromUrl(final URL componentUrl) {
-		try{
-			if (this.isGradleDependency(componentUrl)) {
-				final Gav gav = filePathGavExtractor.getGradlePathGav(componentUrl);
-				return new Gav(GRADLE_NAMESPACE, gav.getGroupId(), gav.getArtifactId(), gav.getVersion());
-			} else if (this.isMavenDependency(componentUrl)) {
-				final URL mavenURL = JavaCore.getClasspathVariable(M2_REPO).toFile().toURI().toURL();
-				final Gav gav = filePathGavExtractor.getMavenPathGav(componentUrl, mavenURL);
-				return new Gav(MAVEN_NAMESPACE, gav.getGroupId(), gav.getArtifactId(), gav.getVersion());
-			}
-		}catch(final MalformedURLException e){
-			//Return null if we can't resolve the maven url
-		}
-		return null;
-	}
+    public MavenExternalId constructMavenExternalIdFromUrl(final URL filePath) {
+        try{
+            if (this.isGradleDependency(filePath)) {
+                return filePathMavenExternalIdExtractor.getGradlePathMavenExternalId(filePath);
+            } else if (this.isMavenDependency(filePath)) {
+                final URL localMavenPath = JavaCore.getClasspathVariable(M2_REPO).toFile().toURI().toURL();
+                return filePathMavenExternalIdExtractor.getMavenPathMavenExternalId(filePath, localMavenPath);
+            }
+        }catch(final MalformedURLException e){
+            //Return null if we can't resolve the maven url
+        }
+        return null;
+    }
 
 }

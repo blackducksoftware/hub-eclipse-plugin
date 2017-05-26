@@ -36,113 +36,113 @@ import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 
-import com.blackducksoftware.integration.hub.buildtool.Gav;
+import com.blackducksoftware.integration.hub.bdio.simple.model.externalid.MavenExternalId;
 
 public class ProjectInformationService {
-	public static final String GRADLE_NATURE = "org.eclipse.buildship.core.gradleprojectnature";
+    public static final String GRADLE_NATURE = "org.eclipse.buildship.core.gradleprojectnature";
 
-	public static final String MAVEN_NATURE = "org.eclipse.m2e.core.maven2Nature";
+    public static final String MAVEN_NATURE = "org.eclipse.m2e.core.maven2Nature";
 
-	public static final String[] SUPPORTED_NATURES = {
-			GRADLE_NATURE,
-			MAVEN_NATURE
-	};
+    public static final String[] SUPPORTED_NATURES = {
+            GRADLE_NATURE,
+            MAVEN_NATURE
+    };
 
-	private final ComponentInformationService componentInformationService;
+    private final ComponentInformationService componentInformationService;
 
-	public ProjectInformationService(final ComponentInformationService componentInformationService) {
-		this.componentInformationService = componentInformationService;
-	}
+    public ProjectInformationService(final ComponentInformationService componentInformationService) {
+        this.componentInformationService = componentInformationService;
+    }
 
-	public int getNumBinaryDependencies(final List<IPackageFragmentRoot> packageFragmentRoots) {
-		int numBinary = 0;
-		for (final IPackageFragmentRoot root : packageFragmentRoots) {
-			try {
-				if (root.getKind() == IPackageFragmentRoot.K_BINARY) {
-					numBinary++;
-				}
-			} catch (final JavaModelException e) {
-				/*
-				 * Occurs if root does not exist or an exception occurs while accessing
-				 * resource. If this happens, assume root is not binary and therefore do
-				 * not increment count
-				 */
-			}
-		}
-		return numBinary;
-	}
+    public int getNumBinaryDependencies(final List<IPackageFragmentRoot> packageFragmentRoots) {
+        int numBinary = 0;
+        for (final IPackageFragmentRoot root : packageFragmentRoots) {
+            try {
+                if (root.getKind() == IPackageFragmentRoot.K_BINARY) {
+                    numBinary++;
+                }
+            } catch (final JavaModelException e) {
+                /*
+                 * Occurs if root does not exist or an exception occurs while accessing
+                 * resource. If this happens, assume root is not binary and therefore do
+                 * not increment count
+                 */
+            }
+        }
+        return numBinary;
+    }
 
-	public List<Gav> getGavsFromFilepaths(final List<URL> mavenAndGradleFilePaths) {
-		final List<Gav> gavs = new ArrayList<>();
-		for (final URL filePath : mavenAndGradleFilePaths) {
-			final Gav tempGav = componentInformationService.constructGavFromUrl(filePath);
-			if (tempGav != null) {
-				gavs.add(tempGav);
-			}
-		}
-		return gavs;
-	}
+    public List<MavenExternalId> getMavenExternalIdsFromFilepaths(final List<URL> mavenAndGradleFilePaths) {
+        final List<MavenExternalId> gavs = new ArrayList<>();
+        for (final URL filePath : mavenAndGradleFilePaths) {
+            final MavenExternalId tempGav = componentInformationService.constructMavenExternalIdFromUrl(filePath);
+            if (tempGav != null) {
+                gavs.add(tempGav);
+            }
+        }
+        return gavs;
+    }
 
-	public List<URL> getProjectComponentUrls(final String projectName) {
-		final IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(projectName);
-		try {
-			if(project.hasNature(JavaCore.NATURE_ID)){
-				final IPackageFragmentRoot[] packageFragmentRoots = JavaCore.create(project).getPackageFragmentRoots();
-				final List<URL> dependencyFilepaths = getBinaryDependencyFilepaths(Arrays.asList(packageFragmentRoots));
-				return dependencyFilepaths;
-			}
-		} catch (final CoreException e) {
-			// if exception thrown when getting filepaths to source and binary dependencies, assume
-			// there are no dependencies
-		}
+    public List<URL> getProjectComponentUrls(final String projectName) {
+        final IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(projectName);
+        try {
+            if(project.hasNature(JavaCore.NATURE_ID)){
+                final IPackageFragmentRoot[] packageFragmentRoots = JavaCore.create(project).getPackageFragmentRoots();
+                final List<URL> dependencyFilepaths = getBinaryDependencyFilepaths(Arrays.asList(packageFragmentRoots));
+                return dependencyFilepaths;
+            }
+        } catch (final CoreException e) {
+            // if exception thrown when getting filepaths to source and binary dependencies, assume
+            // there are no dependencies
+        }
 
-		return Arrays.asList();
-	}
+        return Arrays.asList();
+    }
 
-	public List<URL> getBinaryDependencyFilepaths(final List<IPackageFragmentRoot> packageFragmentRoots) {
-		final ArrayList<URL> dependencyFilepaths = new ArrayList<>();
-		for (final IPackageFragmentRoot root : packageFragmentRoots) {
-			final URL tempURL = getBinaryDependencyFilepath(root);
-			if (tempURL != null) {
-				dependencyFilepaths.add(tempURL);
-			}
-		}
-		return dependencyFilepaths;
-	}
+    public List<URL> getBinaryDependencyFilepaths(final List<IPackageFragmentRoot> packageFragmentRoots) {
+        final ArrayList<URL> dependencyFilepaths = new ArrayList<>();
+        for (final IPackageFragmentRoot root : packageFragmentRoots) {
+            final URL tempURL = getBinaryDependencyFilepath(root);
+            if (tempURL != null) {
+                dependencyFilepaths.add(tempURL);
+            }
+        }
+        return dependencyFilepaths;
+    }
 
-	public URL getBinaryDependencyFilepath(final IPackageFragmentRoot packageFragmentRoot) {
-		try {
-			if (packageFragmentRoot.getKind() == IPackageFragmentRoot.K_BINARY) {
-				return packageFragmentRoot.getPath().toFile().toURI().toURL();
-			}
-		} catch (final JavaModelException | MalformedURLException e) {
-			/*
-			 * If root does not exist or exception occurs while accessing
-			 * resource, do not add its filepath to the list of binary
-			 * dependency filepaths
-			 */
-		}
-		return null;
-	}
+    public URL getBinaryDependencyFilepath(final IPackageFragmentRoot packageFragmentRoot) {
+        try {
+            if (packageFragmentRoot.getKind() == IPackageFragmentRoot.K_BINARY) {
+                return packageFragmentRoot.getPath().toFile().toURI().toURL();
+            }
+        } catch (final JavaModelException | MalformedURLException e) {
+            /*
+             * If root does not exist or exception occurs while accessing
+             * resource, do not add its filepath to the list of binary
+             * dependency filepaths
+             */
+        }
+        return null;
+    }
 
-	public boolean isProjectSupported(final String projectName) {
-		final IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(projectName);
-		return this.isSupportedProject(project);
-	}
+    public boolean isProjectSupported(final String projectName) {
+        final IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(projectName);
+        return this.isSupportedProject(project);
+    }
 
-	public boolean isSupportedProject(final IProject project){
-		try {
-			if(project.hasNature(JavaCore.NATURE_ID)){
-				for (final String nature : SUPPORTED_NATURES) {
-					if (project.hasNature(nature)) {
-						return true;
-					}
-				}
-			}
-		} catch (final CoreException e) {
-			// CoreException means project is closed/ doesn't exist
-		}
-		return false;
-	}
+    public boolean isSupportedProject(final IProject project){
+        try {
+            if(project.hasNature(JavaCore.NATURE_ID)){
+                for (final String nature : SUPPORTED_NATURES) {
+                    if (project.hasNature(nature)) {
+                        return true;
+                    }
+                }
+            }
+        } catch (final CoreException e) {
+            // CoreException means project is closed/ doesn't exist
+        }
+        return false;
+    }
 
 }

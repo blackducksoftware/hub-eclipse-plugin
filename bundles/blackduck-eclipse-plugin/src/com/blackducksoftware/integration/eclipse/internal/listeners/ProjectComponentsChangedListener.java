@@ -35,61 +35,61 @@ import org.eclipse.jdt.core.IPackageFragmentRoot;
 
 import com.blackducksoftware.integration.eclipse.services.ComponentInformationService;
 import com.blackducksoftware.integration.eclipse.services.inspector.ComponentInspectorService;
-import com.blackducksoftware.integration.hub.buildtool.Gav;
+import com.blackducksoftware.integration.hub.bdio.simple.model.externalid.MavenExternalId;
 
 public class ProjectComponentsChangedListener implements IElementChangedListener {
-	private final ComponentInspectorService inspectorService;
+    private final ComponentInspectorService inspectorService;
 
-	private final ComponentInformationService componentInformationService;
+    private final ComponentInformationService componentInformationService;
 
-	public ProjectComponentsChangedListener(final ComponentInspectorService inspectorService, final ComponentInformationService componentInformationService) {
-		this.inspectorService = inspectorService;
-		this.componentInformationService = componentInformationService;
-	}
+    public ProjectComponentsChangedListener(final ComponentInspectorService inspectorService, final ComponentInformationService componentInformationService) {
+        this.inspectorService = inspectorService;
+        this.componentInformationService = componentInformationService;
+    }
 
-	@Override
-	public void elementChanged(final ElementChangedEvent event) {
-		this.searchForChangedComponents(event.getDelta());
-	}
+    @Override
+    public void elementChanged(final ElementChangedEvent event) {
+        this.searchForChangedComponents(event.getDelta());
+    }
 
-	public void searchForChangedComponents(final IJavaElementDelta delta) {
-		final IJavaElement el = delta.getElement();
-		switch (el.getElementType()) {
-		case IJavaElement.JAVA_MODEL:
-			for (final IJavaElementDelta childDelta : delta.getAffectedChildren()) {
-				this.searchForChangedComponents(childDelta);
-			}
-			break;
+    public void searchForChangedComponents(final IJavaElementDelta delta) {
+        final IJavaElement el = delta.getElement();
+        switch (el.getElementType()) {
+        case IJavaElement.JAVA_MODEL:
+            for (final IJavaElementDelta childDelta : delta.getAffectedChildren()) {
+                this.searchForChangedComponents(childDelta);
+            }
+            break;
 
-		case IJavaElement.JAVA_PROJECT:
-			if (0 != (delta.getFlags() & (IJavaElementDelta.F_CLASSPATH_CHANGED | IJavaElementDelta.F_RESOLVED_CLASSPATH_CHANGED))) {
-				for (final IJavaElementDelta childDelta : delta.getAffectedChildren()) {
-					this.searchForChangedComponents(childDelta);
-				}
-			}
-			break;
+        case IJavaElement.JAVA_PROJECT:
+            if (0 != (delta.getFlags() & (IJavaElementDelta.F_CLASSPATH_CHANGED | IJavaElementDelta.F_RESOLVED_CLASSPATH_CHANGED))) {
+                for (final IJavaElementDelta childDelta : delta.getAffectedChildren()) {
+                    this.searchForChangedComponents(childDelta);
+                }
+            }
+            break;
 
-		case IJavaElement.PACKAGE_FRAGMENT_ROOT:
-			try{
-				final IPackageFragmentRoot packageFragmentRoot = (IPackageFragmentRoot) el;
-				packageFragmentRoot.getElementName();
-				final String projectName = el.getJavaProject().getProject().getDescription().getName();
-				final URL componentUrl = el.getPath().toFile().toURI().toURL();
-				final Gav componentGav = componentInformationService.constructGavFromUrl(componentUrl);
-				if ((delta.getFlags() & IJavaElementDelta.F_REMOVED_FROM_CLASSPATH) != 0 || delta.getKind() == IJavaElementDelta.REMOVED) {
-					inspectorService.removeComponentFromProject(projectName, componentGav);
-				}
-				if ((delta.getFlags() & IJavaElementDelta.F_ADDED_TO_CLASSPATH) != 0 || delta.getKind() == IJavaElementDelta.ADDED) {
-					inspectorService.addComponentToProject(projectName, componentGav);
-				}
-			}catch(final MalformedURLException | NullPointerException | CoreException e){
-				//Component failed to be added or removed
-			}
-			break;
+        case IJavaElement.PACKAGE_FRAGMENT_ROOT:
+            try{
+                final IPackageFragmentRoot packageFragmentRoot = (IPackageFragmentRoot) el;
+                packageFragmentRoot.getElementName();
+                final String projectName = el.getJavaProject().getProject().getDescription().getName();
+                final URL componentUrl = el.getPath().toFile().toURI().toURL();
+                final MavenExternalId componentExternalId = componentInformationService.constructMavenExternalIdFromUrl(componentUrl);
+                if ((delta.getFlags() & IJavaElementDelta.F_REMOVED_FROM_CLASSPATH) != 0 || delta.getKind() == IJavaElementDelta.REMOVED) {
+                    inspectorService.removeComponentFromProject(projectName, componentExternalId);
+                }
+                if ((delta.getFlags() & IJavaElementDelta.F_ADDED_TO_CLASSPATH) != 0 || delta.getKind() == IJavaElementDelta.ADDED) {
+                    inspectorService.addComponentToProject(projectName, componentExternalId);
+                }
+            }catch(final MalformedURLException | NullPointerException | CoreException e){
+                //Component failed to be added or removed
+            }
+            break;
 
-		default:
-			break;
-		}
-	}
+        default:
+            break;
+        }
+    }
 
 }

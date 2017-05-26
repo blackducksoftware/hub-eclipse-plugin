@@ -28,27 +28,27 @@ import java.net.URISyntaxException;
 
 import com.blackducksoftware.integration.eclipse.internal.ComponentModel;
 import com.blackducksoftware.integration.exception.IntegrationException;
-import com.blackducksoftware.integration.hub.buildtool.Gav;
+import com.blackducksoftware.integration.hub.bdio.simple.model.externalid.MavenExternalId;
 import com.blackducksoftware.integration.util.TimedLRUCache;
 
 public abstract class AbstractComponentLookupService {
-	protected final TimedLRUCache<Gav, ComponentModel> componentLoadingCache;
+    protected final TimedLRUCache<MavenExternalId, ComponentModel> componentLoadingCache;
 
-	private final int CACHE_CAPACITY = 10000;
+    private final int CACHE_CAPACITY = 10000;
 
-	private final int CACHE_TTL = 3600000;
+    private final int CACHE_TTL = 3600000;
 
-	protected final AbstractConnectionService connectionService;
+    protected final AbstractConnectionService connectionService;
 
-	public AbstractComponentLookupService(final AbstractConnectionService connectionService){
-		this.componentLoadingCache = new TimedLRUCache<>(CACHE_CAPACITY, CACHE_TTL);
-		this.connectionService = connectionService;
-	}
+    public AbstractComponentLookupService(final AbstractConnectionService connectionService){
+        this.componentLoadingCache = new TimedLRUCache<>(CACHE_CAPACITY, CACHE_TTL);
+        this.connectionService = connectionService;
+    }
 
-	public abstract ComponentModel lookupComponent(final Gav gav)  throws IOException, URISyntaxException, IntegrationException;
+    public abstract ComponentModel lookupComponent(final MavenExternalId externalId)  throws IOException, URISyntaxException, IntegrationException;
 
-	public boolean hasActiveConnection(){
-		return connectionService.hasActiveConnection();
-	}
+    public boolean hasActiveConnection(){
+        return connectionService.hasActiveConnection();
+    }
 
 }

@@ -26,31 +26,31 @@ package com.blackducksoftware.integration.eclipse.views.widgets;
 import org.eclipse.swt.widgets.Text;
 
 import com.blackducksoftware.integration.eclipse.internal.ComponentModel;
-import com.blackducksoftware.integration.hub.buildtool.Gav;
+import com.blackducksoftware.integration.hub.bdio.simple.model.externalid.MavenExternalId;
 import com.blackducksoftware.integration.hub.dataservice.license.ComplexLicenseParser;
 
 public class ComponentModelFilter {
-	private final Text filterBox;
+    private final Text filterBox;
 
-	public ComponentModelFilter(final Text filterBox) {
-		this.filterBox = filterBox;
-	}
+    public ComponentModelFilter(final Text filterBox) {
+        this.filterBox = filterBox;
+    }
 
-	public boolean filter(final ComponentModel model) {
-		if (filterBox == null || filterBox.getText().length() == 0) {
-			return true;
-		}
-		final Gav gav = model.getGav();
-		if (gav.toString().contains(filterBox.getText())) {
-			return true;
-		}
-		if (model.getLicenseIsKnown()) {
-			final String license = new ComplexLicenseParser(model.getLicense()).parse();
-			if (license.contains(filterBox.getText())) {
-				return true;
-			}
-		}
-		return false;
-	}
+    public boolean filter(final ComponentModel model) {
+        if (filterBox == null || filterBox.getText().length() == 0) {
+            return true;
+        }
+        final MavenExternalId externalId = model.getExternalId();
+        if (externalId.toString().contains(filterBox.getText())) {
+            return true;
+        }
+        if (model.getLicenseIsKnown()) {
+            final String license = new ComplexLicenseParser(model.getLicense()).parse();
+            if (license.contains(filterBox.getText())) {
+                return true;
+            }
+        }
+        return false;
+    }
 
 }

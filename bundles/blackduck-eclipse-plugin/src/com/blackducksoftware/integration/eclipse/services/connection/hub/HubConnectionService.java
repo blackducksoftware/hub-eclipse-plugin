@@ -46,7 +46,7 @@ import com.blackducksoftware.integration.exception.EncryptionException;
 import com.blackducksoftware.integration.exception.IntegrationException;
 import com.blackducksoftware.integration.hub.api.item.MetaService;
 import com.blackducksoftware.integration.hub.api.nonpublic.HubVersionRequestService;
-import com.blackducksoftware.integration.hub.buildtool.Gav;
+import com.blackducksoftware.integration.hub.bdio.simple.model.externalid.MavenExternalId;
 import com.blackducksoftware.integration.hub.dataservice.component.ComponentDataService;
 import com.blackducksoftware.integration.hub.dataservice.license.LicenseDataService;
 import com.blackducksoftware.integration.hub.dataservice.phonehome.PhoneHomeDataService;
@@ -63,184 +63,184 @@ import com.blackducksoftware.integration.log.IntLogger;
 import com.blackducksoftware.integration.phone.home.enums.ThirdPartyName;
 
 public class HubConnectionService extends AbstractConnectionService {
-	private HubServicesFactory hubServicesFactory;
+    private HubServicesFactory hubServicesFactory;
 
-	private final IntLogger logger;
+    private final IntLogger logger;
 
-	private RestConnection restConnection;
+    private RestConnection restConnection;
 
-	private LicenseDataService licenseDataService;
+    private LicenseDataService licenseDataService;
 
-	private VulnerabilityDataService vulnerabilityDataService;
+    private VulnerabilityDataService vulnerabilityDataService;
 
-	private ComponentDataService componentDataService;
+    private ComponentDataService componentDataService;
 
-	private MetaService metaService;
+    private MetaService metaService;
 
-	private PhoneHomeDataService phoneHomeDataService;
+    private PhoneHomeDataService phoneHomeDataService;
 
-	private HubVersionRequestService hubVersionRequestService;
+    private HubVersionRequestService hubVersionRequestService;
 
-	private final HubPreferencesService hubPreferencesService;
+    private final HubPreferencesService hubPreferencesService;
 
-	private final ComponentInspectorViewService componentInspectorViewService;
+    private final ComponentInspectorViewService componentInspectorViewService;
 
-	public static final String JOB_GENERATE_URL = "Opening component in the Hub...";
+    public static final String JOB_GENERATE_URL = "Opening component in the Hub...";
 
-	public HubConnectionService(final ComponentInspectorViewService componentInspectorViewService){
-		this.logger = new IntBufferedLogger();
-		this.hubPreferencesService = BlackDuckEclipseServicesFactory.getInstance().getHubPreferencesService();
-		this.componentInspectorViewService = componentInspectorViewService;
-		this.reloadConnection();
-	}
+    public HubConnectionService(final ComponentInspectorViewService componentInspectorViewService){
+        this.logger = new IntBufferedLogger();
+        this.hubPreferencesService = BlackDuckEclipseServicesFactory.getInstance().getHubPreferencesService();
+        this.componentInspectorViewService = componentInspectorViewService;
+        this.reloadConnection();
+    }
 
-	private RestConnection getHubConnectionFromPreferences() {
-		final HubServerConfig hubServerConfig = hubPreferencesService.getHubServerConfig();
-		if(hubServerConfig == null){
-			return null;
-		}
-		CredentialsRestConnection connection;
-		try {
-			connection = hubServerConfig.createCredentialsRestConnection(logger);
-			connection.connect();
-		} catch (final IntegrationException e) {
-			return null;
-		}
-		return connection;
-	}
+    private RestConnection getHubConnectionFromPreferences() {
+        final HubServerConfig hubServerConfig = hubPreferencesService.getHubServerConfig();
+        if(hubServerConfig == null){
+            return null;
+        }
+        CredentialsRestConnection connection;
+        try {
+            connection = hubServerConfig.createCredentialsRestConnection(logger);
+            connection.connect();
+        } catch (final IntegrationException e) {
+            return null;
+        }
+        return connection;
+    }
 
-	@Override
-	public void reloadConnection(){
-		this.restConnection = this.getHubConnectionFromPreferences();
-		this.hubServicesFactory = new HubServicesFactory(restConnection);
-		try {
-			this.phoneHome();
-		} catch (final IntegrationException e) {
-			//Do nothing
-		}
-	}
+    @Override
+    public void reloadConnection(){
+        this.restConnection = this.getHubConnectionFromPreferences();
+        this.hubServicesFactory = new HubServicesFactory(restConnection);
+        try {
+            this.phoneHome();
+        } catch (final IntegrationException e) {
+            //Do nothing
+        }
+    }
 
-	public CredentialsRestConnection getCredentialsRestConnection(final HubServerConfig config)
-			throws IllegalArgumentException, EncryptionException, HubIntegrationException {
-		return new CredentialsRestConnection(logger, config.getHubUrl(), config.getGlobalCredentials().getUsername(), config.getGlobalCredentials().getDecryptedPassword(), config.getTimeout());
-	}
+    public CredentialsRestConnection getCredentialsRestConnection(final HubServerConfig config)
+            throws IllegalArgumentException, EncryptionException, HubIntegrationException {
+        return new CredentialsRestConnection(logger, config.getHubUrl(), config.getGlobalCredentials().getUsername(), config.getGlobalCredentials().getDecryptedPassword(), config.getTimeout());
+    }
 
-	public LicenseDataService getLicenseDataService() {
-		if (licenseDataService == null) {
-			licenseDataService = hubServicesFactory.createLicenseDataService();
-		}
-		return licenseDataService;
-	}
+    public LicenseDataService getLicenseDataService() {
+        if (licenseDataService == null) {
+            licenseDataService = hubServicesFactory.createLicenseDataService();
+        }
+        return licenseDataService;
+    }
 
-	public VulnerabilityDataService getVulnerabilityDataService() {
-		if (vulnerabilityDataService == null) {
-			vulnerabilityDataService = hubServicesFactory.createVulnerabilityDataService(logger);
-		}
-		return vulnerabilityDataService;
-	}
+    public VulnerabilityDataService getVulnerabilityDataService() {
+        if (vulnerabilityDataService == null) {
+            vulnerabilityDataService = hubServicesFactory.createVulnerabilityDataService(logger);
+        }
+        return vulnerabilityDataService;
+    }
 
-	public ComponentDataService getComponentDataService() {
-		if (componentDataService == null) {
-			componentDataService = hubServicesFactory.createComponentDataService(logger);
-		}
-		return componentDataService;
-	}
+    public ComponentDataService getComponentDataService() {
+        if (componentDataService == null) {
+            componentDataService = hubServicesFactory.createComponentDataService(logger);
+        }
+        return componentDataService;
+    }
 
-	public MetaService getMetaService() {
-		if (metaService == null) {
-			metaService = hubServicesFactory.createMetaService(logger);
-		}
-		return metaService;
-	}
+    public MetaService getMetaService() {
+        if (metaService == null) {
+            metaService = hubServicesFactory.createMetaService(logger);
+        }
+        return metaService;
+    }
 
-	public PhoneHomeDataService getPhoneHomeDataService() {
-		if (phoneHomeDataService == null) {
-			phoneHomeDataService = hubServicesFactory.createPhoneHomeDataService(logger);
-		}
-		return phoneHomeDataService;
-	}
+    public PhoneHomeDataService getPhoneHomeDataService() {
+        if (phoneHomeDataService == null) {
+            phoneHomeDataService = hubServicesFactory.createPhoneHomeDataService(logger);
+        }
+        return phoneHomeDataService;
+    }
 
-	public HubVersionRequestService getHubVersionRequestService() {
-		if (hubVersionRequestService == null) {
-			hubVersionRequestService = hubServicesFactory.createHubVersionRequestService();
-		}
-		return hubVersionRequestService;
-	}
+    public HubVersionRequestService getHubVersionRequestService() {
+        if (hubVersionRequestService == null) {
+            hubVersionRequestService = hubServicesFactory.createHubVersionRequestService();
+        }
+        return hubVersionRequestService;
+    }
 
-	public RestConnection getRestConnection() {
-		return restConnection;
-	}
+    public RestConnection getRestConnection() {
+        return restConnection;
+    }
 
-	@Override
-	public boolean hasActiveConnection() {
-		return restConnection != null;
-	}
+    @Override
+    public boolean hasActiveConnection() {
+        return restConnection != null;
+    }
 
-	public void phoneHome() throws IntegrationException {
-		if (!this.hasActiveConnection()) {
-			return;
-		}
-		final PhoneHomeDataService phoneHomeService = this.getPhoneHomeDataService();
-		final HubVersionRequestService hubVersionRequestService = hubServicesFactory.createHubVersionRequestService();
-		final String hubVersion = hubVersionRequestService.getHubVersion();
-		final IProduct eclipseProduct = Platform.getProduct();
-		final String eclipseVersion = eclipseProduct.getDefiningBundle().getVersion().toString();
-		final String pluginVersion = Platform.getBundle(BlackDuckEclipseActivator.PLUGIN_ID).getVersion().toString();
-		final HubServerConfig hubServerConfig = hubPreferencesService.getHubServerConfig();
-		final IntegrationInfo integrationInfo = new IntegrationInfo(ThirdPartyName.ECLIPSE, eclipseVersion, pluginVersion);
-		phoneHomeService.phoneHome(hubServerConfig, integrationInfo, hubVersion);
-	}
+    public void phoneHome() throws IntegrationException {
+        if (!this.hasActiveConnection()) {
+            return;
+        }
+        final PhoneHomeDataService phoneHomeService = this.getPhoneHomeDataService();
+        final HubVersionRequestService hubVersionRequestService = hubServicesFactory.createHubVersionRequestService();
+        final String hubVersion = hubVersionRequestService.getHubVersion();
+        final IProduct eclipseProduct = Platform.getProduct();
+        final String eclipseVersion = eclipseProduct.getDefiningBundle().getVersion().toString();
+        final String pluginVersion = Platform.getBundle(BlackDuckEclipseActivator.PLUGIN_ID).getVersion().toString();
+        final HubServerConfig hubServerConfig = hubPreferencesService.getHubServerConfig();
+        final IntegrationInfo integrationInfo = new IntegrationInfo(ThirdPartyName.ECLIPSE, eclipseVersion, pluginVersion);
+        phoneHomeService.phoneHome(hubServerConfig, integrationInfo, hubVersion);
+    }
 
-	@Override
-	public void displayExpandedComponentInformation(final ComponentModel component){
-		final ComponentDataService componentDataService = this.getComponentDataService();
-		final Job job = new UIJob(JOB_GENERATE_URL) {
-			@Override
-			public IStatus runInUIThread(final IProgressMonitor monitor) {
-				final Gav gav = component.getGav();
-				String link;
-				try {
-					final ComponentVersionView selectedComponentVersion = componentDataService.getExactComponentVersionFromComponent(
-							gav.getNamespace(), gav.getGroupId(), gav.getArtifactId(), gav.getVersion());
-					// Final solution, will work once the redirect is set up
-					link = getMetaService().getHref(selectedComponentVersion);
-					// But for now...
-					final String versionID = link.substring(link.lastIndexOf("/") + 1);
-					link = getRestConnection().hubBaseUrl.toString();
-					link = link + "/#versions/id:" + versionID + "/view:overview";
-					final IWebBrowser browser = getBrowser();
-					browser.openURL(new URL(link));
-				} catch (PartInitException | MalformedURLException | IntegrationException e) {
-					componentInspectorViewService.openError("Could not open Component in Hub instance",
-							String.format("Problem opening %1$s %2$s in %3$s, are you connected to your hub instance?",
-									gav.getArtifactId(), gav.getVersion(), getRestConnection().hubBaseUrl), e);
-					return Status.CANCEL_STATUS;
-				}
-				return Status.OK_STATUS;
-			}
+    @Override
+    public void displayExpandedComponentInformation(final ComponentModel component){
+        final ComponentDataService componentDataService = this.getComponentDataService();
+        final Job job = new UIJob(JOB_GENERATE_URL) {
+            @Override
+            public IStatus runInUIThread(final IProgressMonitor monitor) {
+                final MavenExternalId externalId = component.getExternalId();
+                String link;
+                try {
+                    final ComponentVersionView selectedComponentVersion = componentDataService.getExactComponentVersionFromComponent(
+                            externalId.forge.toString().toLowerCase(), externalId.group, externalId.name, externalId.version);
+                    // Final solution, will work once the redirect is set up
+                    link = getMetaService().getHref(selectedComponentVersion);
+                    // But for now...
+                    final String versionID = link.substring(link.lastIndexOf("/") + 1);
+                    link = getRestConnection().hubBaseUrl.toString();
+                    link = link + "/#versions/id:" + versionID + "/view:overview";
+                    final IWebBrowser browser = getBrowser();
+                    browser.openURL(new URL(link));
+                } catch (PartInitException | MalformedURLException | IntegrationException e) {
+                    componentInspectorViewService.openError("Could not open Component in Hub instance",
+                            String.format("Problem opening %1$s %2$s in %3$s, are you connected to your hub instance?",
+                                    externalId.name, externalId.version, getRestConnection().hubBaseUrl), e);
+                    return Status.CANCEL_STATUS;
+                }
+                return Status.OK_STATUS;
+            }
 
-		};
-		job.schedule();
-	}
+        };
+        job.schedule();
+    }
 
-	private IWebBrowser getBrowser() throws PartInitException{
-		if (PlatformUI.getWorkbench().getBrowserSupport().isInternalWebBrowserAvailable()) {
-			return PlatformUI.getWorkbench().getBrowserSupport().createBrowser(BlackDuckEclipseActivator.PLUGIN_ID);
-		} else {
-			return PlatformUI.getWorkbench().getBrowserSupport().getExternalBrowser();
-		}
-	}
+    private IWebBrowser getBrowser() throws PartInitException{
+        if (PlatformUI.getWorkbench().getBrowserSupport().isInternalWebBrowserAvailable()) {
+            return PlatformUI.getWorkbench().getBrowserSupport().createBrowser(BlackDuckEclipseActivator.PLUGIN_ID);
+        } else {
+            return PlatformUI.getWorkbench().getBrowserSupport().getExternalBrowser();
+        }
+    }
 
-	@Override
-	public void shutDown(){
-		try{
-			final IWebBrowser browser = getBrowser();
-			if(browser.getId().equals(BlackDuckEclipseActivator.PLUGIN_ID)){
-				browser.close();
-			}
-		}catch(final Exception e){
-			//TODO: Log correctly
-		}
-	}
+    @Override
+    public void shutDown(){
+        try{
+            final IWebBrowser browser = getBrowser();
+            if(browser.getId().equals(BlackDuckEclipseActivator.PLUGIN_ID)){
+                browser.close();
+            }
+        }catch(final Exception e){
+            //TODO: Log correctly
+        }
+    }
 
 }

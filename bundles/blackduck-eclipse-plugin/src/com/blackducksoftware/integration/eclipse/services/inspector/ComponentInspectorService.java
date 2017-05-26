@@ -35,86 +35,86 @@ import com.blackducksoftware.integration.eclipse.services.BlackDuckEclipseServic
 import com.blackducksoftware.integration.eclipse.services.WorkspaceInformationService;
 import com.blackducksoftware.integration.eclipse.services.connection.free.FreeConnectionService;
 import com.blackducksoftware.integration.eclipse.services.connection.hub.HubConnectionService;
-import com.blackducksoftware.integration.hub.buildtool.Gav;
+import com.blackducksoftware.integration.hub.bdio.simple.model.externalid.MavenExternalId;
 
 public class ComponentInspectorService {
-	private final InspectionJobQueue inspectionQueue;
+    private final InspectionJobQueue inspectionQueue;
 
-	private final HubConnectionService hubConnectionService;
+    private final HubConnectionService hubConnectionService;
 
-	private final FreeConnectionService freeConnectionService;
+    private final FreeConnectionService freeConnectionService;
 
-	private final ComponentInspectorCacheService inspectorCacheService;
+    private final ComponentInspectorCacheService inspectorCacheService;
 
-	private final ComponentInspectorViewService inspectorViewService;
+    private final ComponentInspectorViewService inspectorViewService;
 
-	private final ComponentInspectorPreferencesService inspectorPreferencesService;
+    private final ComponentInspectorPreferencesService inspectorPreferencesService;
 
-	public ComponentInspectorService(final ComponentInspectorViewService inspectorViewService, final HubConnectionService hubConnectionService, final FreeConnectionService freeConnectionService, final ComponentInspectorPreferencesService componentInspectorPreferencesService, final ComponentInspectorCacheService componentInspectorCacheService){
-		final InspectionJobChangeListener inspectionJobChangeListener = new InspectionJobChangeListener(inspectorViewService);
-		this.inspectorPreferencesService = componentInspectorPreferencesService;
-		this.inspectorCacheService = componentInspectorCacheService;
-		this.inspectionQueue = new InspectionJobQueue(inspectionJobChangeListener);
-		this.inspectorViewService = inspectorViewService;
-		this.hubConnectionService = hubConnectionService;
-		this.freeConnectionService = freeConnectionService;
-	}
+    public ComponentInspectorService(final ComponentInspectorViewService inspectorViewService, final HubConnectionService hubConnectionService, final FreeConnectionService freeConnectionService, final ComponentInspectorPreferencesService componentInspectorPreferencesService, final ComponentInspectorCacheService componentInspectorCacheService){
+        final InspectionJobChangeListener inspectionJobChangeListener = new InspectionJobChangeListener(inspectorViewService);
+        this.inspectorPreferencesService = componentInspectorPreferencesService;
+        this.inspectorCacheService = componentInspectorCacheService;
+        this.inspectionQueue = new InspectionJobQueue(inspectionJobChangeListener);
+        this.inspectorViewService = inspectorViewService;
+        this.hubConnectionService = hubConnectionService;
+        this.freeConnectionService = freeConnectionService;
+    }
 
-	public void initializeProjectComponents(final String projectName) {
-		inspectorCacheService.initializeProject(projectName);
-	}
+    public void initializeProjectComponents(final String projectName) {
+        inspectorCacheService.initializeProject(projectName);
+    }
 
-	public boolean addComponentToProject(final String projectName, final Gav gav) {
-		try {
-			inspectorCacheService.addComponentToProject(projectName, gav);
-		} catch (IOException | URISyntaxException e) {
-			return false;
-		}
-		return true;
-	}
+    public boolean addComponentToProject(final String projectName, final MavenExternalId externalId) {
+        try {
+            inspectorCacheService.addComponentToProject(projectName, externalId);
+        } catch (IOException | URISyntaxException e) {
+            return false;
+        }
+        return true;
+    }
 
-	public void removeComponentFromProject(final String projectName, final Gav gav) {
-		inspectorCacheService.removeComponentFromProject(projectName, gav);
-	}
+    public void removeComponentFromProject(final String projectName, final MavenExternalId externalId) {
+        inspectorCacheService.removeComponentFromProject(projectName, externalId);
+    }
 
-	public boolean inspectProject(final String projectName){
-		if ((!hubConnectionService.hasActiveConnection() && !freeConnectionService.hasActiveConnection())
-				|| !inspectorPreferencesService.isProjectMarkedForInspection(projectName)) {
-			return false;
-		}
-		final InspectionJob inspection = new InspectionJob(projectName, this, inspectorPreferencesService);
-		inspectionQueue.enqueueInspection(inspection);
-		return true;
-	}
+    public boolean inspectProject(final String projectName){
+        if ((!hubConnectionService.hasActiveConnection() && !freeConnectionService.hasActiveConnection())
+                || !inspectorPreferencesService.isProjectMarkedForInspection(projectName)) {
+            return false;
+        }
+        final InspectionJob inspection = new InspectionJob(projectName, this, inspectorPreferencesService);
+        inspectionQueue.enqueueInspection(inspection);
+        return true;
+    }
 
-	public void inspectAllProjects(){
-		final WorkspaceInformationService workspaceInformationService = BlackDuckEclipseServicesFactory.getInstance().getWorkspaceInformationService();
-		workspaceInformationService.getSupportedProjectNames().forEach(projectName -> {
-			if(inspectorPreferencesService.isProjectMarkedForInspection(projectName)){
-				inspectProject(projectName);
-			}
-		});
-	}
+    public void inspectAllProjects(){
+        final WorkspaceInformationService workspaceInformationService = BlackDuckEclipseServicesFactory.getInstance().getWorkspaceInformationService();
+        workspaceInformationService.getSupportedProjectNames().forEach(projectName -> {
+            if(inspectorPreferencesService.isProjectMarkedForInspection(projectName)){
+                inspectProject(projectName);
+            }
+        });
+    }
 
-	public boolean isProjectInspectionRunning(final String projectName) {
-		return inspectionQueue.getInspectionIsRunning(projectName);
-	}
+    public boolean isProjectInspectionRunning(final String projectName) {
+        return inspectionQueue.getInspectionIsRunning(projectName);
+    }
 
-	public boolean isProjectInspectionScheduled(final String projectName) {
-		return inspectionQueue.getInspectionIsScheduled(projectName);
-	}
+    public boolean isProjectInspectionScheduled(final String projectName) {
+        return inspectionQueue.getInspectionIsScheduled(projectName);
+    }
 
-	public void shutDown() {
-		inspectionQueue.cancelAll();
-	}
+    public void shutDown() {
+        inspectionQueue.cancelAll();
+    }
 
-	public void removeProject(final String projectName) {
-		inspectorCacheService.removeProject(projectName);
-		inspectorViewService.clearProjectDisplay(projectName);
-	}
+    public void removeProject(final String projectName) {
+        inspectorCacheService.removeProject(projectName);
+        inspectorViewService.clearProjectDisplay(projectName);
+    }
 
-	public List<ComponentModel> getProjectComponents(final String projectName) {
-		return inspectorCacheService.getProjectComponents(projectName);
-	}
+    public List<ComponentModel> getProjectComponents(final String projectName) {
+        return inspectorCacheService.getProjectComponents(projectName);
+    }
 
 }

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<?pde version="3.8"?><target name="blackduck-eclipse-target" sequenceNumber="56">
+<?pde version="3.8"?><target name="blackduck-eclipse-target" sequenceNumber="57">
 <locations>
 <location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="planner" includeSource="true" type="InstallableUnit">
 <unit id="org.eclipse.m2e.feature.feature.group" version="1.7.0.20160603-1933"/>
@@ -25,6 +25,10 @@
 <unit id="org.eclipse.pde.feature.group" version="3.12.3.v20170301-0400"/>
 <unit id="org.eclipse.swtbot.eclipse.feature.group" version="2.5.0.201609021837"/>
 <repository location="http://download.eclipse.org/releases/neon"/>
+</location>
+<location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="planner" includeSource="true" type="InstallableUnit">
+<unit id="org.codehaus.groovy24.feature.feature.group" version="2.9.2.xx-201705221441-e46"/>
+<repository location="http://dist.springsource.org/snapshot/GRECLIPSE/e4.6/"/>
 </location>
 </locations>
 </target>

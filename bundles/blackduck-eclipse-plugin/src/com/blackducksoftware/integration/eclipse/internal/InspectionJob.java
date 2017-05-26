@@ -37,77 +37,77 @@ import com.blackducksoftware.integration.eclipse.services.ComponentInformationSe
 import com.blackducksoftware.integration.eclipse.services.ProjectInformationService;
 import com.blackducksoftware.integration.eclipse.services.inspector.ComponentInspectorPreferencesService;
 import com.blackducksoftware.integration.eclipse.services.inspector.ComponentInspectorService;
-import com.blackducksoftware.integration.hub.buildtool.Gav;
+import com.blackducksoftware.integration.hub.bdio.simple.model.externalid.MavenExternalId;
 
 public class InspectionJob extends Job {
-	public static final String FAMILY = "Black Duck Component Inspection";
+    public static final String FAMILY = "Black Duck Component Inspection";
 
-	public static final String JOB_INSPECT_PROJECT_PREFACE = "Black Duck Component Inspector inspecting ";
+    public static final String JOB_INSPECT_PROJECT_PREFACE = "Black Duck Component Inspector inspecting ";
 
-	private static final int ONE_HUNDRED_PERCENT = 100000;
+    private static final int ONE_HUNDRED_PERCENT = 100000;
 
-	private static final int THIRTY_PERCENT = 30000;
+    private static final int THIRTY_PERCENT = 30000;
 
-	private static final int SEVENTY_PERCENT = 70000;
+    private static final int SEVENTY_PERCENT = 70000;
 
-	private final String projectName;
+    private final String projectName;
 
-	private final ComponentInspectorService componentInspectorService;
+    private final ComponentInspectorService componentInspectorService;
 
-	private final ProjectInformationService projectInformationService;
+    private final ProjectInformationService projectInformationService;
 
-	private final ComponentInformationService componentInformationService;
+    private final ComponentInformationService componentInformationService;
 
-	private final ComponentInspectorPreferencesService componentInspectorPreferencesService;
+    private final ComponentInspectorPreferencesService componentInspectorPreferencesService;
 
-	public InspectionJob(final String projectName, final ComponentInspectorService componentInspectorService, final ComponentInspectorPreferencesService componentInspectorPreferencesService) {
-		super(JOB_INSPECT_PROJECT_PREFACE + projectName);
-		this.projectName = projectName;
-		this.componentInspectorService = componentInspectorService;
-		this.projectInformationService = BlackDuckEclipseServicesFactory.getInstance().getProjectInformationService();
-		this.componentInformationService = BlackDuckEclipseServicesFactory.getInstance().getComponentInformationService();
-		this.componentInspectorPreferencesService = componentInspectorPreferencesService;
-		this.setPriority(Job.BUILD);
-	}
+    public InspectionJob(final String projectName, final ComponentInspectorService componentInspectorService, final ComponentInspectorPreferencesService componentInspectorPreferencesService) {
+        super(JOB_INSPECT_PROJECT_PREFACE + projectName);
+        this.projectName = projectName;
+        this.componentInspectorService = componentInspectorService;
+        this.projectInformationService = BlackDuckEclipseServicesFactory.getInstance().getProjectInformationService();
+        this.componentInformationService = BlackDuckEclipseServicesFactory.getInstance().getComponentInformationService();
+        this.componentInspectorPreferencesService = componentInspectorPreferencesService;
+        this.setPriority(Job.BUILD);
+    }
 
-	public String getProjectName() {
-		return projectName;
-	}
+    public String getProjectName() {
+        return projectName;
+    }
 
-	@Override
-	public boolean belongsTo(final Object family) {
+    @Override
+    public boolean belongsTo(final Object family) {
 
-		return family.equals(FAMILY);
-	}
+        return family.equals(FAMILY);
+    }
 
-	@Override
-	protected IStatus run(final IProgressMonitor monitor) {
-		try {
-			if (!componentInspectorPreferencesService.isProjectMarkedForInspection(projectName)) {
-				return Status.OK_STATUS;
-			}
-			componentInspectorService.initializeProjectComponents(projectName);
-			final SubMonitor subMonitor = SubMonitor.convert(monitor, ONE_HUNDRED_PERCENT);
-			subMonitor.setTaskName("Gathering dependencies");
-			final List<URL> componentUrls = projectInformationService.getProjectComponentUrls(projectName);
-			subMonitor.split(THIRTY_PERCENT).done();
-			for (final URL componentUrl : componentUrls) {
-				subMonitor.setTaskName(String.format("Inspecting %s", componentUrl));
-				final Gav gav = componentInformationService.constructGavFromUrl(componentUrl);
-				if (gav != null) {
-					componentInspectorService.addComponentToProject(projectName, gav);
-					if (componentUrls.size() < SEVENTY_PERCENT) {
-						subMonitor.split(SEVENTY_PERCENT / componentUrls.size()).done();
-					} else {
-						subMonitor.split(SEVENTY_PERCENT).done();
-					}
-				}
-			}
-			return Status.OK_STATUS;
-		} catch (final Exception e) {
-			e.printStackTrace();
-			return Status.CANCEL_STATUS;
-		}
-	}
+    @Override
+    protected IStatus run(final IProgressMonitor monitor) {
+        try {
+            if (!componentInspectorPreferencesService.isProjectMarkedForInspection(projectName)) {
+                return Status.OK_STATUS;
+            }
+            componentInspectorService.initializeProjectComponents(projectName);
+            final SubMonitor subMonitor = SubMonitor.convert(monitor, ONE_HUNDRED_PERCENT);
+            subMonitor.setTaskName("Gathering dependencies");
+            final List<URL> componentUrls = projectInformationService.getProjectComponentUrls(projectName);
+            subMonitor.split(THIRTY_PERCENT).done();
+            for (final URL componentUrl : componentUrls) {
+                subMonitor.setTaskName(String.format("Inspecting %s", componentUrl));
+                final MavenExternalId externalId = componentInformationService.constructMavenExternalIdFromUrl(componentUrl);
+                if (externalId != null) {
+                    componentInspectorService.addComponentToProject(projectName, externalId);
+                    if (componentUrls.size() < SEVENTY_PERCENT) {
+                        subMonitor.split(SEVENTY_PERCENT / componentUrls.size()).done();
+                    } else {
+                        subMonitor.split(SEVENTY_PERCENT).done();
+                    }
+                }
+            }
+            return Status.OK_STATUS;
+        } catch (final Exception e) {
+            e.printStackTrace();
+            return Status.CANCEL_STATUS;
+        }
+    }
 
 }

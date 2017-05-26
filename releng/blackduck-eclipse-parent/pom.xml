@@ -3,9 +3,10 @@
  <parent>
    <groupId>com.blackducksoftware.integration</groupId>
    <artifactId>common-maven-parent</artifactId>
-   <version>2.4.1</version>
+   <version>3.0.0</version>
    <relativePath></relativePath>
  </parent>
+ 
  <groupId>com.blackducksoftware.integration.eclipse</groupId>
  <artifactId>blackduck-eclipse-configuration</artifactId>
  <version>1.0.0-SNAPSHOT</version>
@@ -23,28 +24,33 @@
    <dependency>
      <groupId>com.blackducksoftware.integration</groupId>
      <artifactId>hub-common</artifactId>
-     <version>10.1.0</version>
+     <version>11.0.1</version>
    </dependency>
    <dependency>
      <groupId>com.blackducksoftware.integration</groupId>
      <artifactId>integration-common</artifactId>
-     <version>5.4.0</version>
+     <version>5.7.5</version>
    </dependency>
    <dependency>
      <groupId>com.blackducksoftware.integration</groupId>
      <artifactId>hub-common-rest</artifactId>
-     <version>1.1.0</version>
+     <version>1.2.5</version>
    </dependency>
    <dependency>
-     <groupId>org.apache.servicemix.bundles</groupId>
-     <artifactId>org.apache.servicemix.bundles.okhttp</artifactId>
-	 <version>3.4.2_1</version>
-    </dependency>
-	<dependency>
-	 <groupId>org.apache.servicemix.bundles</groupId>
-	 <artifactId>org.apache.servicemix.bundles.okio</artifactId>
-	 <version>1.9.0_1</version>
-	</dependency>
+     <groupId>com.blackducksoftware.integration</groupId>
+     <artifactId>hub-common-response</artifactId>
+     <version>0.0.9</version>
+   </dependency>
+   <dependency>
+     <groupId>com.blackducksoftware.integration</groupId>
+     <artifactId>phone-home-api</artifactId>
+     <version>1.6.1</version>
+   </dependency>
+   <dependency>
+     <groupId>com.blackducksoftware.integration</groupId>
+     <artifactId>integration-bdio</artifactId>
+     <version>2.0.2</version>
+   </dependency>
  </dependencies>
 
  <build>
@@ -119,23 +125,6 @@
           <configuration>
             <!-- If this isn't skipped, the build deletes the zip file containing the update site -->
             <skip>true</skip>
-          </configuration>
-        </execution>
-      </executions>
-    </plugin>
-    <plugin>
-      <artifactId>maven-dependency-plugin</artifactId>
-      <executions>
-        <execution>
-          <id>copy-dependencies</id>
-          <phase>compile</phase>
-          <goals>
-            <goal>copy-dependencies</goal>
-          </goals>
-          <configuration>
-            <includeScope>compile</includeScope>
-            <useSubDirectoryPerScope>true</useSubDirectoryPerScope>
-            <outputDirectory>${project.build.directory}/libs</outputDirectory>
           </configuration>
         </execution>
       </executions>

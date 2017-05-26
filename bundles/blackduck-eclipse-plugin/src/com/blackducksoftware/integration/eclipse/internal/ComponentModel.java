@@ -23,43 +23,43 @@
  */
 package com.blackducksoftware.integration.eclipse.internal;
 
-import com.blackducksoftware.integration.hub.buildtool.Gav;
+import com.blackducksoftware.integration.hub.bdio.simple.model.externalid.MavenExternalId;
 import com.blackducksoftware.integration.hub.model.view.ComplexLicenseView;
 
 public class ComponentModel {
-	private final Gav gav;
+    private final MavenExternalId gav;
 
-	private final ComplexLicenseView license;
+    private final ComplexLicenseView license;
 
-	private final int[] vulnerabilityCount;
+    private final int[] vulnerabilityCount;
 
-	private final boolean componentIsKnown;
+    private final boolean componentIsKnown;
 
-	public ComponentModel(final Gav gav, final ComplexLicenseView license, final int[] vulnerabilityCount, final boolean componentIsKnown) {
-		this.gav = gav;
-		this.license = license;
-		this.vulnerabilityCount = vulnerabilityCount;
-		this.componentIsKnown = componentIsKnown;
-	}
+    public ComponentModel(final MavenExternalId gav, final ComplexLicenseView license, final int[] vulnerabilityCount, final boolean componentIsKnown) {
+        this.gav = gav;
+        this.license = license;
+        this.vulnerabilityCount = vulnerabilityCount;
+        this.componentIsKnown = componentIsKnown;
+    }
 
-	public Gav getGav() {
-		return gav;
-	}
+    public MavenExternalId getExternalId() {
+        return gav;
+    }
 
-	public ComplexLicenseView getLicense() {
-		return license;
-	}
+    public ComplexLicenseView getLicense() {
+        return license;
+    }
 
-	public int[] getVulnerabilityCount() {
-		return vulnerabilityCount;
-	}
+    public int[] getVulnerabilityCount() {
+        return vulnerabilityCount;
+    }
 
-	public boolean getComponentIsKnown() {
-		return componentIsKnown;
-	}
+    public boolean getComponentIsKnown() {
+        return componentIsKnown;
+    }
 
-	public boolean getLicenseIsKnown() {
-		return license != null;
-	}
+    public boolean getLicenseIsKnown() {
+        return license != null;
+    }
 
 }

@@ -30,7 +30,7 @@ import java.util.List;
 import com.blackducksoftware.integration.eclipse.internal.ComponentModel;
 import com.blackducksoftware.integration.eclipse.services.connection.AbstractComponentLookupService;
 import com.blackducksoftware.integration.exception.IntegrationException;
-import com.blackducksoftware.integration.hub.buildtool.Gav;
+import com.blackducksoftware.integration.hub.bdio.simple.model.externalid.MavenExternalId;
 import com.blackducksoftware.integration.hub.dataservice.license.LicenseDataService;
 import com.blackducksoftware.integration.hub.dataservice.vulnerability.VulnerabilityDataService;
 import com.blackducksoftware.integration.hub.exception.HubIntegrationException;
@@ -39,57 +39,57 @@ import com.blackducksoftware.integration.hub.model.view.ComplexLicenseView;
 import com.blackducksoftware.integration.hub.model.view.VulnerabilityView;
 
 public class HubComponentLookupService extends AbstractComponentLookupService{
-	public HubComponentLookupService(final HubConnectionService connectionService){
-		super(connectionService);
-	}
+    public HubComponentLookupService(final HubConnectionService connectionService){
+        super(connectionService);
+    }
 
-	@Override
-	public ComponentModel lookupComponent(final Gav gav) throws IOException, URISyntaxException, IntegrationException {
-		final LicenseDataService licenseDataService = ((HubConnectionService) connectionService).getLicenseDataService();
-		final VulnerabilityDataService vulnerabilityDataService = ((HubConnectionService) connectionService).getVulnerabilityDataService();
-		ComponentModel component = componentLoadingCache.get(gav);
-		if(component == null){
-			List<VulnerabilityView> vulnerabilities = null;
-			ComplexLicenseView complexLicense = null;
-			try {
-				vulnerabilities = vulnerabilityDataService.getVulnsFromComponentVersion(gav.getNamespace().toLowerCase(), gav.getGroupId(),
-						gav.getArtifactId(), gav.getVersion());
+    @Override
+    public ComponentModel lookupComponent(final MavenExternalId externalId) throws IOException, URISyntaxException, IntegrationException {
+        final LicenseDataService licenseDataService = ((HubConnectionService) connectionService).getLicenseDataService();
+        final VulnerabilityDataService vulnerabilityDataService = ((HubConnectionService) connectionService).getVulnerabilityDataService();
+        ComponentModel component = componentLoadingCache.get(externalId);
+        if(component == null){
+            List<VulnerabilityView> vulnerabilities = null;
+            ComplexLicenseView complexLicense = null;
+            try {
+                vulnerabilities = vulnerabilityDataService.getVulnsFromComponentVersion(externalId.forge.toString().toLowerCase(), externalId.group,
+                        externalId.name, externalId.version);
 
-				complexLicense = licenseDataService.getComplexLicenseItemFromComponent(gav.getNamespace().toLowerCase(), gav.getGroupId(),
-						gav.getArtifactId(), gav.getVersion());
-			} catch (final HubIntegrationException e) {
-				// Do nothing
-			}
-			final int[] vulnerabilitySeverityCount = getVulnerabilitySeverityCount(vulnerabilities);
-			final boolean componentKnown = (vulnerabilities != null);
-			component = new ComponentModel(gav, complexLicense, vulnerabilitySeverityCount, componentKnown);
-		}
-		return component;
-	}
+                complexLicense = licenseDataService.getComplexLicenseItemFromComponent(externalId.forge.toString().toLowerCase(), externalId.group,
+                        externalId.name, externalId.version);
+            } catch (final HubIntegrationException e) {
+                // Do nothing
+            }
+            final int[] vulnerabilitySeverityCount = getVulnerabilitySeverityCount(vulnerabilities);
+            final boolean componentKnown = (vulnerabilities != null);
+            component = new ComponentModel(externalId, complexLicense, vulnerabilitySeverityCount, componentKnown);
+        }
+        return component;
+    }
 
-	public int[] getVulnerabilitySeverityCount(final List<VulnerabilityView> vulnerabilities) {
-		int high = 0;
-		int medium = 0;
-		int low = 0;
-		if (vulnerabilities == null) {
-			return new int[] { 0, 0, 0 };
-		}
-		for (final VulnerabilityView vuln : vulnerabilities) {
-			switch (VulnerabilitySeverityEnum.valueOf(vuln.getSeverity())) {
-			case HIGH:
-				high++;
-				break;
-			case MEDIUM:
-				medium++;
-				break;
-			case LOW:
-				low++;
-				break;
-			default:
-				break;
-			}
-		}
-		return new int[] { high, medium, low };
-	}
+    public int[] getVulnerabilitySeverityCount(final List<VulnerabilityView> vulnerabilities) {
+        int high = 0;
+        int medium = 0;
+        int low = 0;
+        if (vulnerabilities == null) {
+            return new int[] { 0, 0, 0 };
+        }
+        for (final VulnerabilityView vuln : vulnerabilities) {
+            switch (VulnerabilitySeverityEnum.valueOf(vuln.getSeverity())) {
+            case HIGH:
+                high++;
+                break;
+            case MEDIUM:
+                medium++;
+                break;
+            case LOW:
+                low++;
+                break;
+            default:
+                break;
+            }
+        }
+        return new int[] { high, medium, low };
+    }
 
 }
