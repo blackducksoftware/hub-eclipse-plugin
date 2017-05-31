@@ -75,7 +75,7 @@ public class HubComponentLookupService extends AbstractComponentLookupService{
             return new int[] { 0, 0, 0 };
         }
         for (final VulnerabilityView vuln : vulnerabilities) {
-            switch (VulnerabilitySeverityEnum.valueOf(vuln.getSeverity())) {
+            switch (VulnerabilitySeverityEnum.valueOf(vuln.severity)) {
             case HIGH:
                 high++;
                 break;

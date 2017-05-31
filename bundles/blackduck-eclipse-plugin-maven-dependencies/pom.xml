@@ -9,7 +9,45 @@
   </parent>
 
   <artifactId>com.blackducksoftware.integration.eclipse.plugin.maven-dependencies</artifactId>
-  <packaging>bundle</packaging>
+  <packaging>eclipse-plugin</packaging>
+
+  <dependencies>
+    <dependency>
+      <groupId>com.blackducksoftware.integration</groupId>
+      <artifactId>hub-common</artifactId>
+      <version>12.0.0</version>
+    </dependency>
+    <dependency>
+      <groupId>com.blackducksoftware.integration</groupId>
+      <artifactId>integration-common</artifactId>
+      <version>6.0.0</version>
+    </dependency>
+    <dependency>
+      <groupId>com.blackducksoftware.integration</groupId>
+      <artifactId>hub-common-rest</artifactId>
+      <version>2.0.0</version>
+    </dependency>
+    <dependency>
+      <groupId>com.blackducksoftware.integration</groupId>
+      <artifactId>hub-common-reporting</artifactId>
+      <version>2.0.0</version>
+    </dependency>
+    <dependency>
+      <groupId>com.blackducksoftware.integration</groupId>
+      <artifactId>hub-common-response</artifactId>
+      <version>3.0.0</version>
+    </dependency>
+    <dependency>
+      <groupId>com.blackducksoftware.integration</groupId>
+      <artifactId>phone-home-api</artifactId>
+      <version>2.0.0</version>
+    </dependency>
+    <dependency>
+      <groupId>com.blackducksoftware.integration</groupId>
+      <artifactId>integration-bdio</artifactId>
+      <version>4.0.0</version>
+    </dependency>
+  </dependencies>
 
   <build>
     <plugins>
@@ -17,14 +55,42 @@
         <groupId>org.apache.felix</groupId>
         <artifactId>maven-bundle-plugin</artifactId>
         <version>3.3.0</version>
-        <extensions>true</extensions>
+        <executions>
+          <execution>
+            <id>generate-manifest</id>
+            <phase>process-classes</phase>
+            <goals>
+              <goal>manifest</goal>
+            </goals>
+          </execution>
+        </executions>
         <configuration>
+          <supportedProjectTypes>
+            <supportedProjectType>eclipse-plugin</supportedProjectType>
+            <supportedProjectType>jar</supportedProjectType>
+          </supportedProjectTypes>
+          <manifestLocation>META-INF</manifestLocation>
           <instructions>
+            <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
+            <Bundle-Version>${project.version}</Bundle-Version>
             <Export-Package>*</Export-Package>
             <Embed-Dependency>*;scope=compile|runtime;inline=false</Embed-Dependency>
-            <Embed-Transitive>true</Embed-Transitive>
+            <Embed-Directory>target/libs/compile</Embed-Directory>
+            <Embed-StripGroup>true</Embed-StripGroup>
           </instructions>
         </configuration>
+      </plugin>
+      <plugin>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>copy-dependencies</id>
+            <phase>package</phase>
+            <goals>
+              <goal>copy-dependencies</goal>
+            </goals>
+          </execution>
+        </executions>
       </plugin>
     </plugins>
   </build>
