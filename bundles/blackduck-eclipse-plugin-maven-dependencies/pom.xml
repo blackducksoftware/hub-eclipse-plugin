@@ -2,14 +2,10 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <parent>
-    <groupId>com.blackducksoftware.integration.eclipse</groupId>
-    <artifactId>blackduck-eclipse-bundles</artifactId>
-    <version>[0,)</version>
-  </parent>
-
+  <groupId>com.blackducksoftware.integration.eclipse</groupId>
   <artifactId>com.blackducksoftware.integration.eclipse.plugin.maven-dependencies</artifactId>
-  <packaging>eclipse-plugin</packaging>
+  <version>1.0.0-SNAPSHOT</version>
+  <packaging>bundle</packaging>
 
   <dependencies>
     <dependency>
@@ -29,11 +25,6 @@
     </dependency>
     <dependency>
       <groupId>com.blackducksoftware.integration</groupId>
-      <artifactId>hub-common-reporting</artifactId>
-      <version>2.0.0</version>
-    </dependency>
-    <dependency>
-      <groupId>com.blackducksoftware.integration</groupId>
       <artifactId>hub-common-response</artifactId>
       <version>3.0.0</version>
     </dependency>
@@ -41,11 +32,6 @@
       <groupId>com.blackducksoftware.integration</groupId>
       <artifactId>phone-home-api</artifactId>
       <version>2.0.0</version>
-    </dependency>
-    <dependency>
-      <groupId>com.blackducksoftware.integration</groupId>
-      <artifactId>integration-bdio</artifactId>
-      <version>4.0.0</version>
     </dependency>
   </dependencies>
 
@@ -55,28 +41,18 @@
         <groupId>org.apache.felix</groupId>
         <artifactId>maven-bundle-plugin</artifactId>
         <version>3.3.0</version>
-        <executions>
-          <execution>
-            <id>generate-manifest</id>
-            <phase>process-classes</phase>
-            <goals>
-              <goal>manifest</goal>
-            </goals>
-          </execution>
-        </executions>
+        <extensions>true</extensions>
         <configuration>
-          <supportedProjectTypes>
-            <supportedProjectType>eclipse-plugin</supportedProjectType>
-            <supportedProjectType>jar</supportedProjectType>
-          </supportedProjectTypes>
           <manifestLocation>META-INF</manifestLocation>
           <instructions>
             <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
             <Bundle-Version>${project.version}</Bundle-Version>
+            <Embed-Dependency>scope=compile|runtime;inline=false</Embed-Dependency>
+            <Import-Package></Import-Package>
             <Export-Package>*</Export-Package>
-            <Embed-Dependency>*;scope=compile|runtime;inline=false</Embed-Dependency>
-            <Embed-Directory>target/libs/compile</Embed-Directory>
+            <Embed-Transitive>true</Embed-Transitive>
             <Embed-StripGroup>true</Embed-StripGroup>
+            <Embed-Directory>target/dependency</Embed-Directory>
           </instructions>
         </configuration>
       </plugin>

@@ -5,21 +5,15 @@ Bundle-SymbolicName: com.blackducksoftware.integration.eclipse.plugin;singleton:
 Bundle-Version: 1.0.0.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ActivationPolicy: lazy
-Bundle-ClassPath: .,
-    target/dependency/compile/hub-common-12.0.0.jar,
-    target/dependency/compile/integration-common-6.0.0.jar,
-    target/dependency/compile/hub-common-rest-2.0.0.jar,
-    target/dependency/compile/hub-common-reporting-2.0.0.jar,
-    target/dependency/compile/hub-common-response-3.0.0.jar,
-    target/dependency/compile/phone-home-api-2.0.0.jar,
-    target/dependency/compile/integration-bdio-4.0.0.jar
+Bundle-ClassPath: .
 Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.core.resources,
  org.eclipse.jdt.core,
  org.eclipse.ui.workbench,
  org.eclipse.ui,
  org.eclipse.ui.ide,
- org.apache.commons.lang3
+ org.apache.commons.lang3,
+ com.blackducksoftware.integration.eclipse.plugin.maven-dependencies
 Bundle-Activator: com.blackducksoftware.integration.eclipse.BlackDuckEclipseActivator
 Export-Package: com.blackducksoftware.integration.eclipse,
  com.blackducksoftware.integration.eclipse.contextmenu.handlers,
