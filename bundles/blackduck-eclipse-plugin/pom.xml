@@ -4,13 +4,13 @@
 
   <parent>
     <groupId>com.blackducksoftware.integration.eclipse</groupId>
-    <artifactId>blackduck-eclipse-releng</artifactId>
+    <artifactId>blackduck-eclipse-bundles</artifactId>
     <version>[0,)</version>
   </parent>
 
-  <artifactId>blackduck-eclipse-target</artifactId>
-  <packaging>eclipse-target-definition</packaging>
-  
+  <artifactId>com.blackducksoftware.integration.eclipse.plugin</artifactId>
+  <packaging>eclipse-plugin</packaging>
+
   <dependencies>
     <dependency>
       <groupId>com.blackducksoftware.integration.eclipse</groupId>

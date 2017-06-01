@@ -4,12 +4,12 @@
 
   <parent>
     <groupId>com.blackducksoftware.integration.eclipse</groupId>
-    <artifactId>blackduck-eclipse-releng</artifactId>
+    <artifactId>blackduck-eclipse-tests</artifactId>
     <version>[0,)</version>
   </parent>
 
-  <artifactId>blackduck-eclipse-target</artifactId>
-  <packaging>eclipse-target-definition</packaging>
+  <artifactId>blackduck-eclipse-unit-tests</artifactId>
+  <packaging>eclipse-test-plugin</packaging>
   
   <dependencies>
     <dependency>

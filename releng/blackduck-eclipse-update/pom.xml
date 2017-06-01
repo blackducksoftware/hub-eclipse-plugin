@@ -10,6 +10,14 @@
 
   <artifactId>blackduck-eclipse-update</artifactId>
   <packaging>eclipse-repository</packaging>
+  
+  <dependencies>
+    <dependency>
+      <groupId>com.blackducksoftware.integration.eclipse</groupId>
+      <artifactId>com.blackducksoftware.integration.eclipse.plugin.maven-dependencies</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+  </dependencies>
 
   <build>
     <plugins>

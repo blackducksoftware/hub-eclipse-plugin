@@ -10,6 +10,14 @@
 
   <artifactId>blackduck-eclipse-integration-tests</artifactId>
   <packaging>eclipse-test-plugin</packaging>
+  
+  <dependencies>
+    <dependency>
+      <groupId>com.blackducksoftware.integration.eclipse</groupId>
+      <artifactId>com.blackducksoftware.integration.eclipse.plugin.maven-dependencies</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+  </dependencies>
 
   <build>
     <sourceDirectory>src</sourceDirectory>
