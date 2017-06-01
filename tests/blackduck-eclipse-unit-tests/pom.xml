@@ -10,7 +10,7 @@
 
   <artifactId>blackduck-eclipse-unit-tests</artifactId>
   <packaging>eclipse-test-plugin</packaging>
-  
+
   <dependencies>
     <dependency>
       <groupId>com.blackducksoftware.integration.eclipse</groupId>

@@ -5,12 +5,12 @@
   <parent>
     <groupId>com.blackducksoftware.integration.eclipse</groupId>
     <artifactId>blackduck-eclipse-tests</artifactId>
-    <version>[0,)</version>
+    <version>1.0.0-SNAPSHOT</version>
   </parent>
 
   <artifactId>blackduck-eclipse-integration-tests</artifactId>
   <packaging>eclipse-test-plugin</packaging>
-  
+
   <dependencies>
     <dependency>
       <groupId>com.blackducksoftware.integration.eclipse</groupId>
