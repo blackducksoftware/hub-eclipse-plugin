@@ -17,6 +17,11 @@
       <artifactId>com.blackducksoftware.integration.eclipse.plugin.maven-dependencies</artifactId>
       <version>${project.version}</version>
     </dependency>
+    <dependency>
+      <groupId>com.blackducksoftware.integration.eclipse</groupId>
+      <artifactId>com.blackducksoftware.integration.eclipse.plugin</artifactId>
+      <version>${project.version}</version>
+    </dependency>
   </dependencies>
 
   <build>
@@ -32,6 +37,25 @@
           <useUIThread>false</useUIThread>
           <product>org.eclipse.sdk.ide</product>
           <application>org.eclipse.ui.ide.workbench</application>
+          <dependencies>
+            <!-- needed for SWTBot -->
+            <dependency>
+              <artifactId>org.eclipse.sdk.feature.group</artifactId>
+              <type>p2-installable-unit</type>
+            </dependency>
+            <dependency>
+              <artifactId>org.eclipse.m2e.feature</artifactId>
+              <type>p2-installable-unit</type>
+            </dependency>
+            <dependency>
+              <artifactId>org.eclipse.m2e.logback.feature</artifactId>
+              <type>p2-installable-unit</type>
+            </dependency>
+            <dependency>
+              <artifactId>org.eclipse.buildship</artifactId>
+              <type>p2-installable-unit</type>
+            </dependency>
+          </dependencies>
         </configuration>
       </plugin>
     </plugins>
