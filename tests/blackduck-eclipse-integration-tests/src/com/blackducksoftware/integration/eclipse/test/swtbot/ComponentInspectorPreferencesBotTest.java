@@ -40,6 +40,8 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import com.blackducksoftware.integration.eclipse.services.BlackDuckEclipseServicesFactory;
+import com.blackducksoftware.integration.eclipse.services.inspector.ComponentInspectorPreferencesService;
 import com.blackducksoftware.integration.eclipse.test.TestConstants;
 import com.blackducksoftware.integration.eclipse.test.swtbot.utils.BlackDuckBotUtils;
 
@@ -47,8 +49,11 @@ import com.blackducksoftware.integration.eclipse.test.swtbot.utils.BlackDuckBotU
 public class ComponentInspectorPreferencesBotTest {
     private static BlackDuckBotUtils botUtils;
 
+    private static ComponentInspectorPreferencesService componentInspectorPreferencesService;
+
     @BeforeClass
     public static void setUpWorkspace() {
+        componentInspectorPreferencesService = BlackDuckEclipseServicesFactory.getInstance().getComponentInspectorPreferencesService();
         botUtils = new BlackDuckBotUtils();
         botUtils.closeWelcomeView();
         botUtils.preferences().openHubPreferencesFromEclipseMenu();
@@ -63,11 +68,12 @@ public class ComponentInspectorPreferencesBotTest {
         botUtils.setSWTBotTimeoutShort();
         try {
             botUtils.bot().shell("Preferences").close();
-        } catch (WidgetNotFoundException e) {
+        } catch (final WidgetNotFoundException e) {
             // Do nothing, because shell is closed
         }
         botUtils.setSWTBotTimeoutDefault();
         botUtils.workbench().deleteProjectFromDisk(TestConstants.TEST_MAVEN_ARTIFACT);
+        componentInspectorPreferencesService.removeProject(TestConstants.TEST_MAVEN_ARTIFACT);
     }
 
     @Test

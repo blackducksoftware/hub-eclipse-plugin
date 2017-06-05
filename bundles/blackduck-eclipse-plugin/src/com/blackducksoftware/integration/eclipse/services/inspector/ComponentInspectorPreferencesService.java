@@ -26,42 +26,55 @@ package com.blackducksoftware.integration.eclipse.services.inspector;
 import com.blackducksoftware.integration.eclipse.services.BlackDuckPreferencesService;
 
 public class ComponentInspectorPreferencesService {
-	public static final String INSPECT_BY_DEFAULT = "inspectNewProjectsByDefault";
+    public static final String INSPECT_BY_DEFAULT = "inspectNewProjectsByDefault";
 
-	private final BlackDuckPreferencesService blackDuckPreferencesService;
+    private final BlackDuckPreferencesService blackDuckPreferencesService;
 
-	public ComponentInspectorPreferencesService(final BlackDuckPreferencesService blackDuckPreferencesService){
-		this.blackDuckPreferencesService = blackDuckPreferencesService;
-		blackDuckPreferencesService.setPreferenceDefault(INSPECT_BY_DEFAULT, "true");
-	}
+    public ComponentInspectorPreferencesService(final BlackDuckPreferencesService blackDuckPreferencesService){
+        this.blackDuckPreferencesService = blackDuckPreferencesService;
+        blackDuckPreferencesService.setPreferenceDefault(INSPECT_BY_DEFAULT, "true");
+    }
 
-	public boolean isProjectMarkedForInspection(final String projectName) {
-		final String projectActivated = blackDuckPreferencesService.getPreference(projectName);
-		if(projectActivated.equals("")){
-			return false;
-		}
-		return Boolean.parseBoolean(projectActivated);
-	}
+    public boolean isProjectMarkedForInspection(final String projectName) {
+        final String projectActivated = blackDuckPreferencesService.getPreference(projectName);
+        if(projectActivated.equals("")){
+            return false;
+        }
+        return Boolean.parseBoolean(projectActivated);
+    }
 
-	public String getInspectByDefault(){
-		return blackDuckPreferencesService.getPreference(INSPECT_BY_DEFAULT);
-	}
+    public boolean projectExists(final String projectName){
+        final String projectExists = blackDuckPreferencesService.getPreference(projectName);
+        return !projectExists.equals("");
+    }
 
-	public void activateProject(final String projectName) {
-		blackDuckPreferencesService.savePreference(projectName, "true");
-	}
+    public String getInspectByDefault(){
+        return blackDuckPreferencesService.getPreference(INSPECT_BY_DEFAULT);
+    }
 
-	public void deactivateProject(final String projectName) {
-		blackDuckPreferencesService.savePreference(projectName, "false");
-	}
+    public void activateProject(final String projectName) {
+        blackDuckPreferencesService.savePreference(projectName, "true");
+    }
 
-	public void removeProject(final String projectName) {
-		blackDuckPreferencesService.removePreference(projectName);
-	}
+    public void deactivateProject(final String projectName) {
+        blackDuckPreferencesService.savePreference(projectName, "false");
+    }
 
-	public void addProject(final String projectName){
-		final String initialValue = blackDuckPreferencesService.getPreference(INSPECT_BY_DEFAULT);
-		blackDuckPreferencesService.savePreference(projectName, initialValue);
-	}
+    public void removeProject(final String projectName) {
+        blackDuckPreferencesService.removePreference(projectName);
+    }
+
+    public void addProject(final String projectName){
+        final String initialValue = blackDuckPreferencesService.getPreference(INSPECT_BY_DEFAULT);
+        blackDuckPreferencesService.savePreference(projectName, initialValue);
+    }
+
+    public void saveInspectByDefault(final String value){
+        blackDuckPreferencesService.savePreference(INSPECT_BY_DEFAULT, value);
+    }
+
+    public void setProjectActivation(final String projectName, final String value){
+        blackDuckPreferencesService.savePreference(projectName, value);
+    }
 
 }

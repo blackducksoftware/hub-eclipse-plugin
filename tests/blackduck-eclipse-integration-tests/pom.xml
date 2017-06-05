@@ -44,15 +44,15 @@
               <type>p2-installable-unit</type>
             </dependency>
             <dependency>
-              <artifactId>org.eclipse.m2e.feature</artifactId>
+              <artifactId>org.eclipse.m2e.feature.feature.group</artifactId>
               <type>p2-installable-unit</type>
             </dependency>
             <dependency>
-              <artifactId>org.eclipse.m2e.logback.feature</artifactId>
+              <artifactId>org.eclipse.m2e.logback.feature.feature.group</artifactId>
               <type>p2-installable-unit</type>
             </dependency>
             <dependency>
-              <artifactId>org.eclipse.buildship</artifactId>
+              <artifactId>org.eclipse.buildship.feature.group</artifactId>
               <type>p2-installable-unit</type>
             </dependency>
           </dependencies>

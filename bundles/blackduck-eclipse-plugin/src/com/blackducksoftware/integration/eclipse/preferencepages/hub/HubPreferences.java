@@ -51,262 +51,268 @@ import com.blackducksoftware.integration.eclipse.BlackDuckEclipseActivator;
 import com.blackducksoftware.integration.eclipse.services.BlackDuckEclipseServicesFactory;
 import com.blackducksoftware.integration.eclipse.services.connection.hub.HubPreferencesService;
 import com.blackducksoftware.integration.eclipse.services.inspector.ComponentInspectorViewService;
+import com.blackducksoftware.integration.exception.IntegrationException;
 import com.blackducksoftware.integration.hub.builder.HubServerConfigBuilder;
 import com.blackducksoftware.integration.hub.exception.HubIntegrationException;
+import com.blackducksoftware.integration.hub.global.HubServerConfig;
+import com.blackducksoftware.integration.hub.rest.CredentialsRestConnection;
+import com.blackducksoftware.integration.log.IntBufferedLogger;
 
 public class HubPreferences extends PreferencePage implements IWorkbenchPreferencePage {
-	public static final String PREFERENCE_PAGE_ID = "com.blackducksoftware.integration.eclipse.preferencepages.HubPreferences";
+    public static final String PREFERENCE_PAGE_ID = "com.blackducksoftware.integration.eclipse.preferencepages.HubPreferences";
 
-	public static final String TEST_HUB_CREDENTIALS_TEXT = "Test Connection";
+    public static final String TEST_HUB_CREDENTIALS_TEXT = "Test Connection";
 
-	public static final String LOGIN_SUCCESS_MESSAGE = "Connection successful!";
+    public static final String LOGIN_SUCCESS_MESSAGE = "Connection successful!";
 
-	public static final String HUB_USERNAME_LABEL = "Username";
+    public static final String HUB_USERNAME_LABEL = "Username";
 
-	public static final String HUB_PASSWORD_LABEL = "Password";
+    public static final String HUB_PASSWORD_LABEL = "Password";
 
-	public static final String HUB_URL_LABEL = "Instance URL";
+    public static final String HUB_URL_LABEL = "Instance URL";
 
-	public static final String HUB_TIMEOUT_LABEL = "Timeout in Seconds";
+    public static final String HUB_TIMEOUT_LABEL = "Timeout in Seconds";
 
-	public static final String PROXY_USERNAME_LABEL = "Proxy Username";
+    public static final String PROXY_USERNAME_LABEL = "Proxy Username";
 
-	public static final String PROXY_PASSWORD_LABEL = "Proxy Password";
+    public static final String PROXY_PASSWORD_LABEL = "Proxy Password";
 
-	public static final String PROXY_HOST_LABEL = "Proxy Host";
+    public static final String PROXY_HOST_LABEL = "Proxy Host";
 
-	public static final String PROXY_PORT_LABEL = "Proxy Port";
+    public static final String PROXY_PORT_LABEL = "Proxy Port";
 
-	private HubPreferencesService hubPreferencesService;
+    private HubPreferencesService hubPreferencesService;
 
-	private StringFieldEditor hubUsernameField;
+    private StringFieldEditor hubUsernameField;
 
-	private StringFieldEditor hubUrlField;
+    private StringFieldEditor hubUrlField;
 
-	private StringFieldEditor hubTimeoutField;
+    private StringFieldEditor hubTimeoutField;
 
-	private StringFieldEditor proxyHostField;
+    private StringFieldEditor proxyHostField;
 
-	private StringFieldEditor proxyPortField;
+    private StringFieldEditor proxyPortField;
 
-	private StringFieldEditor proxyUsernameField;
+    private StringFieldEditor proxyUsernameField;
 
-	private Text hubPasswordField;
+    private Text hubPasswordField;
 
-	private Text proxyPasswordField;
+    private Text proxyPasswordField;
 
-	private Button testHubCredentials;
+    private Button testHubCredentials;
 
-	private Text connectionMessageText;
+    private Text connectionMessageText;
 
-	private final int NUM_COLUMNS = 2;
+    private final int NUM_COLUMNS = 2;
 
-	private static final String INTEGER_FIELD_EDITOR_ERROR_STRING = "IntegerFieldEditor.errorMessage";
+    private static final String INTEGER_FIELD_EDITOR_ERROR_STRING = "IntegerFieldEditor.errorMessage";
 
-	private Set<String> hasChanges;
+    private Set<String> hasChanges;
 
-	@Override
-	public void createControl(final Composite parent){
-		super.createControl(parent);
-		this.getApplyButton().setEnabled(false);
-	}
+    @Override
+    public void createControl(final Composite parent){
+        super.createControl(parent);
+        this.getApplyButton().setEnabled(false);
+    }
 
-	@Override
-	public void init(final IWorkbench workbench) {
-		hubPreferencesService = BlackDuckEclipseServicesFactory.getInstance().getHubPreferencesService();
-		this.setPreferenceStore(BlackDuckEclipseActivator.getDefault().getPreferenceStore());
-		this.noDefaultButton();
-	}
+    @Override
+    public void init(final IWorkbench workbench) {
+        hubPreferencesService = BlackDuckEclipseServicesFactory.getInstance().getHubPreferencesService();
+        this.setPreferenceStore(BlackDuckEclipseActivator.getDefault().getPreferenceStore());
+        this.noDefaultButton();
+    }
 
-	@Override
-	protected Control createContents(final Composite parent) {
-		hasChanges = new HashSet<>();
-		final Composite authComposite = new Composite(parent, SWT.LEFT);
-		final GridLayout authCompositeLayout = new GridLayout();
-		authCompositeLayout.numColumns = NUM_COLUMNS;
-		authComposite.setLayout(authCompositeLayout);
-		authComposite.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.HORIZONTAL_ALIGN_BEGINNING));
-		authComposite.setFont(parent.getFont());
-		hubUsernameField = createStringField(HubPreferencesService.HUB_USERNAME, HUB_USERNAME_LABEL, authComposite, false);
-		hubPasswordField = createPasswordField(HubPreferencesService.HUB_PASSWORD, HUB_PASSWORD_LABEL, authComposite);
-		hubUrlField = createStringField(HubPreferencesService.HUB_URL, HUB_URL_LABEL, authComposite, false);
-		hubTimeoutField = createStringField(HubPreferencesService.HUB_TIMEOUT, HUB_TIMEOUT_LABEL, authComposite, true);
-		proxyUsernameField = createStringField(HubPreferencesService.PROXY_USERNAME, PROXY_USERNAME_LABEL, authComposite, false);
-		proxyPasswordField = createPasswordField(HubPreferencesService.PROXY_PASSWORD, PROXY_PASSWORD_LABEL, authComposite);
-		proxyHostField = createStringField(HubPreferencesService.PROXY_HOST, PROXY_HOST_LABEL, authComposite, false);
-		proxyPortField = createStringField(HubPreferencesService.PROXY_PORT, PROXY_PORT_LABEL, authComposite, true);
-		final Composite connectionMessageComposite = new Composite(parent, SWT.LEFT);
-		final GridLayout connectionMessageCompositeLayout = new GridLayout();
-		connectionMessageCompositeLayout.numColumns = 1;
-		connectionMessageComposite.setLayout(connectionMessageCompositeLayout);
-		connectionMessageComposite.setLayoutData(new GridData(GridData.FILL_BOTH | GridData.BEGINNING));
-		final GridData textData = new GridData(GridData.FILL_BOTH);
-		connectionMessageText = new Text(connectionMessageComposite, SWT.READ_ONLY | SWT.MULTI | SWT.WRAP);
-		connectionMessageText.setBackground(connectionMessageText.getDisplay().getSystemColor(SWT.COLOR_WIDGET_BACKGROUND));
-		connectionMessageText.setLayoutData(textData);
-		return parent;
-	}
+    @Override
+    protected Control createContents(final Composite parent) {
+        hasChanges = new HashSet<>();
+        final Composite authComposite = new Composite(parent, SWT.LEFT);
+        final GridLayout authCompositeLayout = new GridLayout();
+        authCompositeLayout.numColumns = NUM_COLUMNS;
+        authComposite.setLayout(authCompositeLayout);
+        authComposite.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.HORIZONTAL_ALIGN_BEGINNING));
+        authComposite.setFont(parent.getFont());
+        hubUsernameField = createStringField(HubPreferencesService.HUB_USERNAME, HUB_USERNAME_LABEL, authComposite, false);
+        hubPasswordField = createPasswordField(HubPreferencesService.HUB_PASSWORD, HUB_PASSWORD_LABEL, authComposite);
+        hubUrlField = createStringField(HubPreferencesService.HUB_URL, HUB_URL_LABEL, authComposite, false);
+        hubTimeoutField = createStringField(HubPreferencesService.HUB_TIMEOUT, HUB_TIMEOUT_LABEL, authComposite, true);
+        proxyUsernameField = createStringField(HubPreferencesService.PROXY_USERNAME, PROXY_USERNAME_LABEL, authComposite, false);
+        proxyPasswordField = createPasswordField(HubPreferencesService.PROXY_PASSWORD, PROXY_PASSWORD_LABEL, authComposite);
+        proxyHostField = createStringField(HubPreferencesService.PROXY_HOST, PROXY_HOST_LABEL, authComposite, false);
+        proxyPortField = createStringField(HubPreferencesService.PROXY_PORT, PROXY_PORT_LABEL, authComposite, true);
+        final Composite connectionMessageComposite = new Composite(parent, SWT.LEFT);
+        final GridLayout connectionMessageCompositeLayout = new GridLayout();
+        connectionMessageCompositeLayout.numColumns = 1;
+        connectionMessageComposite.setLayout(connectionMessageCompositeLayout);
+        connectionMessageComposite.setLayoutData(new GridData(GridData.FILL_BOTH | GridData.BEGINNING));
+        final GridData textData = new GridData(GridData.FILL_BOTH);
+        connectionMessageText = new Text(connectionMessageComposite, SWT.READ_ONLY | SWT.MULTI | SWT.WRAP);
+        connectionMessageText.setBackground(connectionMessageText.getDisplay().getSystemColor(SWT.COLOR_WIDGET_BACKGROUND));
+        connectionMessageText.setLayoutData(textData);
+        return parent;
+    }
 
-	@Override
-	public void performApply() {
-		try {
-			this.storeValues();
-		} catch (final HubIntegrationException e) {
-		}
-	}
+    @Override
+    public void performApply() {
+        try {
+            this.storeValues();
+        } catch (final HubIntegrationException e) {
+        }
+    }
 
-	@Override
-	public boolean performOk() {
-		if(this.getApplyButton().getEnabled()){
-			this.performApply();
-		}
-		return super.performOk();
-	}
+    @Override
+    public boolean performOk() {
+        if(this.getApplyButton().getEnabled()){
+            this.performApply();
+        }
+        return super.performOk();
+    }
 
-	@Override
-	protected void contributeButtons(final Composite parent) {
-		((GridLayout) parent.getLayout()).numColumns++;
-		testHubCredentials = new Button(parent, SWT.PUSH);
-		testHubCredentials.setText(TEST_HUB_CREDENTIALS_TEXT);
-		testHubCredentials.addSelectionListener(new SelectionListener(){
-			@Override
-			public void widgetDefaultSelected(final SelectionEvent arg0) {
-				attemptToConnect();
-			}
+    @Override
+    protected void contributeButtons(final Composite parent) {
+        ((GridLayout) parent.getLayout()).numColumns++;
+        testHubCredentials = new Button(parent, SWT.PUSH);
+        testHubCredentials.setText(TEST_HUB_CREDENTIALS_TEXT);
+        testHubCredentials.addSelectionListener(new SelectionListener(){
+            @Override
+            public void widgetDefaultSelected(final SelectionEvent arg0) {
+                attemptToConnect();
+            }
 
-			@Override
-			public void widgetSelected(final SelectionEvent arg0) {
-				attemptToConnect();
-			}
-		});
-	}
+            @Override
+            public void widgetSelected(final SelectionEvent arg0) {
+                attemptToConnect();
+            }
+        });
+    }
 
-	private StringFieldEditor createStringField(final String preferenceName, final String label, final Composite composite, final boolean integerValidation) {
-		final StringFieldEditor editor;
-		if (integerValidation) {
-			// String field editor w/ integer validation, we can make this a separate class if we need to.
-			editor = new StringFieldEditor(preferenceName, label, composite) {
-				@Override
-				protected boolean checkState() {
-					this.setErrorMessage(JFaceResources.getString(INTEGER_FIELD_EDITOR_ERROR_STRING));
-					final Text text = this.getTextControl();
-					if (text == null) {
-						return false;
-					}
-					final String intString = text.getText();
-					if (intString.isEmpty()) {
-						this.clearErrorMessage();
-						return true;
-					}
-					try {
-						Integer.valueOf(intString).intValue();
-					} catch (final NumberFormatException nfe) {
-						this.showErrorMessage();
-					}
-					return false;
-				}
-			};
-		} else {
-			editor = new StringFieldEditor(preferenceName, label, composite);
-		}
-		editor.setPage(this);
-		editor.setPreferenceStore(getPreferenceStore());
-		editor.load();
-		editor.fillIntoGrid(composite, NUM_COLUMNS);
-		editor.setPropertyChangeListener(new IPropertyChangeListener(){
-			@Override
-			public void propertyChange(final PropertyChangeEvent event) {
-				if(hubPreferencesService.getPreference(preferenceName).equals(editor.getStringValue())){
-					hasChanges.remove(preferenceName);
-				} else {
-					hasChanges.add(preferenceName);
-				}
-				updateApplyButtonWithChanges();
-			}
-		});
-		return editor;
-	}
+    private StringFieldEditor createStringField(final String preferenceName, final String label, final Composite composite, final boolean integerValidation) {
+        final StringFieldEditor editor;
+        if (integerValidation) {
+            // String field editor w/ integer validation, we can make this a separate class if we need to.
+            editor = new StringFieldEditor(preferenceName, label, composite) {
+                @Override
+                protected boolean checkState() {
+                    this.setErrorMessage(JFaceResources.getString(INTEGER_FIELD_EDITOR_ERROR_STRING));
+                    final Text text = this.getTextControl();
+                    if (text == null) {
+                        return false;
+                    }
+                    final String intString = text.getText();
+                    if (intString.isEmpty()) {
+                        this.clearErrorMessage();
+                        return true;
+                    }
+                    try {
+                        Integer.valueOf(intString).intValue();
+                    } catch (final NumberFormatException nfe) {
+                        this.showErrorMessage();
+                    }
+                    return false;
+                }
+            };
+        } else {
+            editor = new StringFieldEditor(preferenceName, label, composite);
+        }
+        editor.setPage(this);
+        editor.setPreferenceStore(getPreferenceStore());
+        editor.load();
+        editor.fillIntoGrid(composite, NUM_COLUMNS);
+        editor.setPropertyChangeListener(new IPropertyChangeListener(){
+            @Override
+            public void propertyChange(final PropertyChangeEvent event) {
+                if(hubPreferencesService.getPreference(preferenceName).equals(editor.getStringValue())){
+                    hasChanges.remove(preferenceName);
+                } else {
+                    hasChanges.add(preferenceName);
+                }
+                updateApplyButtonWithChanges();
+            }
+        });
+        return editor;
+    }
 
-	private Text createPasswordField(final String preferenceName, final String labelText, final Composite composite) {
-		final Label label = new Label(composite, SWT.WRAP);
-		label.setText(labelText);
-		label.setFont(composite.getFont());
-		final Text passwordField = new Text(composite, SWT.SINGLE | SWT.BORDER | SWT.PASSWORD);
-		String passwordFieldText = "";
-		if(preferenceName.equals(HubPreferencesService.HUB_PASSWORD)){
-			passwordFieldText = hubPreferencesService.getHubPassword();
-		}else if(preferenceName.equals(HubPreferencesService.PROXY_PASSWORD)){
-			passwordFieldText = hubPreferencesService.getHubProxyPassword();
-		}
-		passwordField.setText(passwordFieldText);
-		passwordField.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		passwordField.addModifyListener(new ModifyListener(){
-			@Override
-			public void modifyText(final ModifyEvent e) {
-				if(preferenceName.equals(HubPreferencesService.HUB_PASSWORD)){
-					if(hubPreferencesService.getHubPassword().equals(passwordField.getText())){
-						hasChanges.remove(preferenceName);
-					} else {
-						hasChanges.add(preferenceName);
-					}
-				}else if(preferenceName.equals(HubPreferencesService.PROXY_PASSWORD)){
-					if(hubPreferencesService.getHubProxyPassword().equals(passwordField.getText())){
-						hasChanges.remove(preferenceName);
-					} else {
-						hasChanges.add(preferenceName);
-					}
-				}
-				updateApplyButtonWithChanges();
-			}
-		});
-		return passwordField;
-	}
+    private Text createPasswordField(final String preferenceName, final String labelText, final Composite composite) {
+        final Label label = new Label(composite, SWT.WRAP);
+        label.setText(labelText);
+        label.setFont(composite.getFont());
+        final Text passwordField = new Text(composite, SWT.SINGLE | SWT.BORDER | SWT.PASSWORD);
+        String passwordFieldText = "";
+        if(preferenceName.equals(HubPreferencesService.HUB_PASSWORD)){
+            passwordFieldText = hubPreferencesService.getHubPassword();
+        }else if(preferenceName.equals(HubPreferencesService.PROXY_PASSWORD)){
+            passwordFieldText = hubPreferencesService.getHubProxyPassword();
+        }
+        passwordField.setText(passwordFieldText);
+        passwordField.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+        passwordField.addModifyListener(new ModifyListener(){
+            @Override
+            public void modifyText(final ModifyEvent e) {
+                if(preferenceName.equals(HubPreferencesService.HUB_PASSWORD)){
+                    if(hubPreferencesService.getHubPassword().equals(passwordField.getText())){
+                        hasChanges.remove(preferenceName);
+                    } else {
+                        hasChanges.add(preferenceName);
+                    }
+                }else if(preferenceName.equals(HubPreferencesService.PROXY_PASSWORD)){
+                    if(hubPreferencesService.getHubProxyPassword().equals(passwordField.getText())){
+                        hasChanges.remove(preferenceName);
+                    } else {
+                        hasChanges.add(preferenceName);
+                    }
+                }
+                updateApplyButtonWithChanges();
+            }
+        });
+        return passwordField;
+    }
 
-	private void attemptToConnect() {
-		final HubServerConfigBuilder hubServerConfigBuilder = new HubServerConfigBuilder();
-		hubServerConfigBuilder.setUsername(hubUsernameField.getStringValue());
-		hubServerConfigBuilder.setPassword(hubPasswordField.getText());
-		hubServerConfigBuilder.setHubUrl(hubUrlField.getStringValue());
-		hubServerConfigBuilder.setTimeout(hubTimeoutField.getStringValue());
-		hubServerConfigBuilder.setProxyHost(proxyHostField.getStringValue());
-		hubServerConfigBuilder.setProxyPort(proxyPortField.getStringValue());
-		hubServerConfigBuilder.setProxyUsername(proxyUsernameField.getStringValue());
-		hubServerConfigBuilder.setProxyPassword(proxyPasswordField.getText());
-		String message = LOGIN_SUCCESS_MESSAGE;
-		try{
-			hubServerConfigBuilder.build();
-		}catch(final IllegalStateException | IllegalArgumentException e){
-			message = e.getMessage();
-		}
-		final Display display = Display.getCurrent();
-		if (message.equals(LOGIN_SUCCESS_MESSAGE)) {
-			connectionMessageText.setText(message);
-			connectionMessageText.setForeground(display.getSystemColor(SWT.COLOR_WIDGET_FOREGROUND));
-		} else {
-			connectionMessageText.setText(message);
-			connectionMessageText.setForeground(display.getSystemColor(SWT.COLOR_RED));
-		}
-	}
+    private void attemptToConnect() {
+        final HubServerConfigBuilder hubServerConfigBuilder = new HubServerConfigBuilder();
+        hubServerConfigBuilder.setUsername(hubUsernameField.getStringValue());
+        hubServerConfigBuilder.setPassword(hubPasswordField.getText());
+        hubServerConfigBuilder.setHubUrl(hubUrlField.getStringValue());
+        hubServerConfigBuilder.setTimeout(hubTimeoutField.getStringValue());
+        hubServerConfigBuilder.setProxyHost(proxyHostField.getStringValue());
+        hubServerConfigBuilder.setProxyPort(proxyPortField.getStringValue());
+        hubServerConfigBuilder.setProxyUsername(proxyUsernameField.getStringValue());
+        hubServerConfigBuilder.setProxyPassword(proxyPasswordField.getText());
+        String message = LOGIN_SUCCESS_MESSAGE;
+        try{
+            final HubServerConfig config = hubServerConfigBuilder.build();
+            final CredentialsRestConnection restConnection = config.createCredentialsRestConnection(new IntBufferedLogger());
+            restConnection.connect();
+        }catch(final IntegrationException e ){
+            message = e.getMessage();
+        }
+        final Display display = Display.getCurrent();
+        if (message.equals(LOGIN_SUCCESS_MESSAGE)) {
+            connectionMessageText.setText(message);
+            connectionMessageText.setForeground(display.getSystemColor(SWT.COLOR_WIDGET_FOREGROUND));
+        } else {
+            connectionMessageText.setText(message);
+            connectionMessageText.setForeground(display.getSystemColor(SWT.COLOR_RED));
+        }
+    }
 
-	private void storeValues() throws HubIntegrationException {
-		hasChanges = new HashSet<>();
-		this.updateApplyButtonWithChanges();
-		hubPreferencesService.saveHubUsername(hubUsernameField.getStringValue());
-		hubPreferencesService.saveHubPassword(hubPasswordField.getText());
-		hubPreferencesService.saveHubUrl(hubUrlField.getStringValue());
-		hubPreferencesService.saveHubTimeout(hubTimeoutField.getStringValue());
-		hubPreferencesService.saveHubProxyHost(proxyHostField.getStringValue());
-		hubPreferencesService.saveHubProxyPort(proxyPortField.getStringValue());
-		hubPreferencesService.saveHubProxyUsername(proxyUsernameField.getStringValue());
-		hubPreferencesService.saveHubProxyPassword(proxyPasswordField.getText());
-		final BlackDuckEclipseActivator plugin = BlackDuckEclipseActivator.getDefault();
-		plugin.refreshConnection();
-		final ComponentInspectorViewService inspectorViewService = BlackDuckEclipseServicesFactory.getInstance().getComponentInspectorViewService();
-		inspectorViewService.resetDisplay();
-	}
+    private void storeValues() throws HubIntegrationException {
+        hasChanges = new HashSet<>();
+        this.updateApplyButtonWithChanges();
+        hubPreferencesService.saveHubUsername(hubUsernameField.getStringValue());
+        hubPreferencesService.saveHubPassword(hubPasswordField.getText());
+        hubPreferencesService.saveHubUrl(hubUrlField.getStringValue());
+        hubPreferencesService.saveHubTimeout(hubTimeoutField.getStringValue());
+        hubPreferencesService.saveHubProxyHost(proxyHostField.getStringValue());
+        hubPreferencesService.saveHubProxyPort(proxyPortField.getStringValue());
+        hubPreferencesService.saveHubProxyUsername(proxyUsernameField.getStringValue());
+        hubPreferencesService.saveHubProxyPassword(proxyPasswordField.getText());
+        final BlackDuckEclipseActivator plugin = BlackDuckEclipseActivator.getDefault();
+        plugin.refreshConnection();
+        final ComponentInspectorViewService inspectorViewService = BlackDuckEclipseServicesFactory.getInstance().getComponentInspectorViewService();
+        inspectorViewService.resetDisplay();
+    }
 
-	public void updateApplyButtonWithChanges(){
-		getApplyButton().setEnabled(!hasChanges.isEmpty());
-	}
+    public void updateApplyButtonWithChanges(){
+        getApplyButton().setEnabled(!hasChanges.isEmpty());
+    }
 
 }

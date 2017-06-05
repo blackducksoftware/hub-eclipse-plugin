@@ -102,7 +102,6 @@
                 <goal>clean</goal>
               </goals>
               <configuration>
-                <!-- If this isn't skipped, the build deletes the zip file containing the update site -->
                 <skip>true</skip>
               </configuration>
             </execution>

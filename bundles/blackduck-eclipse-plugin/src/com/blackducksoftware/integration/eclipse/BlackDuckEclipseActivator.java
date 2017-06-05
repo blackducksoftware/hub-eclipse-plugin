@@ -43,81 +43,82 @@ import com.blackducksoftware.integration.eclipse.services.inspector.ComponentIns
 import com.blackducksoftware.integration.eclipse.services.inspector.ComponentInspectorViewService;
 
 public class BlackDuckEclipseActivator extends AbstractUIPlugin {
-	public static final String PLUGIN_ID = "com.blackducksoftware.integration.eclipse.plugin";
+    public static final String PLUGIN_ID = "com.blackducksoftware.integration.eclipse.plugin";
 
-	private static BlackDuckEclipseActivator plugin;
+    private static BlackDuckEclipseActivator plugin;
 
-	private ComponentInspectorService componentInspectorService;
+    private ComponentInspectorService componentInspectorService;
 
-	private ComponentInspectorViewService componentInspectorViewService;
+    private ComponentInspectorViewService componentInspectorViewService;
 
-	private ComponentInspectorPreferencesService componentInspectorPreferencesService;
+    private ComponentInspectorPreferencesService componentInspectorPreferencesService;
 
-	private HubConnectionService hubConnectionService;
+    private HubConnectionService hubConnectionService;
 
-	private FreeConnectionService freeConnectionService;
+    private FreeConnectionService freeConnectionService;
 
-	private ProjectDeletedListener projectDeletedListener;
+    private ProjectDeletedListener projectDeletedListener;
 
-	private NewOrMovedProjectListener newProjectListener;
+    private NewOrMovedProjectListener newProjectListener;
 
-	private ProjectComponentsChangedListener projectComponentsChangedListener;
+    private ProjectComponentsChangedListener projectComponentsChangedListener;
 
-	private ProjectMarkedForInspectionListener projectMarkedForInspectionListener;
+    private ProjectMarkedForInspectionListener projectMarkedForInspectionListener;
 
-	private ProjectInformationService projectInformationService;
+    private ProjectInformationService projectInformationService;
 
-	private ComponentInformationService componentInformationService;
+    private ComponentInformationService componentInformationService;
 
-	@Override
-	public void start(final BundleContext context) {
-		plugin = this;
-		hubConnectionService = BlackDuckEclipseServicesFactory.getInstance().getHubConnectionService();
-		freeConnectionService = BlackDuckEclipseServicesFactory.getInstance().getFreeConnectionService();
-		componentInspectorViewService = BlackDuckEclipseServicesFactory.getInstance().getComponentInspectorViewService();
-		componentInspectorService = BlackDuckEclipseServicesFactory.getInstance().getComponentInspectorService();
-		projectInformationService = BlackDuckEclipseServicesFactory.getInstance().getProjectInformationService();
-		componentInformationService = BlackDuckEclipseServicesFactory.getInstance().getComponentInformationService();
-		componentInspectorPreferencesService = BlackDuckEclipseServicesFactory.getInstance().getComponentInspectorPreferencesService();
-		projectMarkedForInspectionListener = new ProjectMarkedForInspectionListener(componentInspectorService, componentInspectorViewService);
-		plugin.getPreferenceStore().addPropertyChangeListener(projectMarkedForInspectionListener);
-		projectComponentsChangedListener = new ProjectComponentsChangedListener(componentInspectorService, componentInformationService);
-		JavaCore.addElementChangedListener(projectComponentsChangedListener);
-		newProjectListener = new NewOrMovedProjectListener(componentInspectorService, projectInformationService, componentInspectorPreferencesService);
-		ResourcesPlugin.getWorkspace().addResourceChangeListener(newProjectListener);
-		projectDeletedListener = new ProjectDeletedListener(componentInspectorService);
-		ResourcesPlugin.getWorkspace().addResourceChangeListener(projectDeletedListener, IResourceChangeEvent.PRE_DELETE);
-		try {
-			super.start(context);
-		} catch (final Exception e) {
-			//TODO: Log properly
-		}
-	}
+    @Override
+    public void start(final BundleContext context) {
+        plugin = this;
+        hubConnectionService = BlackDuckEclipseServicesFactory.getInstance().getHubConnectionService();
+        freeConnectionService = BlackDuckEclipseServicesFactory.getInstance().getFreeConnectionService();
+        componentInspectorViewService = BlackDuckEclipseServicesFactory.getInstance().getComponentInspectorViewService();
+        componentInspectorService = BlackDuckEclipseServicesFactory.getInstance().getComponentInspectorService();
+        projectInformationService = BlackDuckEclipseServicesFactory.getInstance().getProjectInformationService();
+        componentInformationService = BlackDuckEclipseServicesFactory.getInstance().getComponentInformationService();
+        componentInspectorPreferencesService = BlackDuckEclipseServicesFactory.getInstance().getComponentInspectorPreferencesService();
+        projectMarkedForInspectionListener = new ProjectMarkedForInspectionListener(componentInspectorService, componentInspectorViewService);
+        plugin.getPreferenceStore().addPropertyChangeListener(projectMarkedForInspectionListener);
+        projectComponentsChangedListener = new ProjectComponentsChangedListener(componentInspectorService, componentInformationService);
+        JavaCore.addElementChangedListener(projectComponentsChangedListener);
+        newProjectListener = new NewOrMovedProjectListener(componentInspectorService, projectInformationService, componentInspectorPreferencesService);
+        ResourcesPlugin.getWorkspace().addResourceChangeListener(newProjectListener);
+        projectDeletedListener = new ProjectDeletedListener(componentInspectorService);
+        ResourcesPlugin.getWorkspace().addResourceChangeListener(projectDeletedListener, IResourceChangeEvent.PRE_DELETE);
+        componentInspectorService.inspectAllProjects();
+        try {
+            super.start(context);
+        } catch (final Exception e) {
+            //TODO: Log properly
+        }
+    }
 
-	public void refreshConnection() {
-		hubConnectionService.reloadConnection();
-		freeConnectionService.reloadConnection();
-	}
+    public void refreshConnection() {
+        hubConnectionService.reloadConnection();
+        freeConnectionService.reloadConnection();
+    }
 
-	@Override
-	public void stop(final BundleContext context) {
-		plugin.getPreferenceStore().removePropertyChangeListener(projectMarkedForInspectionListener);
-		plugin = null;
-		componentInspectorService.shutDown();
-		hubConnectionService.shutDown();
-		freeConnectionService.shutDown();
-		ResourcesPlugin.getWorkspace().removeResourceChangeListener(newProjectListener);
-		ResourcesPlugin.getWorkspace().removeResourceChangeListener(projectDeletedListener);
-		JavaCore.removeElementChangedListener(projectComponentsChangedListener);
-		try {
-			super.stop(context);
-		} catch (final Exception e) {
-			//TODO: Log properly
-		}
-	}
+    @Override
+    public void stop(final BundleContext context) {
+        plugin.getPreferenceStore().removePropertyChangeListener(projectMarkedForInspectionListener);
+        plugin = null;
+        componentInspectorService.shutDown();
+        hubConnectionService.shutDown();
+        freeConnectionService.shutDown();
+        ResourcesPlugin.getWorkspace().removeResourceChangeListener(newProjectListener);
+        ResourcesPlugin.getWorkspace().removeResourceChangeListener(projectDeletedListener);
+        JavaCore.removeElementChangedListener(projectComponentsChangedListener);
+        try {
+            super.stop(context);
+        } catch (final Exception e) {
+            //TODO: Log properly
+        }
+    }
 
-	public static BlackDuckEclipseActivator getDefault() {
-		return plugin;
-	}
+    public static BlackDuckEclipseActivator getDefault() {
+        return plugin;
+    }
 
 }

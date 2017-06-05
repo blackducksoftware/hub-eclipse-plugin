@@ -41,83 +41,83 @@ import org.eclipse.ui.PlatformUI;
 import com.blackducksoftware.integration.eclipse.test.TestConstants;
 
 public class PreferenceBotUtils extends AbstractPreferenceBotUtils {
-	public static final String OK_BUTTON_TEXT = "OK";
+    public static final String OK_BUTTON_TEXT = "OK";
 
-	public static final String APPLY_BUTTON_TEXT = "Apply";
+    public static final String APPLY_BUTTON_TEXT = "Apply";
 
-	public static final String DEFAULTS_BUTTON_TEXT = "Restore Defaults";
+    public static final String DEFAULTS_BUTTON_TEXT = "Restore Defaults";
 
-	public static final String CANCEL_BUTTON_TEXT = "Cancel";
+    public static final String CANCEL_BUTTON_TEXT = "Cancel";
 
-	private final HubPreferencesBotUtils hubPreferencesBotUtils;
+    private final HubPreferencesBotUtils hubPreferencesBotUtils;
 
-	private final InspectorPreferencesBotUtils inspectorPreferencesBotUtils;
+    private final InspectorPreferencesBotUtils inspectorPreferencesBotUtils;
 
-	public PreferenceBotUtils(final BlackDuckBotUtils botUtils) {
-		super(botUtils);
-		this.hubPreferencesBotUtils = new HubPreferencesBotUtils(botUtils);
-		this.inspectorPreferencesBotUtils = new InspectorPreferencesBotUtils(botUtils);
-	}
+    public PreferenceBotUtils(final BlackDuckBotUtils botUtils) {
+        super(botUtils);
+        this.hubPreferencesBotUtils = new HubPreferencesBotUtils(botUtils);
+        this.inspectorPreferencesBotUtils = new InspectorPreferencesBotUtils(botUtils);
+    }
 
-	public HubPreferencesBotUtils hubSettings() {
-		return hubPreferencesBotUtils;
-	}
+    public HubPreferencesBotUtils hubSettings() {
+        return hubPreferencesBotUtils;
+    }
 
-	public InspectorPreferencesBotUtils inspectorSettings() {
-		return inspectorPreferencesBotUtils;
-	}
+    public InspectorPreferencesBotUtils inspectorSettings() {
+        return inspectorPreferencesBotUtils;
+    }
 
-	public void openHubPreferencesFromContextMenu() {
-		final SWTBotView view = botUtils.getSupportedProjectView();
-		view.setFocus();
-		final SWTBot viewBot = view.bot();
-		final SWTBotTree tree = viewBot.tree();
-		tree.setFocus();
-		this.selectFromMenu(tree.contextMenu(), TestConstants.BLACK_DUCK_HUB_CATEGORY_NAME, TestConstants.CONTEXT_MENU_OPEN_HUB_SETTINGS_ACTION);
-		bot.waitUntil(Conditions.shellIsActive(PREFERENCES_FILTERED_WINDOW_TITLE));
-	}
+    public void openHubPreferencesFromContextMenu() {
+        final SWTBotView view = botUtils.getSupportedProjectView();
+        view.setFocus();
+        final SWTBot viewBot = view.bot();
+        final SWTBotTree tree = viewBot.tree();
+        tree.setFocus();
+        this.selectFromMenu(tree.contextMenu(), TestConstants.BLACK_DUCK_CATEGORY_NAME, TestConstants.CONTEXT_MENU_OPEN_HUB_SETTINGS_ACTION);
+        bot.waitUntil(Conditions.shellIsActive(PREFERENCES_FILTERED_WINDOW_TITLE));
+    }
 
-	public void openHubPreferencesFromEclipseMenu() {
-		final IWorkbench workbench = PlatformUI.getWorkbench();
-		workbench.getDisplay().asyncExec(new Runnable() {
-			@Override
-			public void run() {
-				final IWorkbenchWindow window = workbench.getActiveWorkbenchWindow();
-				if (window != null) {
-					final Menu appMenu = workbench.getDisplay().getSystemMenu();
-					for (final MenuItem item : appMenu.getItems()) {
-						if (item.getText().startsWith(PREFERENCES_WINDOW_TITLE)) {
-							final Event event = new Event();
-							event.time = (int) System.currentTimeMillis();
-							event.widget = item;
-							event.display = workbench.getDisplay();
-							item.setSelection(true);
-							item.notifyListeners(SWT.Selection, event);
-							break;
-						}
-					}
-				}
-			}
-		});
-		try {
-			this.setSWTBotTimeoutShort();
-			bot.waitUntil(Conditions.shellIsActive(PREFERENCES_WINDOW_TITLE));
-			this.setSWTBotTimeoutDefault();
-		} catch (final TimeoutException e1) {
-			try {
-				this.setSWTBotTimeoutDefault();
-				bot.menu("Window").menu(PREFERENCES_WINDOW_TITLE).click();
-				bot.waitUntil(Conditions.shellIsActive(PREFERENCES_WINDOW_TITLE));
-			} catch (final WidgetNotFoundException e2) {
-				this.setSWTBotTimeoutDefault();
-				bot.activeShell().close();
-				bot.menu("Window").menu(PREFERENCES_WINDOW_TITLE).click();
-				bot.waitUntil(Conditions.shellIsActive(PREFERENCES_WINDOW_TITLE));
-			}
-		}
-		final SWTBotTree tree = bot.tree();
-		final SWTBotTreeItem blackDuckNode = tree.getTreeItem(TestConstants.HUB_PREFERENCE_PAGE_NAME);
-		blackDuckNode.click();
-	}
+    public void openHubPreferencesFromEclipseMenu() {
+        final IWorkbench workbench = PlatformUI.getWorkbench();
+        workbench.getDisplay().asyncExec(new Runnable() {
+            @Override
+            public void run() {
+                final IWorkbenchWindow window = workbench.getActiveWorkbenchWindow();
+                if (window != null) {
+                    final Menu appMenu = workbench.getDisplay().getSystemMenu();
+                    for (final MenuItem item : appMenu.getItems()) {
+                        if (item.getText().startsWith(PREFERENCES_WINDOW_TITLE)) {
+                            final Event event = new Event();
+                            event.time = (int) System.currentTimeMillis();
+                            event.widget = item;
+                            event.display = workbench.getDisplay();
+                            item.setSelection(true);
+                            item.notifyListeners(SWT.Selection, event);
+                            break;
+                        }
+                    }
+                }
+            }
+        });
+        try {
+            this.setSWTBotTimeoutShort();
+            bot.waitUntil(Conditions.shellIsActive(PREFERENCES_WINDOW_TITLE));
+            this.setSWTBotTimeoutDefault();
+        } catch (final TimeoutException e1) {
+            try {
+                this.setSWTBotTimeoutDefault();
+                bot.menu("Window").menu(PREFERENCES_WINDOW_TITLE).click();
+                bot.waitUntil(Conditions.shellIsActive(PREFERENCES_WINDOW_TITLE));
+            } catch (final WidgetNotFoundException e2) {
+                this.setSWTBotTimeoutDefault();
+                bot.activeShell().close();
+                bot.menu("Window").menu(PREFERENCES_WINDOW_TITLE).click();
+                bot.waitUntil(Conditions.shellIsActive(PREFERENCES_WINDOW_TITLE));
+            }
+        }
+        final SWTBotTree tree = bot.tree();
+        final SWTBotTreeItem blackDuckNode = tree.getTreeItem(TestConstants.HUB_PREFERENCE_PAGE_NAME);
+        blackDuckNode.click();
+    }
 
 }

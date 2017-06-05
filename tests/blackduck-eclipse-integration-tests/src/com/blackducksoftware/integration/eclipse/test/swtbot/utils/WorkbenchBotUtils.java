@@ -45,165 +45,165 @@ import org.eclipse.swtbot.swt.finder.widgets.SWTBotTreeItem;
 import com.blackducksoftware.integration.eclipse.test.TestConstants;
 
 public class WorkbenchBotUtils extends AbstractBotUtils {
-	public static final String PACKAGE_EXPLORER_VIEW = "Package Explorer";
+    public static final String PACKAGE_EXPLORER_VIEW = "Package Explorer";
 
-	public static final String PROJECT_EXPLORER_VIEW = "Project Explorer";
+    public static final String PROJECT_EXPLORER_VIEW = "Project Explorer";
 
-	public static final String PROJECTS_VIEW = "Projects";
+    public static final String PROJECTS_VIEW = "Projects";
 
-	public static final String MENU_WINDOW = "Window";
+    public static final String MENU_WINDOW = "Window";
 
-	public static final String MENU_WINDOW_SHOW_VIEW = "Show View";
+    public static final String MENU_WINDOW_SHOW_VIEW = "Show View";
 
-	public static final String MENU_WINDOW_SHOW_VIEW_OTHER = "Other...";
+    public static final String MENU_WINDOW_SHOW_VIEW_OTHER = "Other...";
 
-	public static final String SHOW_VIEW_WINDOW_TITLE = "Show View";
+    public static final String SHOW_VIEW_WINDOW_TITLE = "Show View";
 
-	public static final String VIEW_TYPE_JAVA = "Java";
+    public static final String VIEW_TYPE_JAVA = "Java";
 
-	public static final String VIEW_TYPE_JAVA_BROWSING = "Java Browsing";
+    public static final String VIEW_TYPE_JAVA_BROWSING = "Java Browsing";
 
-	public static final String VIEW_TYPE_GENERAL = "General";
+    public static final String VIEW_TYPE_GENERAL = "General";
 
-	private final ProjectCreationBotUtils projectCreationBotUtils;
+    private final ProjectCreationBotUtils projectCreationBotUtils;
 
-	public WorkbenchBotUtils(final BlackDuckBotUtils botUtils) {
-		super(botUtils);
-		projectCreationBotUtils = new ProjectCreationBotUtils(botUtils);
-	}
+    public WorkbenchBotUtils(final BlackDuckBotUtils botUtils) {
+        super(botUtils);
+        projectCreationBotUtils = new ProjectCreationBotUtils(botUtils);
+    }
 
-	public ProjectCreationBotUtils createProject() {
-		return projectCreationBotUtils;
-	}
+    public ProjectCreationBotUtils createProject() {
+        return projectCreationBotUtils;
+    }
 
-	public SWTBotView getPackageExplorerView() {
-		final SWTBotView view = bot.viewByTitle(PACKAGE_EXPLORER_VIEW);
-		return view;
-	}
+    public SWTBotView getPackageExplorerView() {
+        final SWTBotView view = bot.viewByTitle(PACKAGE_EXPLORER_VIEW);
+        return view;
+    }
 
-	public SWTBotView getProjectExplorerView() {
-		final SWTBotView view = bot.viewByTitle(PROJECT_EXPLORER_VIEW);
-		return view;
-	}
+    public SWTBotView getProjectExplorerView() {
+        final SWTBotView view = bot.viewByTitle(PROJECT_EXPLORER_VIEW);
+        return view;
+    }
 
-	public SWTBotView getProjectsView() {
-		final SWTBotView view = bot.viewByTitle(PROJECTS_VIEW);
-		return view;
-	}
+    public SWTBotView getProjectsView() {
+        final SWTBotView view = bot.viewByTitle(PROJECTS_VIEW);
+        return view;
+    }
 
-	public void openPackageExplorerView() {
-		this.openShowViewDialog();
-		final SWTBotTreeItem javaNode = this.expandSuperNode(VIEW_TYPE_JAVA);
-		javaNode.expandNode(PACKAGE_EXPLORER_VIEW).select();
-		this.pressButton("OK");
-	}
+    public void openPackageExplorerView() {
+        this.openShowViewDialog();
+        final SWTBotTreeItem javaNode = this.expandSuperNode(VIEW_TYPE_JAVA);
+        javaNode.expandNode(PACKAGE_EXPLORER_VIEW).select();
+        this.pressButton("OK");
+    }
 
-	public void openProjectExplorerview() {
-		this.openShowViewDialog();
-		final SWTBotTreeItem generalNode = this.expandSuperNode(VIEW_TYPE_GENERAL);
-		generalNode.expandNode(PROJECT_EXPLORER_VIEW).select();
-		this.pressButton("OK");
-	}
+    public void openProjectExplorerview() {
+        this.openShowViewDialog();
+        final SWTBotTreeItem generalNode = this.expandSuperNode(VIEW_TYPE_GENERAL);
+        generalNode.expandNode(PROJECT_EXPLORER_VIEW).select();
+        this.pressButton("OK");
+    }
 
-	public void openProjectsView() {
-		this.openShowViewDialog();
-		final SWTBotTreeItem javaBrowsingNode = this.expandSuperNode(VIEW_TYPE_JAVA_BROWSING);
-		javaBrowsingNode.expandNode(PROJECTS_VIEW).select();
-		this.pressButton("OK");
-	}
+    public void openProjectsView() {
+        this.openShowViewDialog();
+        final SWTBotTreeItem javaBrowsingNode = this.expandSuperNode(VIEW_TYPE_JAVA_BROWSING);
+        javaBrowsingNode.expandNode(PROJECTS_VIEW).select();
+        this.pressButton("OK");
+    }
 
-	public void openComponentInspectorView() {
-		this.openShowViewDialog();
-		final SWTBotTreeItem blackDuckNode = this.expandSuperNode(TestConstants.BLACK_DUCK_HUB_CATEGORY_NAME);
-		blackDuckNode.getNode(TestConstants.COMPONENT_INSPECTOR_VIEW_NAME).select();
-		this.pressButton("OK");
-	}
+    public void openComponentInspectorView() {
+        this.openShowViewDialog();
+        final SWTBotTreeItem blackDuckNode = this.expandSuperNode(TestConstants.BLACK_DUCK_CATEGORY_NAME);
+        blackDuckNode.getNode(TestConstants.COMPONENT_INSPECTOR_VIEW_NAME).select();
+        this.pressButton("OK");
+    }
 
-	private void openShowViewDialog() {
-		final SWTBotMenu windowMenu = bot.menu(MENU_WINDOW);
-		final SWTBotMenu showViewMenu = windowMenu.menu(MENU_WINDOW_SHOW_VIEW);
-		final SWTBotMenu allViewsMenu = showViewMenu.menu(MENU_WINDOW_SHOW_VIEW_OTHER);
-		allViewsMenu.click();
-		bot.waitUntil(Conditions.shellIsActive(SHOW_VIEW_WINDOW_TITLE));
-	}
+    private void openShowViewDialog() {
+        final SWTBotMenu windowMenu = bot.menu(MENU_WINDOW);
+        final SWTBotMenu showViewMenu = windowMenu.menu(MENU_WINDOW_SHOW_VIEW);
+        final SWTBotMenu allViewsMenu = showViewMenu.menu(MENU_WINDOW_SHOW_VIEW_OTHER);
+        allViewsMenu.click();
+        bot.waitUntil(Conditions.shellIsActive(SHOW_VIEW_WINDOW_TITLE));
+    }
 
-	public void updateMavenProject(final String projectName) {
-		final SWTBotTreeItem mavenProjectNode = this.getProject(projectName);
-		final SWTBotMenu mavenMenu = mavenProjectNode.contextMenu().menu("Maven");
-		mavenMenu.menu("Update Project...").click();
-		bot.waitUntil(Conditions.shellIsActive("Update Maven Project"));
-		this.pressButton("OK");
-	}
+    public void updateMavenProject(final String projectName) {
+        final SWTBotTreeItem mavenProjectNode = this.getProject(projectName);
+        final SWTBotMenu mavenMenu = mavenProjectNode.contextMenu().menu("Maven");
+        mavenMenu.menu("Update Project...").click();
+        bot.waitUntil(Conditions.shellIsActive("Update Maven Project"));
+        this.pressButton("OK");
+    }
 
-	public void addMavenDependency(final String projectName, final String groupId, final String artifactId,
-			final String version) {
-		final SWTBotTreeItem mavenProjectNode = this.getProject(projectName);
-		final SWTBotMenu mavenMenu = mavenProjectNode.contextMenu().menu("Maven");
-		mavenMenu.menu("Add Dependency").click();
-		bot.waitUntil(Conditions.shellIsActive("Add Dependency"));
-		bot.text(0).setText(groupId);
-		bot.text(1).setText(artifactId);
-		bot.text(2).setText(version);
-		this.pressButton("OK");
-	}
+    public void addMavenDependency(final String projectName, final String groupId, final String artifactId,
+            final String version) {
+        final SWTBotTreeItem mavenProjectNode = this.getProject(projectName);
+        final SWTBotMenu mavenMenu = mavenProjectNode.contextMenu().menu("Maven");
+        mavenMenu.menu("Add Dependency").click();
+        bot.waitUntil(Conditions.shellIsActive("Add Dependency"));
+        bot.text(0).setText(groupId);
+        bot.text(1).setText(artifactId);
+        bot.text(2).setText(version);
+        this.pressButton("OK");
+    }
 
-	public void deleteProjectFromDisk(final String projectName) {
-		final SWTBotTreeItem projectNode = this.getProjectInPackageExplorer(projectName);
-		projectNode.contextMenu().menu("Delete").click();
-		bot.waitUntil(Conditions.shellIsActive("Delete Resources"));
-		bot.checkBox().select();
-		this.pressButton("OK");
-		try {
-			bot.waitUntil(Conditions.shellCloses(bot.shell("Delete Resources")));
-		} catch (final WidgetNotFoundException e) {
-		}
-	}
+    public void deleteProjectFromDisk(final String projectName) {
+        final SWTBotTreeItem projectNode = this.getProjectInPackageExplorer(projectName);
+        projectNode.contextMenu().menu("Delete").click();
+        bot.waitUntil(Conditions.shellIsActive("Delete Resources"));
+        bot.checkBox().select();
+        this.pressButton("OK");
+        try {
+            bot.waitUntil(Conditions.shellCloses(bot.shell("Delete Resources")));
+        } catch (final WidgetNotFoundException e) {
+        }
+    }
 
-	public void deleteProjectFromWorkspace(final String projectName, final SWTWorkbenchBot bot) {
-		this.openPackageExplorerView();
-		final SWTBotTreeItem projectNode = this.getProjectInPackageExplorer(projectName);
-		projectNode.contextMenu().menu("Delete").click();
-		bot.waitUntil(Conditions.shellIsActive("Delete Resources"));
-		this.pressButton("OK");
-		try {
-			bot.waitUntil(Conditions.shellCloses(bot.shell("Delete Resources")));
-		} catch (final WidgetNotFoundException e) {
-		}
-	}
+    public void deleteProjectFromWorkspace(final String projectName, final SWTWorkbenchBot bot) {
+        this.openPackageExplorerView();
+        final SWTBotTreeItem projectNode = this.getProjectInPackageExplorer(projectName);
+        projectNode.contextMenu().menu("Delete").click();
+        bot.waitUntil(Conditions.shellIsActive("Delete Resources"));
+        this.pressButton("OK");
+        try {
+            bot.waitUntil(Conditions.shellCloses(bot.shell("Delete Resources")));
+        } catch (final WidgetNotFoundException e) {
+        }
+    }
 
-	public SWTBotTreeItem getProjectInPackageExplorer(final String projectName){
-		this.openPackageExplorerView();
-		final SWTBotView view = this.getPackageExplorerView();
-		view.setFocus();
-		final SWTBot viewBot = view.bot();
-		final SWTBotTree tree = viewBot.tree();
-		return tree.getTreeItem(projectName);
-	}
+    public SWTBotTreeItem getProjectInPackageExplorer(final String projectName){
+        this.openPackageExplorerView();
+        final SWTBotView view = this.getPackageExplorerView();
+        view.setFocus();
+        final SWTBot viewBot = view.bot();
+        final SWTBotTree tree = viewBot.tree();
+        return tree.getTreeItem(projectName);
+    }
 
-	public SWTBotTreeItem getProject(final String projectName) {
-		final SWTBotView view = botUtils.getSupportedProjectView();
-		view.setFocus();
-		final SWTBot viewBot = view.bot();
-		final SWTBotTree tree = viewBot.tree();
-		return tree.getTreeItem(projectName);
-	}
+    public SWTBotTreeItem getProject(final String projectName) {
+        final SWTBotView view = botUtils.getSupportedProjectView();
+        view.setFocus();
+        final SWTBot viewBot = view.bot();
+        final SWTBotTree tree = viewBot.tree();
+        return tree.getTreeItem(projectName);
+    }
 
-	public void copyPomToProject(final String resourcePomPath, final String projectName) throws IOException {
-		final File resourcePom = new File(resourcePomPath);
-		final IWorkspace workspace = ResourcesPlugin.getWorkspace();
-		final IWorkspaceRoot workspaceRoot = workspace.getRoot();
-		IPath workspacePath = workspaceRoot.getLocation();
-		final String projectPomRelativePath = String.format("/%s/pom.xml", projectName);
-		workspacePath = workspacePath.append(projectPomRelativePath);
-		final File projectPom = workspacePath.toFile();
-		Files.copy(resourcePom.toPath(), projectPom.toPath(), StandardCopyOption.REPLACE_EXISTING);
-		this.updateMavenProject(projectName);
-	}
+    public void copyPomToProject(final String resourcePomPath, final String projectName) throws IOException {
+        final File resourcePom = new File(resourcePomPath);
+        final IWorkspace workspace = ResourcesPlugin.getWorkspace();
+        final IWorkspaceRoot workspaceRoot = workspace.getRoot();
+        IPath workspacePath = workspaceRoot.getLocation();
+        final String projectPomRelativePath = String.format("/%s/pom.xml", projectName);
+        workspacePath = workspacePath.append(projectPomRelativePath);
+        final File projectPom = workspacePath.toFile();
+        Files.copy(resourcePom.toPath(), projectPom.toPath(), StandardCopyOption.REPLACE_EXISTING);
+        this.updateMavenProject(projectName);
+    }
 
-	public void closeProject(final String projectName) {
-		final SWTBotTreeItem projectNode = getProject(projectName);
-		final SWTBotRootMenu projectMenu = projectNode.contextMenu();
-		final SWTBotMenu closeProject = projectMenu.menu("Close Project");
-		closeProject.click();
-	}
+    public void closeProject(final String projectName) {
+        final SWTBotTreeItem projectNode = getProject(projectName);
+        final SWTBotRootMenu projectMenu = projectNode.contextMenu();
+        final SWTBotMenu closeProject = projectMenu.menu("Close Project");
+        closeProject.click();
+    }
 }

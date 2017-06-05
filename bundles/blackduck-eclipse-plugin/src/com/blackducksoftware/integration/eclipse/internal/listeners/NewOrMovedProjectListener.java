@@ -34,42 +34,45 @@ import com.blackducksoftware.integration.eclipse.services.inspector.ComponentIns
 import com.blackducksoftware.integration.eclipse.services.inspector.ComponentInspectorService;
 
 public class NewOrMovedProjectListener implements IResourceChangeListener {
-	private final ComponentInspectorService componentInspectorService;
+    private final ComponentInspectorService componentInspectorService;
 
-	private final ProjectInformationService projectInformationService;
+    private final ProjectInformationService projectInformationService;
 
-	private final ComponentInspectorPreferencesService componentInspectorPreferencesService;
+    private final ComponentInspectorPreferencesService componentInspectorPreferencesService;
 
-	public NewOrMovedProjectListener(final ComponentInspectorService componentInspectorService, final ProjectInformationService projectInformationService, final ComponentInspectorPreferencesService componentInspectorPreferencesService) {
-		super();
-		this.componentInspectorService = componentInspectorService;
-		this.projectInformationService = projectInformationService;
-		this.componentInspectorPreferencesService = componentInspectorPreferencesService;
-	}
+    public NewOrMovedProjectListener(final ComponentInspectorService componentInspectorService, final ProjectInformationService projectInformationService, final ComponentInspectorPreferencesService componentInspectorPreferencesService) {
+        super();
+        this.componentInspectorService = componentInspectorService;
+        this.projectInformationService = projectInformationService;
+        this.componentInspectorPreferencesService = componentInspectorPreferencesService;
+    }
 
-	@Override
-	public void resourceChanged(final IResourceChangeEvent event) {
-		final IResourceDelta eventDelta = event.getDelta();
-		if (eventDelta == null) {
-			return;
-		}
-		final IResourceDelta[] childrenDeltas = eventDelta.getAffectedChildren();
-		for (final IResourceDelta delta : childrenDeltas) {
-			final IResource project = delta.getResource();
-			if (project instanceof IProject && (delta.getKind() == IResourceDelta.ADDED || delta.getKind() == IResourceDelta.CHANGED)) {
-				final String projectName = project.getName();
-				if (projectInformationService.isProjectSupported(projectName) && delta.getFlags() == IResourceDelta.MOVED_FROM) {
-					final String oldProjectName = delta.getMovedFromPath().toFile().getName();
-					if (componentInspectorPreferencesService.isProjectMarkedForInspection(oldProjectName)) {
-						componentInspectorPreferencesService.activateProject(projectName);
-					}
-				}
-				if (componentInspectorPreferencesService.isProjectMarkedForInspection(projectName)) {
-					componentInspectorService.inspectProject(projectName);
-				}
+    @Override
+    public void resourceChanged(final IResourceChangeEvent event) {
+        final IResourceDelta eventDelta = event.getDelta();
+        if (eventDelta == null) {
+            return;
+        }
+        final IResourceDelta[] childrenDeltas = eventDelta.getAffectedChildren();
+        for (final IResourceDelta delta : childrenDeltas) {
+            final IResource project = delta.getResource();
+            if (project instanceof IProject && (delta.getKind() == IResourceDelta.ADDED || delta.getKind() == IResourceDelta.CHANGED)) {
+                final String projectName = project.getName();
+                if (projectInformationService.isProjectSupported(projectName) && delta.getFlags() == IResourceDelta.MOVED_FROM) {
+                    final String oldProjectName = delta.getMovedFromPath().toFile().getName();
+                    if (componentInspectorPreferencesService.isProjectMarkedForInspection(oldProjectName)) {
+                        componentInspectorPreferencesService.activateProject(projectName);
+                    }
+                }
+                if (!componentInspectorPreferencesService.projectExists(projectName)){
+                    componentInspectorPreferencesService.setProjectActivation(projectName, componentInspectorPreferencesService.getInspectByDefault());
+                }
+                if (componentInspectorPreferencesService.isProjectMarkedForInspection(projectName)) {
+                    componentInspectorService.inspectProject(projectName);
+                }
 
-			}
-		}
-	}
+            }
+        }
+    }
 
 }
