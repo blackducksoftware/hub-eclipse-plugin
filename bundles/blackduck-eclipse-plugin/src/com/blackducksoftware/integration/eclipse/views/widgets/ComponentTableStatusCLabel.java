@@ -87,10 +87,12 @@ public class ComponentTableStatusCLabel extends CLabel{
     }
 
     public void updateStatus(final String projectName){
-        final boolean noComponents = ((ComponentModel[]) componentInspectorTableViewer.getInput()).length == 0;
-        final boolean noProjectMapping = componentInspectorService.getProjectComponents(projectName) == null;
-        final String statusMessage = determineStatusMessage(noComponents, noProjectMapping, projectName);
-        this.setStatusMessage(statusMessage);
+        if(componentInspectorTableViewer != null && (ComponentModel[]) componentInspectorTableViewer.getInput() != null){
+            final boolean noComponents = ((ComponentModel[]) componentInspectorTableViewer.getInput()).length == 0;
+            final boolean noProjectMapping = componentInspectorService.getProjectComponents(projectName) == null;
+            final String statusMessage = determineStatusMessage(noComponents, noProjectMapping, projectName);
+            this.setStatusMessage(statusMessage);
+        }
     }
 
     private String determineStatusMessage(final boolean noComponents, final boolean noProjectMapping, final String projectName) {

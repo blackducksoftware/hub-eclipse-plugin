@@ -25,6 +25,7 @@ package com.blackducksoftware.integration.eclipse.test.swtbot.utils;
 
 import org.eclipse.swtbot.eclipse.finder.waits.Conditions;
 import org.eclipse.swtbot.swt.finder.exceptions.WidgetNotFoundException;
+import org.eclipse.swtbot.swt.finder.widgets.TimeoutException;
 
 public abstract class AbstractPreferenceBotUtils extends AbstractBotUtils {
     public static final String PREFERENCES_WINDOW_TITLE = "Preferences";
@@ -36,7 +37,11 @@ public abstract class AbstractPreferenceBotUtils extends AbstractBotUtils {
     }
 
     public void pressApply() {
-        this.pressButton("Apply");
+        try{
+            this.pressButton("Apply");
+        }catch(final TimeoutException e){
+            //Do nothing, sometimes this will happen
+        }
     }
 
     public void pressOK() {

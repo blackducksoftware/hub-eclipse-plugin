@@ -32,6 +32,8 @@ import java.io.IOException;
 import org.eclipse.swtbot.eclipse.finder.SWTWorkbenchBot;
 import org.eclipse.swtbot.swt.finder.SWTBot;
 import org.eclipse.swtbot.swt.finder.junit.SWTBotJunit4ClassRunner;
+import org.eclipse.swtbot.swt.finder.widgets.SWTBotMenu;
+import org.eclipse.swtbot.swt.finder.widgets.SWTBotRootMenu;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotTable;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotText;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotTreeItem;
@@ -89,7 +91,11 @@ public class ComponentInspectorViewBotTest {
     public void testInspectionResults() {
         botUtils.workbench().openComponentInspectorView();
         final SWTBotTreeItem projectNode = botUtils.workbench().getProject(TestConstants.TEST_MAVEN_COMPONENTS_ARTIFACT);
-        projectNode.select();
+        final SWTBotRootMenu rootMenu = projectNode.select().contextMenu();
+        final SWTBotMenu blackDuckMenu = rootMenu.contextMenu(TestConstants.CONTEXT_MENU_BLACK_DUCK_CATEGORY);
+        final SWTBotMenu inspectProject = blackDuckMenu.contextMenu(TestConstants.CONTEXT_MENU_INSPECT_PROJECT_ACTION);
+        inspectProject.click();
+        botUtils.componentInspector().waitUntilInspectionResultsTableHasRows(testMavenComponents.length);
         final SWTBotTable table = botUtils.componentInspector().getInspectionResultsTable();
         for (final String componentName : testMavenComponents) {
             assertTrue(table.containsItem(componentName));

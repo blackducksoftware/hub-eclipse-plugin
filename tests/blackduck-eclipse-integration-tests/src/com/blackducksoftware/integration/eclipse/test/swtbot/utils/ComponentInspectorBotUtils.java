@@ -28,6 +28,7 @@ import java.util.Arrays;
 import org.eclipse.swtbot.eclipse.finder.widgets.SWTBotView;
 import org.eclipse.swtbot.swt.finder.SWTBot;
 import org.eclipse.swtbot.swt.finder.exceptions.WidgetNotFoundException;
+import org.eclipse.swtbot.swt.finder.waits.Conditions;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotCLabel;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotTable;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotTableItem;
@@ -95,6 +96,11 @@ public class ComponentInspectorBotUtils extends AbstractBotUtils {
     public SWTBotTable getInspectionResultsTable() {
         final SWTBot viewBot = this.getComponentInspectorView();
         return viewBot.table();
+    }
+
+    public void waitUntilInspectionResultsTableHasRows(final int numberOfRows) {
+        final SWTBot viewBot = this.getComponentInspectorView();
+        viewBot.waitUntil(Conditions.tableHasRows(viewBot.table(), 3));
     }
 
     public String[][] getInspectionResults() {
