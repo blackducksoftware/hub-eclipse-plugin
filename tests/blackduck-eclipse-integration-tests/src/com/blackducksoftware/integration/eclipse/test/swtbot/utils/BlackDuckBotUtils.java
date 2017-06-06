@@ -83,7 +83,7 @@ public class BlackDuckBotUtils extends AbstractBotUtils {
             try {
                 final SWTBotView view = bot.viewByTitle(viewTitle);
                 return view;
-            } catch (WidgetNotFoundException e) {
+            } catch (final WidgetNotFoundException e) {
             }
         }
         throw new WidgetNotFoundException(
