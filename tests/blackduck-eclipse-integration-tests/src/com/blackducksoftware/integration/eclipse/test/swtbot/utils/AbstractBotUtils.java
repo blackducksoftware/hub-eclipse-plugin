@@ -24,6 +24,7 @@
 package com.blackducksoftware.integration.eclipse.test.swtbot.utils;
 
 import org.eclipse.swtbot.eclipse.finder.SWTWorkbenchBot;
+import org.eclipse.swtbot.swt.finder.SWTBot;
 import org.eclipse.swtbot.swt.finder.utils.SWTBotPreferences;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotButton;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotMenu;
@@ -44,9 +45,9 @@ public abstract class AbstractBotUtils {
         this.botUtils = botUtils;
     }
 
-    protected SWTBotButton pressButton(final String buttonTitle) {
-        final SWTBotButton target = bot.button(buttonTitle);
-        bot.waitUntil(new ButtonIsEnabledCondition(target));
+    protected SWTBotButton pressButton(final SWTBot activeBot, final String buttonTitle) {
+        final SWTBotButton target = activeBot.button(buttonTitle);
+        activeBot.waitUntil(new ButtonIsEnabledCondition(target));
         return target.click();
     }
 

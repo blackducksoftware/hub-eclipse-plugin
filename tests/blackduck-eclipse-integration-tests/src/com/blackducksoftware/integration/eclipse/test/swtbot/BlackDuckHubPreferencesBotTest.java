@@ -53,7 +53,7 @@ public class BlackDuckHubPreferencesBotTest {
         botUtils.closeWelcomeView();
         botUtils.preferences().openHubPreferencesFromEclipseMenu();
         botUtils.preferences().inspectorSettings().openComponentInspectorPreferences();
-        botUtils.preferences().inspectorSettings().setAnalyzeByDefaultTrue();
+        botUtils.preferences().inspectorSettings().setInspectNewByDefaultTrue();
         botUtils.preferences().inspectorSettings().pressOK();
         botUtils.workbench().createProject().createMavenProject(TestConstants.TEST_MAVEN_GROUP, TestConstants.TEST_MAVEN_ARTIFACT);
     }

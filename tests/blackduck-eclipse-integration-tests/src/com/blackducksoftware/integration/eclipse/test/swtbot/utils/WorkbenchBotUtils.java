@@ -95,28 +95,32 @@ public class WorkbenchBotUtils extends AbstractBotUtils {
         this.openShowViewDialog();
         final SWTBotTreeItem javaNode = this.expandSuperNode(VIEW_TYPE_JAVA);
         javaNode.expandNode(PACKAGE_EXPLORER_VIEW).select();
-        this.pressButton("OK");
+        final SWTBot pageBot = bot.activeShell().bot();
+        this.pressButton(pageBot, "OK");
     }
 
     public void openProjectExplorerview() {
         this.openShowViewDialog();
         final SWTBotTreeItem generalNode = this.expandSuperNode(VIEW_TYPE_GENERAL);
         generalNode.expandNode(PROJECT_EXPLORER_VIEW).select();
-        this.pressButton("OK");
+        final SWTBot pageBot = bot.activeShell().bot();
+        this.pressButton(pageBot, "OK");
     }
 
     public void openProjectsView() {
         this.openShowViewDialog();
         final SWTBotTreeItem javaBrowsingNode = this.expandSuperNode(VIEW_TYPE_JAVA_BROWSING);
         javaBrowsingNode.expandNode(PROJECTS_VIEW).select();
-        this.pressButton("OK");
+        final SWTBot pageBot = bot.activeShell().bot();
+        this.pressButton(pageBot, "OK");
     }
 
     public void openComponentInspectorView() {
         this.openShowViewDialog();
         final SWTBotTreeItem blackDuckNode = this.expandSuperNode(TestConstants.BLACK_DUCK_CATEGORY_NAME);
         blackDuckNode.getNode(TestConstants.COMPONENT_INSPECTOR_VIEW_NAME).select();
-        this.pressButton("OK");
+        final SWTBot pageBot = bot.activeShell().bot();
+        this.pressButton(pageBot, "OK");
     }
 
     private void openShowViewDialog() {
@@ -132,7 +136,8 @@ public class WorkbenchBotUtils extends AbstractBotUtils {
         final SWTBotMenu mavenMenu = mavenProjectNode.contextMenu().menu("Maven");
         mavenMenu.menu("Update Project...").click();
         bot.waitUntil(Conditions.shellIsActive("Update Maven Project"));
-        this.pressButton("OK");
+        final SWTBot pageBot = bot.activeShell().bot();
+        this.pressButton(pageBot, "OK");
     }
 
     public void addMavenDependency(final String projectName, final String groupId, final String artifactId,
@@ -144,7 +149,7 @@ public class WorkbenchBotUtils extends AbstractBotUtils {
         bot.text(0).setText(groupId);
         bot.text(1).setText(artifactId);
         bot.text(2).setText(version);
-        this.pressButton("OK");
+        this.pressButton(bot, "OK");
     }
 
     public void deleteProjectFromDisk(final String projectName) {
@@ -152,7 +157,7 @@ public class WorkbenchBotUtils extends AbstractBotUtils {
         projectNode.contextMenu().menu("Delete").click();
         bot.waitUntil(Conditions.shellIsActive("Delete Resources"));
         bot.checkBox().select();
-        this.pressButton("OK");
+        this.pressButton(bot, "OK");
         try {
             bot.waitUntil(Conditions.shellCloses(bot.shell("Delete Resources")));
         } catch (final WidgetNotFoundException e) {
@@ -164,7 +169,7 @@ public class WorkbenchBotUtils extends AbstractBotUtils {
         final SWTBotTreeItem projectNode = this.getProjectInPackageExplorer(projectName);
         projectNode.contextMenu().menu("Delete").click();
         bot.waitUntil(Conditions.shellIsActive("Delete Resources"));
-        this.pressButton("OK");
+        this.pressButton(bot, "OK");
         try {
             bot.waitUntil(Conditions.shellCloses(bot.shell("Delete Resources")));
         } catch (final WidgetNotFoundException e) {

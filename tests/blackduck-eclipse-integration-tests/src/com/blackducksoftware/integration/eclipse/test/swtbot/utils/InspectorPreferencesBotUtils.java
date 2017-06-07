@@ -31,35 +31,45 @@ import com.blackducksoftware.integration.eclipse.test.TestConstants;
 import com.blackducksoftware.integration.eclipse.test.swtbot.utils.conditions.TreeItemIsExpandedCondition;
 
 public class InspectorPreferencesBotUtils extends AbstractPreferenceBotUtils {
-	public InspectorPreferencesBotUtils(final BlackDuckBotUtils botUtils) {
-		super(botUtils);
-	}
+    public InspectorPreferencesBotUtils(final BlackDuckBotUtils botUtils) {
+        super(botUtils);
+    }
 
-	public void setAnalyzeByDefaultTrue() {
-		final SWTBot pageBot = bot.activeShell().bot();
-		pageBot.radio(ComponentInspectorPreferences.INSPECT_AUTOMATICALLY_LABEL).click();
-	}
+    public void setInspectNewByDefaultTrue() {
+        final SWTBot pageBot = bot.activeShell().bot();
+        pageBot.radio(ComponentInspectorPreferences.INSPECT_AUTOMATICALLY_LABEL).click();
+    }
 
-	public void setAnalyzeByDefaultFalse() {
-		final SWTBot pageBot = bot.activeShell().bot();
-		pageBot.radio(ComponentInspectorPreferences.DO_NOT_INSPECT_AUTOMATICALLY_LABEL).click();
-	}
+    public void setInspectNewByDefaultFalse() {
+        final SWTBot pageBot = bot.activeShell().bot();
+        pageBot.radio(ComponentInspectorPreferences.DO_NOT_INSPECT_AUTOMATICALLY_LABEL).click();
+    }
 
-	public void activateProject(final String projectName) {
-		final SWTBot pageBot = bot.activeShell().bot();
-		pageBot.checkBox(projectName).select();
-	}
+    public void markProjectForInspection(final String projectName) {
+        final SWTBot pageBot = bot.activeShell().bot();
+        pageBot.checkBox(projectName).select();
+    }
 
-	public void deactivateProject(final String projectName) {
-		final SWTBot pageBot = bot.activeShell().bot();
-		pageBot.checkBox(projectName).deselect();
-	}
+    public void unmarkProjectForInspection(final String projectName) {
+        final SWTBot pageBot = bot.activeShell().bot();
+        pageBot.checkBox(projectName).deselect();
+    }
 
-	public void openComponentInspectorPreferences() {
-		final SWTBot pageBot = bot.activeShell().bot();
-		final SWTBotTreeItem blackDuck = pageBot.tree().expandNode(TestConstants.HUB_PREFERENCE_PAGE_NAME);
-		bot.waitUntil(new TreeItemIsExpandedCondition(blackDuck));
-		blackDuck.getNode(TestConstants.COMPONENT_INSPECTOR_PREFERENCE_PAGE_NAME).click();
-	}
+    public void openComponentInspectorPreferences() {
+        final SWTBot pageBot = bot.activeShell().bot();
+        final SWTBotTreeItem blackDuck = pageBot.tree().expandNode(TestConstants.HUB_PREFERENCE_PAGE_NAME);
+        bot.waitUntil(new TreeItemIsExpandedCondition(blackDuck));
+        blackDuck.getNode(TestConstants.COMPONENT_INSPECTOR_PREFERENCE_PAGE_NAME).click();
+    }
+
+    public void markAllProjectsForInspection() {
+        final SWTBot pageBot = bot.activeShell().bot();
+        this.pressButton(pageBot, ComponentInspectorPreferences.CHECK_ALL_BUTTON_LABEL);
+    }
+
+    public void unmarkAllProjectsForInspection() {
+        final SWTBot pageBot = bot.activeShell().bot();
+        this.pressButton(pageBot, ComponentInspectorPreferences.UNCHECK_ALL_BUTTON_LABEL);
+    }
 
 }

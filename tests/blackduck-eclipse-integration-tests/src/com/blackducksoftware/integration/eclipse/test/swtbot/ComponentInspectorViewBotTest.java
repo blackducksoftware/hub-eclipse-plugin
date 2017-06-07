@@ -66,7 +66,7 @@ public class ComponentInspectorViewBotTest {
         botUtils.preferences().hubSettings().enterValidCredentials();
         botUtils.preferences().pressApply();
         botUtils.preferences().inspectorSettings().openComponentInspectorPreferences();
-        botUtils.preferences().inspectorSettings().setAnalyzeByDefaultTrue();
+        botUtils.preferences().inspectorSettings().setInspectNewByDefaultTrue();
         botUtils.preferences().pressOK();
         botUtils.workbench().createProject().createMavenProject(TestConstants.TEST_MAVEN_GROUP, TestConstants.TEST_MAVEN_ARTIFACT);
         botUtils.workbench().closeProject(TestConstants.TEST_MAVEN_ARTIFACT);
@@ -164,7 +164,7 @@ public class ComponentInspectorViewBotTest {
     public void testInspectionDeactivated() {
         botUtils.preferences().openHubPreferencesFromEclipseMenu();
         botUtils.preferences().inspectorSettings().openComponentInspectorPreferences();
-        botUtils.preferences().inspectorSettings().deactivateProject(TestConstants.TEST_MAVEN_COMPONENTS_ARTIFACT);
+        botUtils.preferences().inspectorSettings().unmarkProjectForInspection(TestConstants.TEST_MAVEN_COMPONENTS_ARTIFACT);
         botUtils.preferences().inspectorSettings().pressOK();
         try{
             final SWTBotTreeItem projectNode = botUtils.workbench().getProject(TestConstants.TEST_MAVEN_COMPONENTS_ARTIFACT);
@@ -175,7 +175,7 @@ public class ComponentInspectorViewBotTest {
         }finally{
             botUtils.preferences().openHubPreferencesFromEclipseMenu();
             botUtils.preferences().inspectorSettings().openComponentInspectorPreferences();
-            botUtils.preferences().inspectorSettings().activateProject(TestConstants.TEST_MAVEN_COMPONENTS_ARTIFACT);
+            botUtils.preferences().inspectorSettings().markProjectForInspection(TestConstants.TEST_MAVEN_COMPONENTS_ARTIFACT);
             botUtils.preferences().inspectorSettings().pressOK();
         }
     }

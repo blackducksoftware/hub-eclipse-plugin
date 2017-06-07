@@ -24,6 +24,7 @@
 package com.blackducksoftware.integration.eclipse.test.swtbot.utils;
 
 import org.eclipse.swtbot.eclipse.finder.waits.Conditions;
+import org.eclipse.swtbot.swt.finder.SWTBot;
 import org.eclipse.swtbot.swt.finder.exceptions.WidgetNotFoundException;
 import org.eclipse.swtbot.swt.finder.widgets.TimeoutException;
 
@@ -38,14 +39,16 @@ public abstract class AbstractPreferenceBotUtils extends AbstractBotUtils {
 
     public void pressApply() {
         try{
-            this.pressButton("Apply");
+            final SWTBot pageBot = bot.activeShell().bot();
+            this.pressButton(pageBot, "Apply");
         }catch(final TimeoutException e){
             //Do nothing, sometimes this will happen
         }
     }
 
     public void pressOK() {
-        this.pressButton("OK");
+        final SWTBot pageBot = bot.activeShell().bot();
+        this.pressButton(pageBot, "OK");
         try {
             bot.waitUntil(Conditions.shellCloses(bot.shell(PREFERENCES_WINDOW_TITLE)));
         } catch (final WidgetNotFoundException e) {
@@ -54,7 +57,8 @@ public abstract class AbstractPreferenceBotUtils extends AbstractBotUtils {
     }
 
     public void pressCancel() {
-        this.pressButton("Cancel");
+        final SWTBot pageBot = bot.activeShell().bot();
+        this.pressButton(pageBot, "Cancel");
         try {
             bot.waitUntil(Conditions.shellCloses(bot.shell(PREFERENCES_WINDOW_TITLE)));
         } catch (final WidgetNotFoundException e) {

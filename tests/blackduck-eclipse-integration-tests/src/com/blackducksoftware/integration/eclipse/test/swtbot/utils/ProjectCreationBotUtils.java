@@ -23,6 +23,7 @@
  */
 package com.blackducksoftware.integration.eclipse.test.swtbot.utils;
 
+import org.eclipse.swtbot.swt.finder.SWTBot;
 import org.eclipse.swtbot.swt.finder.exceptions.WidgetNotFoundException;
 import org.eclipse.swtbot.swt.finder.waits.Conditions;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotMenu;
@@ -79,7 +80,7 @@ public class ProjectCreationBotUtils extends AbstractBotUtils {
         final SWTBotTreeItem javaNode = optionTree.expandNode(PROJECT_TYPE_JAVA);
         bot.waitUntil(new TreeItemIsExpandedCondition(javaNode));
         javaNode.expandNode(JAVA_PROJECT).select();
-        this.pressButton(NEXT_BUTTON);
+        this.pressButton(bot, NEXT_BUTTON);
         bot.textWithLabel(PROJECT_NAME_FIELD).setText(projectName);
         this.finishAndOpenAssociatedPerspectiveIfNotOpen();
     }
@@ -90,10 +91,10 @@ public class ProjectCreationBotUtils extends AbstractBotUtils {
         final SWTBotTreeItem javaNode = optionTree.expandNode(PROJECT_TYPE_GRADLE);
         bot.waitUntil(new TreeItemIsExpandedCondition(javaNode));
         javaNode.expandNode(GRADLE_PROJECT).select();
-        this.pressButton(NEXT_BUTTON);
+        this.pressButton(bot, NEXT_BUTTON);
         try {
-            this.pressButton(NEXT_BUTTON);
-        } catch (WidgetNotFoundException e) {
+            this.pressButton(bot, NEXT_BUTTON);
+        } catch (final WidgetNotFoundException e) {
             // For the welcome screen
         }
         bot.textWithLabel(PROJECT_NAME_FIELD_GRADLE).setText(projectName);
@@ -106,7 +107,7 @@ public class ProjectCreationBotUtils extends AbstractBotUtils {
         final SWTBotTreeItem generalNode = optionTree.expandNode(PROJECT_TYPE_GENERAL);
         bot.waitUntil(new TreeItemIsExpandedCondition(generalNode));
         generalNode.expandNode(GENERAL_PROJECT).select();
-        this.pressButton(NEXT_BUTTON);
+        this.pressButton(bot, NEXT_BUTTON);
         bot.textWithLabel(PROJECT_NAME_FIELD).setText(projectName);
         this.finishAndOpenAssociatedPerspectiveIfNotOpen();
     }
@@ -117,9 +118,9 @@ public class ProjectCreationBotUtils extends AbstractBotUtils {
         final SWTBotTreeItem mavenNode = optionTree.expandNode(PROJECT_TYPE_MAVEN);
         bot.waitUntil(new TreeItemIsExpandedCondition(mavenNode));
         mavenNode.expandNode(MAVEN_PROJECT).select();
-        this.pressButton(NEXT_BUTTON);
+        this.pressButton(bot, NEXT_BUTTON);
         bot.checkBox("Create a simple project (skip archetype selection)").select();
-        this.pressButton(NEXT_BUTTON);
+        this.pressButton(bot, NEXT_BUTTON);
         bot.comboBox(0).setText(groupId);
         bot.comboBox(1).setText(artifactId);
         this.finishAndOpenAssociatedPerspectiveIfNotOpen();
@@ -134,10 +135,11 @@ public class ProjectCreationBotUtils extends AbstractBotUtils {
     }
 
     private void finishAndOpenAssociatedPerspectiveIfNotOpen() {
-        this.pressButton(FINISH_BUTTON);
+        final SWTBot pageBot = bot.activeShell().bot();
+        this.pressButton(pageBot, FINISH_BUTTON);
         try {
             bot.waitUntil(Conditions.shellIsActive(OPEN_ASSOCIATED_PERSPECTIVE_WINDOW_TITLE));
-            bot.button(OPEN_ASSOCIATED_PERSPECTIVE_NO_BUTTON).click();
+            this.pressButton(bot, OPEN_ASSOCIATED_PERSPECTIVE_NO_BUTTON);
         } catch (final TimeoutException e) {
         } finally {
             try {

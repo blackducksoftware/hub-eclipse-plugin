@@ -77,7 +77,7 @@ public class ComponentInspectorPreferencesBotTest {
     }
 
     @Test
-    public void testThatAllJavaProjectsShow() {
+    public void testThatAllSupportedProjectsShow() {
         botUtils.workbench().createProject().createMavenProject(TestConstants.TEST_MAVEN_GROUP, TestConstants.TEST_MAVEN_ARTIFACT);
         botUtils.preferences().openHubPreferencesFromEclipseMenu();
         botUtils.preferences().inspectorSettings().openComponentInspectorPreferences();
@@ -92,12 +92,8 @@ public class ComponentInspectorPreferencesBotTest {
     }
 
     @Test
-    public void testAnalyzeByDefault() {
-        botUtils.preferences().openHubPreferencesFromEclipseMenu();
-        botUtils.preferences().inspectorSettings().openComponentInspectorPreferences();
-        botUtils.preferences().inspectorSettings().setAnalyzeByDefaultTrue();
-        botUtils.preferences().inspectorSettings().pressOK();
-        botUtils.workbench().createProject().createMavenProject(TestConstants.TEST_MAVEN_GROUP, TestConstants.TEST_MAVEN_ARTIFACT);
+    public void testMarkForInspectionByDefault() {
+        createMavenProject(true);
         botUtils.preferences().openHubPreferencesFromEclipseMenu();
         botUtils.preferences().inspectorSettings().openComponentInspectorPreferences();
         final SWTBot pageBot = botUtils.bot().activeShell().bot();
@@ -106,12 +102,8 @@ public class ComponentInspectorPreferencesBotTest {
     }
 
     @Test
-    public void testDoNotAnalyzeByDefault() {
-        botUtils.preferences().openHubPreferencesFromEclipseMenu();
-        botUtils.preferences().inspectorSettings().openComponentInspectorPreferences();
-        botUtils.preferences().inspectorSettings().setAnalyzeByDefaultFalse();
-        botUtils.preferences().pressOK();
-        botUtils.workbench().createProject().createMavenProject(TestConstants.TEST_MAVEN_GROUP, TestConstants.TEST_MAVEN_ARTIFACT);
+    public void testDoNotMarkForInspectionByDefault() {
+        createMavenProject(false);
         botUtils.preferences().openHubPreferencesFromEclipseMenu();
         botUtils.preferences().inspectorSettings().openComponentInspectorPreferences();
         final SWTBot pageBot = botUtils.bot().activeShell().bot();
@@ -120,12 +112,8 @@ public class ComponentInspectorPreferencesBotTest {
     }
 
     @Test
-    public void testActivateProject() {
-        botUtils.preferences().openHubPreferencesFromEclipseMenu();
-        botUtils.preferences().inspectorSettings().openComponentInspectorPreferences();
-        botUtils.preferences().inspectorSettings().setAnalyzeByDefaultFalse();
-        botUtils.preferences().pressOK();
-        botUtils.workbench().createProject().createMavenProject(TestConstants.TEST_MAVEN_GROUP, TestConstants.TEST_MAVEN_ARTIFACT);
+    public void testMarkProject() {
+        createMavenProject(false);
         botUtils.workbench().openComponentInspectorView();
         final SWTBotTreeItem project = botUtils.workbench().getProject(TestConstants.TEST_MAVEN_ARTIFACT);
         project.select();
@@ -146,12 +134,8 @@ public class ComponentInspectorPreferencesBotTest {
     }
 
     @Test
-    public void testDeactivateProject() {
-        botUtils.preferences().openHubPreferencesFromEclipseMenu();
-        botUtils.preferences().inspectorSettings().openComponentInspectorPreferences();
-        botUtils.preferences().inspectorSettings().setAnalyzeByDefaultTrue();
-        botUtils.preferences().pressOK();
-        botUtils.workbench().createProject().createMavenProject(TestConstants.TEST_MAVEN_GROUP, TestConstants.TEST_MAVEN_ARTIFACT);
+    public void testUnmarkProject() {
+        createMavenProject(true);
         botUtils.workbench().openComponentInspectorView();
         final SWTBotTreeItem project = botUtils.workbench().getProject(TestConstants.TEST_MAVEN_ARTIFACT);
         project.select();
@@ -173,14 +157,10 @@ public class ComponentInspectorPreferencesBotTest {
 
     @Test
     public void testCancel() {
+        createMavenProject(false);
         botUtils.preferences().openHubPreferencesFromEclipseMenu();
         botUtils.preferences().inspectorSettings().openComponentInspectorPreferences();
-        botUtils.preferences().inspectorSettings().setAnalyzeByDefaultFalse();
-        botUtils.preferences().inspectorSettings().pressOK();
-        botUtils.workbench().createProject().createMavenProject(TestConstants.TEST_MAVEN_GROUP, TestConstants.TEST_MAVEN_ARTIFACT);
-        botUtils.preferences().openHubPreferencesFromEclipseMenu();
-        botUtils.preferences().inspectorSettings().openComponentInspectorPreferences();
-        botUtils.preferences().inspectorSettings().activateProject(TestConstants.TEST_MAVEN_ARTIFACT);
+        botUtils.preferences().inspectorSettings().markProjectForInspection(TestConstants.TEST_MAVEN_ARTIFACT);
         botUtils.preferences().inspectorSettings().pressCancel();
         botUtils.preferences().openHubPreferencesFromEclipseMenu();
         botUtils.preferences().inspectorSettings().openComponentInspectorPreferences();
@@ -190,15 +170,37 @@ public class ComponentInspectorPreferencesBotTest {
     }
 
     @Test
+    public void testMarkAll() {
+        createMavenProject(false);
+        botUtils.preferences().openHubPreferencesFromEclipseMenu();
+        botUtils.preferences().inspectorSettings().openComponentInspectorPreferences();
+        botUtils.preferences().inspectorSettings().markAllProjectsForInspection();
+        final SWTBot pageBot = botUtils.bot().activeShell().bot();
+        assertNotNull(pageBot.checkBox(TestConstants.TEST_MAVEN_ARTIFACT));
+        assertTrue(pageBot.checkBox(TestConstants.TEST_MAVEN_ARTIFACT).isChecked());
+        assertNotNull(pageBot.checkBox(TestConstants.TEST_GRADLE_PROJECT_NAME));
+        assertTrue(pageBot.checkBox(TestConstants.TEST_GRADLE_PROJECT_NAME).isChecked());
+    }
+
+    @Test
+    public void testMarkNone(){
+        createMavenProject(true);
+        botUtils.preferences().openHubPreferencesFromEclipseMenu();
+        botUtils.preferences().inspectorSettings().openComponentInspectorPreferences();
+        botUtils.preferences().inspectorSettings().unmarkAllProjectsForInspection();
+        final SWTBot pageBot = botUtils.bot().activeShell().bot();
+        assertNotNull(pageBot.checkBox(TestConstants.TEST_MAVEN_ARTIFACT));
+        assertFalse(pageBot.checkBox(TestConstants.TEST_MAVEN_ARTIFACT).isChecked());
+        assertNotNull(pageBot.checkBox(TestConstants.TEST_GRADLE_PROJECT_NAME));
+        assertFalse(pageBot.checkBox(TestConstants.TEST_GRADLE_PROJECT_NAME).isChecked());
+    }
+
+    @Test
     public void testApply() {
+        createMavenProject(false);
         botUtils.preferences().openHubPreferencesFromEclipseMenu();
         botUtils.preferences().inspectorSettings().openComponentInspectorPreferences();
-        botUtils.preferences().inspectorSettings().setAnalyzeByDefaultFalse();
-        botUtils.preferences().inspectorSettings().pressOK();
-        botUtils.workbench().createProject().createMavenProject(TestConstants.TEST_MAVEN_GROUP, TestConstants.TEST_MAVEN_ARTIFACT);
-        botUtils.preferences().openHubPreferencesFromEclipseMenu();
-        botUtils.preferences().inspectorSettings().openComponentInspectorPreferences();
-        botUtils.preferences().inspectorSettings().activateProject(TestConstants.TEST_MAVEN_ARTIFACT);
+        botUtils.preferences().inspectorSettings().markProjectForInspection(TestConstants.TEST_MAVEN_ARTIFACT);
         botUtils.preferences().inspectorSettings().pressApply();
         botUtils.preferences().inspectorSettings().pressCancel();
         botUtils.preferences().openHubPreferencesFromEclipseMenu();
@@ -213,6 +215,18 @@ public class ComponentInspectorPreferencesBotTest {
         botUtils.workbench().deleteProjectFromDisk(TestConstants.TEST_GRADLE_PROJECT_NAME);
         botUtils.workbench().deleteProjectFromDisk(TestConstants.TEST_NON_JAVA_PROJECT_NAME);
         botUtils.bot().resetWorkbench();
+    }
+
+    private static void createMavenProject(final boolean enabled){
+        botUtils.preferences().openHubPreferencesFromEclipseMenu();
+        botUtils.preferences().inspectorSettings().openComponentInspectorPreferences();
+        if(enabled){
+            botUtils.preferences().inspectorSettings().setInspectNewByDefaultTrue();
+        }else{
+            botUtils.preferences().inspectorSettings().setInspectNewByDefaultFalse();
+        }
+        botUtils.preferences().pressOK();
+        botUtils.workbench().createProject().createMavenProject(TestConstants.TEST_MAVEN_GROUP, TestConstants.TEST_MAVEN_ARTIFACT);
     }
 
 }
