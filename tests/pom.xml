@@ -13,7 +13,6 @@
   <packaging>pom</packaging>
 
   <modules>
-    <module>blackduck-eclipse-unit-tests</module>
     <module>blackduck-eclipse-integration-tests</module>
   </modules>
 </project>
