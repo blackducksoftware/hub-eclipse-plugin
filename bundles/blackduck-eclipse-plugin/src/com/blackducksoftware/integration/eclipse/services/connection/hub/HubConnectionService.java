@@ -94,6 +94,17 @@ public class HubConnectionService extends AbstractConnectionService {
         this.reloadConnection();
     }
 
+    @Override
+    public void reloadConnection(){
+        this.restConnection = this.getHubConnectionFromPreferences();
+        this.hubServicesFactory = new HubServicesFactory(restConnection);
+        try {
+            this.phoneHome();
+        } catch (final IntegrationException e) {
+            //TODO: Log properly
+        }
+    }
+
     private RestConnection getHubConnectionFromPreferences() {
         final HubServerConfig hubServerConfig = hubPreferencesService.getHubServerConfig();
         if(hubServerConfig == null){
@@ -107,17 +118,6 @@ public class HubConnectionService extends AbstractConnectionService {
             return null;
         }
         return connection;
-    }
-
-    @Override
-    public void reloadConnection(){
-        this.restConnection = this.getHubConnectionFromPreferences();
-        this.hubServicesFactory = new HubServicesFactory(restConnection);
-        try {
-            this.phoneHome();
-        } catch (final IntegrationException e) {
-            //Do nothing
-        }
     }
 
     public CredentialsRestConnection getCredentialsRestConnection(final HubServerConfig config)
