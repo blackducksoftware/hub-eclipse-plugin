@@ -56,21 +56,23 @@ public class NewOrMovedProjectListener implements IResourceChangeListener {
         final IResourceDelta[] childrenDeltas = eventDelta.getAffectedChildren();
         for (final IResourceDelta delta : childrenDeltas) {
             final IResource project = delta.getResource();
-            if (project instanceof IProject && (delta.getKind() == IResourceDelta.ADDED || delta.getKind() == IResourceDelta.CHANGED)) {
+            final boolean projectWasAdded = delta.getKind() == IResourceDelta.ADDED;
+            final boolean projectWasMoved = delta.getKind() == IResourceDelta.CHANGED && (delta.getFlags() & IResourceDelta.MOVED_FROM) != 0;
+            if (project instanceof IProject && (projectWasAdded || projectWasMoved)) {
                 final String projectName = project.getName();
-                if (projectInformationService.isProjectSupported(projectName) && delta.getFlags() == IResourceDelta.MOVED_FROM) {
-                    final String oldProjectName = delta.getMovedFromPath().toFile().getName();
-                    if (componentInspectorPreferencesService.isProjectMarkedForInspection(oldProjectName)) {
-                        componentInspectorPreferencesService.activateProject(projectName);
+                if (projectInformationService.isProjectSupported(projectName)) {
+                    if (projectWasAdded) {
+                        final String oldProjectName = delta.getMovedFromPath().toFile().getName();
+                        if (componentInspectorPreferencesService.isProjectMarkedForInspection(oldProjectName)) {
+                            componentInspectorPreferencesService.markProjectForInspection(projectName);
+                        }
+                    } else if (!componentInspectorPreferencesService.projectExists(projectName)){
+                        componentInspectorPreferencesService.setProjectMarkedForInspection(projectName, componentInspectorPreferencesService.getInspectByDefault());
+                    }
+                    if (componentInspectorPreferencesService.isProjectMarkedForInspection(projectName)) {
+                        componentInspectorService.inspectProject(projectName);
                     }
                 }
-                if (!componentInspectorPreferencesService.projectExists(projectName)){
-                    componentInspectorPreferencesService.setProjectActivation(projectName, componentInspectorPreferencesService.getInspectByDefault());
-                }
-                if (componentInspectorPreferencesService.isProjectMarkedForInspection(projectName)) {
-                    componentInspectorService.inspectProject(projectName);
-                }
-
             }
         }
     }

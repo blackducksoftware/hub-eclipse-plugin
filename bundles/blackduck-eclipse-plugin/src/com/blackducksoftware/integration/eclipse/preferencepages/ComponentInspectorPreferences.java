@@ -261,7 +261,7 @@ public class ComponentInspectorPreferences extends PreferencePage implements IWo
         this.updateApplyButtonWithChanges();
         inspectByDefault.store();
         inspectorPreferencesService.saveInspectByDefault(Boolean.toString(this.getPreferenceStore().getBoolean(inspectByDefault.getPreferenceName())));
-        projectCheckboxes.forEach(projectCheckBox -> inspectorPreferencesService.setProjectActivation(projectCheckBox.getPreferenceName(), Boolean.toString(projectCheckBox.getBooleanValue())));
+        projectCheckboxes.forEach(projectCheckBox -> inspectorPreferencesService.setProjectMarkedForInspection(projectCheckBox.getPreferenceName(), Boolean.toString(projectCheckBox.getBooleanValue())));
     }
 
     public void updateApplyButtonWithChanges(){

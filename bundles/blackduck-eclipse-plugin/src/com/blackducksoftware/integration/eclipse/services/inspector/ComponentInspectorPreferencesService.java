@@ -52,11 +52,11 @@ public class ComponentInspectorPreferencesService {
         return blackDuckPreferencesService.getPreference(INSPECT_BY_DEFAULT);
     }
 
-    public void activateProject(final String projectName) {
+    public void markProjectForInspection(final String projectName) {
         blackDuckPreferencesService.savePreference(projectName, "true");
     }
 
-    public void deactivateProject(final String projectName) {
+    public void unmarkProjectForInspection(final String projectName) {
         blackDuckPreferencesService.savePreference(projectName, "false");
     }
 
@@ -73,7 +73,7 @@ public class ComponentInspectorPreferencesService {
         blackDuckPreferencesService.savePreference(INSPECT_BY_DEFAULT, value);
     }
 
-    public void setProjectActivation(final String projectName, final String value){
+    public void setProjectMarkedForInspection(final String projectName, final String value){
         blackDuckPreferencesService.savePreference(projectName, value);
     }
 

@@ -210,8 +210,8 @@ public class ComponentInspectorView extends ViewPart {
         if (componentModels != null) {
             results = componentModels.toArray(new ComponentModel[componentModels.size()]);
         }
-        tableViewer.setInput(results);
         tableViewer.setItemCount(results.length);
+        tableViewer.setInput(results);
     }
 
     public void refreshStatus() {

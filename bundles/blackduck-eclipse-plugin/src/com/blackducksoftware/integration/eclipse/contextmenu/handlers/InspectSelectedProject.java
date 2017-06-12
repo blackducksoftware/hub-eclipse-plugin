@@ -43,7 +43,7 @@ public class InspectSelectedProject extends AbstractHandler {
 		final List<String> selectedProjects = workspaceService.getAllSelectedProjects();
 		for (final String selectedProject : selectedProjects) {
 			if (!componentInspectorPreferencesService.isProjectMarkedForInspection(selectedProject)) {
-				componentInspectorPreferencesService.activateProject(selectedProject);
+				componentInspectorPreferencesService.markProjectForInspection(selectedProject);
 			}
 			componentInspectorService.inspectProject(selectedProject);
 		}
