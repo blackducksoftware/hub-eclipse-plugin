@@ -13,6 +13,5 @@
 
   <modules>
     <module>blackduck-eclipse-plugin</module>
-    <module>blackduck-eclipse-plugin-maven-dependencies</module>
   </modules>
 </project>

@@ -1,7 +1,7 @@
 /**
  * com.blackducksoftware.integration.eclipse.plugin
  *
- * Copyright (C) 2017 Black Duck Software, Inc.
+ * Copyright (C) 2018 Black Duck Software, Inc.
  * http://www.blackducksoftware.com/
  *
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -30,33 +30,29 @@ import java.util.List;
 import com.blackducksoftware.integration.eclipse.internal.ComponentModel;
 import com.blackducksoftware.integration.eclipse.services.connection.AbstractComponentLookupService;
 import com.blackducksoftware.integration.exception.IntegrationException;
-import com.blackducksoftware.integration.hub.bdio.simple.model.externalid.MavenExternalId;
-import com.blackducksoftware.integration.hub.dataservice.license.LicenseDataService;
-import com.blackducksoftware.integration.hub.dataservice.vulnerability.VulnerabilityDataService;
+import com.blackducksoftware.integration.hub.api.generated.view.ComplexLicenseView;
+import com.blackducksoftware.integration.hub.api.generated.view.VulnerabilityV2View;
+import com.blackducksoftware.integration.hub.bdio.model.externalid.ExternalId;
 import com.blackducksoftware.integration.hub.exception.HubIntegrationException;
-import com.blackducksoftware.integration.hub.model.enumeration.VulnerabilitySeverityEnum;
-import com.blackducksoftware.integration.hub.model.view.ComplexLicenseView;
-import com.blackducksoftware.integration.hub.model.view.VulnerabilityView;
+import com.blackducksoftware.integration.hub.service.ComponentService;
+import com.blackducksoftware.integration.hub.service.LicenseService;
 
-public class HubComponentLookupService extends AbstractComponentLookupService{
-    public HubComponentLookupService(final HubConnectionService connectionService){
+public class HubComponentLookupService extends AbstractComponentLookupService {
+    public HubComponentLookupService(final HubConnectionService connectionService) {
         super(connectionService);
     }
 
     @Override
-    public ComponentModel lookupComponent(final MavenExternalId externalId) throws IOException, URISyntaxException, IntegrationException {
-        final LicenseDataService licenseDataService = ((HubConnectionService) connectionService).getLicenseDataService();
-        final VulnerabilityDataService vulnerabilityDataService = ((HubConnectionService) connectionService).getVulnerabilityDataService();
+    public ComponentModel lookupComponent(final ExternalId externalId) throws IOException, URISyntaxException, IntegrationException {
+        final LicenseService licenseService = ((HubConnectionService) connectionService).getLicenseDataService();
+        final ComponentService componentService = ((HubConnectionService) connectionService).getComponentService();
         ComponentModel component = componentLoadingCache.get(externalId);
-        if(component == null){
-            List<VulnerabilityView> vulnerabilities = null;
+        if (component == null) {
+            List<VulnerabilityV2View> vulnerabilities = null;
             ComplexLicenseView complexLicense = null;
             try {
-                vulnerabilities = vulnerabilityDataService.getVulnsFromComponentVersion(externalId.forge.toString().toLowerCase(), externalId.group,
-                        externalId.name, externalId.version);
-
-                complexLicense = licenseDataService.getComplexLicenseItemFromComponent(externalId.forge.toString().toLowerCase(), externalId.group,
-                        externalId.name, externalId.version);
+                vulnerabilities = componentService.getVulnerabilitiesFromComponentVersion(externalId);
+                complexLicense = licenseService.getComplexLicenseItemFromComponent(externalId);
             } catch (final HubIntegrationException e) {
                 // Do nothing
             }
@@ -67,22 +63,22 @@ public class HubComponentLookupService extends AbstractComponentLookupService{
         return component;
     }
 
-    public int[] getVulnerabilitySeverityCount(final List<VulnerabilityView> vulnerabilities) {
+    public int[] getVulnerabilitySeverityCount(final List<VulnerabilityV2View> vulnerabilities) {
         int high = 0;
         int medium = 0;
         int low = 0;
         if (vulnerabilities == null) {
             return new int[] { 0, 0, 0 };
         }
-        for (final VulnerabilityView vuln : vulnerabilities) {
-            switch (VulnerabilitySeverityEnum.valueOf(vuln.severity)) {
-            case HIGH:
+        for (final VulnerabilityV2View vuln : vulnerabilities) {
+            switch (vuln.severity) {
+            case "HIGH":
                 high++;
                 break;
-            case MEDIUM:
+            case "MEDIUM":
                 medium++;
                 break;
-            case LOW:
+            case "LOW":
                 low++;
                 break;
             default:

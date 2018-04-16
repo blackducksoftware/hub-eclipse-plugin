@@ -1,7 +1,7 @@
 /**
  * com.blackducksoftware.integration.eclipse.plugin
  *
- * Copyright (C) 2017 Black Duck Software, Inc.
+ * Copyright (C) 2018 Black Duck Software, Inc.
  * http://www.blackducksoftware.com/
  *
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -26,8 +26,8 @@ package com.blackducksoftware.integration.eclipse.views.widgets;
 import org.eclipse.swt.widgets.Text;
 
 import com.blackducksoftware.integration.eclipse.internal.ComponentModel;
-import com.blackducksoftware.integration.hub.bdio.simple.model.externalid.MavenExternalId;
-import com.blackducksoftware.integration.hub.dataservice.license.ComplexLicenseParser;
+import com.blackducksoftware.integration.hub.bdio.model.externalid.ExternalId;
+import com.blackducksoftware.integration.hub.service.model.ComplexLicenseParser;
 
 public class ComponentModelFilter {
     private final Text filterBox;
@@ -40,7 +40,7 @@ public class ComponentModelFilter {
         if (filterBox == null || filterBox.getText().length() == 0) {
             return true;
         }
-        final MavenExternalId externalId = model.getExternalId();
+        final ExternalId externalId = model.getExternalId();
         if (externalId.toString().contains(filterBox.getText())) {
             return true;
         }

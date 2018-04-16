@@ -1,7 +1,7 @@
 /**
  * com.blackducksoftware.integration.eclipse.plugin
  *
- * Copyright (C) 2017 Black Duck Software, Inc.
+ * Copyright (C) 2018 Black Duck Software, Inc.
  * http://www.blackducksoftware.com/
  *
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -31,10 +31,9 @@ import com.blackducksoftware.integration.eclipse.internal.connection.free.KBDeta
 import com.blackducksoftware.integration.eclipse.internal.connection.free.KBDetailsResponse;
 import com.blackducksoftware.integration.eclipse.internal.connection.free.model.KBLicenseView;
 import com.blackducksoftware.integration.exception.IntegrationException;
-import com.blackducksoftware.integration.hub.model.enumeration.ComplexLicenseCodeSharingEnum;
-import com.blackducksoftware.integration.hub.model.enumeration.ComplexLicenseOwnershipEnum;
-import com.blackducksoftware.integration.hub.model.view.ComplexLicenseView;
-import com.blackducksoftware.integration.hub.model.view.LicenseView;
+import com.blackducksoftware.integration.hub.api.generated.enumeration.LicenseCodeSharingType;
+import com.blackducksoftware.integration.hub.api.generated.view.ComplexLicenseView;
+import com.blackducksoftware.integration.hub.api.generated.view.LicenseView;
 
 public class KBLicenseDataService {
     private final KBDetailsRequestService kbDetailsRequestService;
@@ -55,23 +54,23 @@ public class KBLicenseDataService {
         }
     }
 
-    private ComplexLicenseView transformKBLicenseViewToComplexLicenseView(final KBLicenseView license) throws IllegalArgumentException, IllegalAccessException, NoSuchFieldException, SecurityException{
+    private ComplexLicenseView transformKBLicenseViewToComplexLicenseView(final KBLicenseView license) throws IllegalArgumentException, IllegalAccessException, NoSuchFieldException, SecurityException {
         final ComplexLicenseView wrappingComplexLicenseView = new ComplexLicenseView();
         final Field typeField = wrappingComplexLicenseView.getClass().getDeclaredField("type");
         typeField.setAccessible(true);
         typeField.set(wrappingComplexLicenseView, license.getType());
         final List<ComplexLicenseView> licenses = new ArrayList<>();
-        for(final LicenseView licenseView: license.getDetail().values()) {
+        for (final LicenseView licenseView : license.getDetail().values()) {
             final ComplexLicenseView wrappedComplexLicenseView = new ComplexLicenseView();
             final Field codesharingField = wrappedComplexLicenseView.getClass().getDeclaredField("codeSharing");
             codesharingField.setAccessible(true);
-            codesharingField.set(wrappedComplexLicenseView, ComplexLicenseCodeSharingEnum.valueOf(licenseView.codeSharing.toString()));
+            codesharingField.set(wrappedComplexLicenseView, LicenseCodeSharingType.valueOf(licenseView.codeSharing.toString()));
             final Field nameField = wrappedComplexLicenseView.getClass().getDeclaredField("name");
             nameField.setAccessible(true);
             nameField.set(wrappedComplexLicenseView, licenseView.name);
             final Field ownershipField = wrappedComplexLicenseView.getClass().getDeclaredField("ownership");
             ownershipField.setAccessible(true);
-            ownershipField.set(wrappedComplexLicenseView, ComplexLicenseOwnershipEnum.valueOf(licenseView.ownership.toString()));
+            ownershipField.set(wrappedComplexLicenseView, LicenseCodeSharingType.valueOf(licenseView.ownership.toString()));
             final Field licensesField = wrappedComplexLicenseView.getClass().getDeclaredField("licenses");
             licensesField.setAccessible(true);
             licensesField.set(wrappedComplexLicenseView, new ArrayList<>());

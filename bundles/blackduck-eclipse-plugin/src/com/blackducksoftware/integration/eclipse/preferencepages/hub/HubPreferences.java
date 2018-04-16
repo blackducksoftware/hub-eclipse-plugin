@@ -1,7 +1,7 @@
 /**
  * com.blackducksoftware.integration.eclipse.plugin
  *
- * Copyright (C) 2017 Black Duck Software, Inc.
+ * Copyright (C) 2018 Black Duck Software, Inc.
  * http://www.blackducksoftware.com/
  *
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -52,65 +52,44 @@ import com.blackducksoftware.integration.eclipse.services.BlackDuckEclipseServic
 import com.blackducksoftware.integration.eclipse.services.connection.hub.HubPreferencesService;
 import com.blackducksoftware.integration.eclipse.services.inspector.ComponentInspectorViewService;
 import com.blackducksoftware.integration.exception.IntegrationException;
-import com.blackducksoftware.integration.hub.builder.HubServerConfigBuilder;
+import com.blackducksoftware.integration.hub.configuration.HubServerConfig;
+import com.blackducksoftware.integration.hub.configuration.HubServerConfigBuilder;
 import com.blackducksoftware.integration.hub.exception.HubIntegrationException;
-import com.blackducksoftware.integration.hub.global.HubServerConfig;
 import com.blackducksoftware.integration.hub.rest.CredentialsRestConnection;
 import com.blackducksoftware.integration.log.IntBufferedLogger;
 
 public class HubPreferences extends PreferencePage implements IWorkbenchPreferencePage {
     public static final String PREFERENCE_PAGE_ID = "com.blackducksoftware.integration.eclipse.preferencepages.HubPreferences";
-
     public static final String TEST_HUB_CREDENTIALS_TEXT = "Test Connection";
-
     public static final String LOGIN_SUCCESS_MESSAGE = "Connection successful!";
-
     public static final String HUB_USERNAME_LABEL = "Username";
-
     public static final String HUB_PASSWORD_LABEL = "Password";
-
     public static final String HUB_URL_LABEL = "Instance URL";
-
     public static final String HUB_TIMEOUT_LABEL = "Timeout in Seconds";
-
     public static final String PROXY_USERNAME_LABEL = "Proxy Username";
-
     public static final String PROXY_PASSWORD_LABEL = "Proxy Password";
-
     public static final String PROXY_HOST_LABEL = "Proxy Host";
-
     public static final String PROXY_PORT_LABEL = "Proxy Port";
 
-    private HubPreferencesService hubPreferencesService;
-
-    private StringFieldEditor hubUsernameField;
-
-    private StringFieldEditor hubUrlField;
-
-    private StringFieldEditor hubTimeoutField;
-
-    private StringFieldEditor proxyHostField;
-
-    private StringFieldEditor proxyPortField;
-
-    private StringFieldEditor proxyUsernameField;
-
-    private Text hubPasswordField;
-
-    private Text proxyPasswordField;
-
-    private Button testHubCredentials;
-
-    private Text connectionMessageText;
-
+    private static final String INTEGER_FIELD_EDITOR_ERROR_STRING = "IntegerFieldEditor.errorMessage";
     private final int NUM_COLUMNS = 2;
 
-    private static final String INTEGER_FIELD_EDITOR_ERROR_STRING = "IntegerFieldEditor.errorMessage";
+    private HubPreferencesService hubPreferencesService;
+    private StringFieldEditor hubUsernameField;
+    private StringFieldEditor hubUrlField;
+    private StringFieldEditor hubTimeoutField;
+    private StringFieldEditor proxyHostField;
+    private StringFieldEditor proxyPortField;
+    private StringFieldEditor proxyUsernameField;
+    private Text hubPasswordField;
+    private Text proxyPasswordField;
+    private Button testHubCredentials;
+    private Text connectionMessageText;
 
     private Set<String> hasChanges;
 
     @Override
-    public void createControl(final Composite parent){
+    public void createControl(final Composite parent) {
         super.createControl(parent);
         this.getApplyButton().setEnabled(false);
     }
@@ -161,7 +140,7 @@ public class HubPreferences extends PreferencePage implements IWorkbenchPreferen
 
     @Override
     public boolean performOk() {
-        if(this.getApplyButton().getEnabled()){
+        if (this.getApplyButton().getEnabled()) {
             this.performApply();
         }
         return super.performOk();
@@ -172,7 +151,7 @@ public class HubPreferences extends PreferencePage implements IWorkbenchPreferen
         ((GridLayout) parent.getLayout()).numColumns++;
         testHubCredentials = new Button(parent, SWT.PUSH);
         testHubCredentials.setText(TEST_HUB_CREDENTIALS_TEXT);
-        testHubCredentials.addSelectionListener(new SelectionListener(){
+        testHubCredentials.addSelectionListener(new SelectionListener() {
             @Override
             public void widgetDefaultSelected(final SelectionEvent arg0) {
                 attemptToConnect();
@@ -217,10 +196,10 @@ public class HubPreferences extends PreferencePage implements IWorkbenchPreferen
         editor.setPreferenceStore(getPreferenceStore());
         editor.load();
         editor.fillIntoGrid(composite, NUM_COLUMNS);
-        editor.setPropertyChangeListener(new IPropertyChangeListener(){
+        editor.setPropertyChangeListener(new IPropertyChangeListener() {
             @Override
             public void propertyChange(final PropertyChangeEvent event) {
-                if(hubPreferencesService.getPreference(preferenceName).equals(editor.getStringValue())){
+                if (hubPreferencesService.getPreference(preferenceName).equals(editor.getStringValue())) {
                     hasChanges.remove(preferenceName);
                 } else {
                     hasChanges.add(preferenceName);
@@ -237,24 +216,24 @@ public class HubPreferences extends PreferencePage implements IWorkbenchPreferen
         label.setFont(composite.getFont());
         final Text passwordField = new Text(composite, SWT.SINGLE | SWT.BORDER | SWT.PASSWORD);
         String passwordFieldText = "";
-        if(preferenceName.equals(HubPreferencesService.HUB_PASSWORD)){
+        if (preferenceName.equals(HubPreferencesService.HUB_PASSWORD)) {
             passwordFieldText = hubPreferencesService.getHubPassword();
-        }else if(preferenceName.equals(HubPreferencesService.PROXY_PASSWORD)){
+        } else if (preferenceName.equals(HubPreferencesService.PROXY_PASSWORD)) {
             passwordFieldText = hubPreferencesService.getHubProxyPassword();
         }
         passwordField.setText(passwordFieldText);
         passwordField.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-        passwordField.addModifyListener(new ModifyListener(){
+        passwordField.addModifyListener(new ModifyListener() {
             @Override
             public void modifyText(final ModifyEvent e) {
-                if(preferenceName.equals(HubPreferencesService.HUB_PASSWORD)){
-                    if(hubPreferencesService.getHubPassword().equals(passwordField.getText())){
+                if (preferenceName.equals(HubPreferencesService.HUB_PASSWORD)) {
+                    if (hubPreferencesService.getHubPassword().equals(passwordField.getText())) {
                         hasChanges.remove(preferenceName);
                     } else {
                         hasChanges.add(preferenceName);
                     }
-                }else if(preferenceName.equals(HubPreferencesService.PROXY_PASSWORD)){
-                    if(hubPreferencesService.getHubProxyPassword().equals(passwordField.getText())){
+                } else if (preferenceName.equals(HubPreferencesService.PROXY_PASSWORD)) {
+                    if (hubPreferencesService.getHubProxyPassword().equals(passwordField.getText())) {
                         hasChanges.remove(preferenceName);
                     } else {
                         hasChanges.add(preferenceName);
@@ -277,11 +256,11 @@ public class HubPreferences extends PreferencePage implements IWorkbenchPreferen
         hubServerConfigBuilder.setProxyUsername(proxyUsernameField.getStringValue());
         hubServerConfigBuilder.setProxyPassword(proxyPasswordField.getText());
         String message = LOGIN_SUCCESS_MESSAGE;
-        try{
+        try {
             final HubServerConfig config = hubServerConfigBuilder.build();
             final CredentialsRestConnection restConnection = config.createCredentialsRestConnection(new IntBufferedLogger());
             restConnection.connect();
-        }catch(final IntegrationException e ){
+        } catch (final IntegrationException e) {
             message = e.getMessage();
         }
         final Display display = Display.getCurrent();
@@ -311,7 +290,7 @@ public class HubPreferences extends PreferencePage implements IWorkbenchPreferen
         inspectorViewService.resetDisplay();
     }
 
-    public void updateApplyButtonWithChanges(){
+    public void updateApplyButtonWithChanges() {
         getApplyButton().setEnabled(!hasChanges.isEmpty());
     }
 

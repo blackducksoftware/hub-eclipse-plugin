@@ -1,7 +1,7 @@
 /**
  * com.blackducksoftware.integration.eclipse.plugin
  *
- * Copyright (C) 2017 Black Duck Software, Inc.
+ * Copyright (C) 2018 Black Duck Software, Inc.
  * http://www.blackducksoftware.com/
  *
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -37,27 +37,19 @@ import com.blackducksoftware.integration.eclipse.services.ComponentInformationSe
 import com.blackducksoftware.integration.eclipse.services.ProjectInformationService;
 import com.blackducksoftware.integration.eclipse.services.inspector.ComponentInspectorPreferencesService;
 import com.blackducksoftware.integration.eclipse.services.inspector.ComponentInspectorService;
-import com.blackducksoftware.integration.hub.bdio.simple.model.externalid.MavenExternalId;
+import com.blackducksoftware.integration.hub.bdio.model.externalid.ExternalId;
 
 public class InspectionJob extends Job {
     public static final String FAMILY = "Black Duck Component Inspection";
-
     public static final String JOB_INSPECT_PROJECT_PREFACE = "Black Duck Component Inspector inspecting ";
-
     private static final int ONE_HUNDRED_PERCENT = 100000;
-
     private static final int THIRTY_PERCENT = 30000;
-
     private static final int SEVENTY_PERCENT = 70000;
 
     private final String projectName;
-
     private final ComponentInspectorService componentInspectorService;
-
     private final ProjectInformationService projectInformationService;
-
     private final ComponentInformationService componentInformationService;
-
     private final ComponentInspectorPreferencesService componentInspectorPreferencesService;
 
     public InspectionJob(final String projectName, final ComponentInspectorService componentInspectorService, final ComponentInspectorPreferencesService componentInspectorPreferencesService) {
@@ -93,7 +85,7 @@ public class InspectionJob extends Job {
             subMonitor.split(THIRTY_PERCENT).done();
             for (final URL componentUrl : componentUrls) {
                 subMonitor.setTaskName(String.format("Inspecting %s", componentUrl));
-                final MavenExternalId externalId = componentInformationService.constructMavenExternalIdFromUrl(componentUrl);
+                final ExternalId externalId = componentInformationService.constructMavenExternalIdFromUrl(componentUrl);
                 if (externalId != null) {
                     componentInspectorService.addComponentToProject(projectName, externalId);
                     if (componentUrls.size() < SEVENTY_PERCENT) {

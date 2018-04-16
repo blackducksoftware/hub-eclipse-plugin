@@ -1,7 +1,7 @@
 /**
  * com.blackducksoftware.integration.eclipse.plugin
  *
- * Copyright (C) 2017 Black Duck Software, Inc.
+ * Copyright (C) 2018 Black Duck Software, Inc.
  * http://www.blackducksoftware.com/
  *
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -25,21 +25,21 @@ package com.blackducksoftware.integration.eclipse.internal.connection.free.model
 
 import java.util.Map;
 
-import com.blackducksoftware.integration.hub.model.HubView;
-import com.blackducksoftware.integration.hub.model.enumeration.ComplexLicenseEnum;
-import com.blackducksoftware.integration.hub.model.view.LicenseView;
+import com.blackducksoftware.integration.hub.api.core.HubResponse;
+import com.blackducksoftware.integration.hub.api.generated.enumeration.ComplexLicenseType;
+import com.blackducksoftware.integration.hub.api.generated.view.LicenseView;
 
-public class KBLicenseView extends HubView{
-	private Map<String, LicenseView> detail;
+public class KBLicenseView extends HubResponse {
+    private Map<String, LicenseView> detail;
 
-	private ComplexLicenseEnum type;
+    private ComplexLicenseType type;
 
-	public Map<String, LicenseView> getDetail() {
-		return detail;
-	}
+    public Map<String, LicenseView> getDetail() {
+        return detail;
+    }
 
-	public ComplexLicenseEnum getType() {
-		return type;
-	}
+    public ComplexLicenseType getType() {
+        return type;
+    }
 
 }

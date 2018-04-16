@@ -1,7 +1,7 @@
 /**
  * com.blackducksoftware.integration.eclipse.plugin
  *
- * Copyright (C) 2017 Black Duck Software, Inc.
+ * Copyright (C) 2018 Black Duck Software, Inc.
  * http://www.blackducksoftware.com/
  *
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -30,82 +30,95 @@ import com.blackducksoftware.integration.eclipse.internal.ComponentModel;
 import com.blackducksoftware.integration.eclipse.internal.connection.free.KBDetailsRequestService;
 import com.blackducksoftware.integration.eclipse.internal.connection.free.dataservices.KBLicenseDataService;
 import com.blackducksoftware.integration.eclipse.internal.connection.free.dataservices.KBVulnerabilityDataService;
+import com.blackducksoftware.integration.eclipse.services.BlackDuckEclipseServicesFactory;
 import com.blackducksoftware.integration.eclipse.services.connection.AbstractConnectionService;
 import com.blackducksoftware.integration.eclipse.services.inspector.ComponentInspectorViewService;
 import com.blackducksoftware.integration.exception.IntegrationException;
+import com.blackducksoftware.integration.hub.proxy.ProxyInfo;
+import com.blackducksoftware.integration.hub.proxy.ProxyInfoBuilder;
 import com.blackducksoftware.integration.hub.rest.RestConnection;
 import com.blackducksoftware.integration.hub.rest.UnauthenticatedRestConnection;
+import com.blackducksoftware.integration.hub.rest.UriCombiner;
 import com.blackducksoftware.integration.log.IntBufferedLogger;
 import com.blackducksoftware.integration.log.IntLogger;
 
 public class FreeConnectionService extends AbstractConnectionService {
-	private final IntLogger logger;
+    private final IntLogger logger;
 
-	private RestConnection restConnection;
+    private RestConnection restConnection;
 
-	private KBLicenseDataService licenseDataService;
+    private KBLicenseDataService licenseDataService;
 
-	private KBVulnerabilityDataService vulnerabilityDataService;
+    private KBVulnerabilityDataService vulnerabilityDataService;
 
-	private KBDetailsRequestService kbDetailsRequestService;
+    private KBDetailsRequestService kbDetailsRequestService;
 
-	public static final String JOB_GENERATE_URL = "Opening component in the Hub...";
+    private final FreePreferencesService freePreferencesService;
 
-	public static final String KB_URL = "https://kbtest.blackducksoftware.com/";
+    public static final String JOB_GENERATE_URL = "Opening component in the Hub...";
 
-	public FreeConnectionService(final ComponentInspectorViewService componentInspectorViewService){
-		this.logger = new IntBufferedLogger();
-		this.reloadConnection();
-	}
+    public static final String KB_URL = "https://kbtest.blackducksoftware.com/";
 
-	@Override
-	public void reloadConnection(){
-		this.restConnection = this.getKBRestConnectionFromPreferences();
-		this.kbDetailsRequestService = new KBDetailsRequestService(restConnection);
-	}
+    public FreeConnectionService(final ComponentInspectorViewService componentInspectorViewService) {
+        this.logger = new IntBufferedLogger();
+        this.freePreferencesService = BlackDuckEclipseServicesFactory.getInstance().getFreePreferencesService();
+        this.reloadConnection();
+    }
 
-	private RestConnection getKBRestConnectionFromPreferences() {
-		final UnauthenticatedRestConnection connection;
-		try {
-			connection = new UnauthenticatedRestConnection(logger, new URL(KB_URL), 120);
-			connection.connect();
-		} catch (final IntegrationException | MalformedURLException e) {
-			return null;
-		}
-		return connection;
-	}
+    @Override
+    public void reloadConnection() {
+        this.restConnection = this.getKBRestConnectionFromPreferences();
+        this.kbDetailsRequestService = new KBDetailsRequestService(restConnection);
+    }
 
-	public KBLicenseDataService getLicenseDataService() {
-		if (licenseDataService == null) {
-			licenseDataService = new KBLicenseDataService(kbDetailsRequestService);
-		}
-		return licenseDataService;
-	}
+    private RestConnection getKBRestConnectionFromPreferences() {
+        final UnauthenticatedRestConnection connection;
+        try {
+            final ProxyInfoBuilder proxyInfoBuilder = new ProxyInfoBuilder();
+            proxyInfoBuilder.setHost(freePreferencesService.getHubProxyHost());
+            proxyInfoBuilder.setPort(freePreferencesService.getHubProxyPort());
+            proxyInfoBuilder.setUsername(freePreferencesService.getHubProxyUsername());
+            proxyInfoBuilder.setPassword(freePreferencesService.getHubProxyPassword());
+            final ProxyInfo proxyInfo = proxyInfoBuilder.build();
+            connection = new UnauthenticatedRestConnection(logger, new URL(KB_URL), 120, proxyInfo, new UriCombiner());
+            connection.connect();
+        } catch (final IntegrationException | MalformedURLException e) {
+            return null;
+        }
+        return connection;
+    }
 
-	public KBVulnerabilityDataService getVulnerabilityDataService() {
-		if (vulnerabilityDataService == null) {
-			vulnerabilityDataService = new KBVulnerabilityDataService(kbDetailsRequestService);
-		}
-		return vulnerabilityDataService;
-	}
+    public KBLicenseDataService getLicenseDataService() {
+        if (licenseDataService == null) {
+            licenseDataService = new KBLicenseDataService(kbDetailsRequestService);
+        }
+        return licenseDataService;
+    }
 
-	public RestConnection getRestConnection() {
-		return restConnection;
-	}
+    public KBVulnerabilityDataService getVulnerabilityDataService() {
+        if (vulnerabilityDataService == null) {
+            vulnerabilityDataService = new KBVulnerabilityDataService(kbDetailsRequestService);
+        }
+        return vulnerabilityDataService;
+    }
 
-	@Override
-	public boolean hasActiveConnection() {
-		return restConnection != null;
-	}
+    public RestConnection getRestConnection() {
+        return restConnection;
+    }
 
-	@Override
-	public void displayExpandedComponentInformation(final ComponentModel component){
-		//TODO: Implement if necessary
-	}
+    @Override
+    public boolean hasActiveConnection() {
+        return restConnection != null;
+    }
 
-	@Override
-	public void shutDown(){
-		//TODO: Implement if necessary
-	}
+    @Override
+    public void displayExpandedComponentInformation(final ComponentModel component) {
+        // TODO: Implement if necessary
+    }
+
+    @Override
+    public void shutDown() {
+        // TODO: Implement if necessary
+    }
 
 }

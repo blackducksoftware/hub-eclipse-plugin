@@ -1,7 +1,7 @@
 /**
  * com.blackducksoftware.integration.eclipse.plugin
  *
- * Copyright (C) 2017 Black Duck Software, Inc.
+ * Copyright (C) 2018 Black Duck Software, Inc.
  * http://www.blackducksoftware.com/
  *
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -33,21 +33,20 @@ import com.blackducksoftware.integration.eclipse.internal.connection.free.datase
 import com.blackducksoftware.integration.eclipse.internal.connection.free.model.CVEVulnerabilityView;
 import com.blackducksoftware.integration.eclipse.services.connection.AbstractComponentLookupService;
 import com.blackducksoftware.integration.exception.IntegrationException;
-import com.blackducksoftware.integration.hub.bdio.simple.model.externalid.MavenExternalId;
-import com.blackducksoftware.integration.hub.model.enumeration.VulnerabilitySeverityEnum;
-import com.blackducksoftware.integration.hub.model.view.ComplexLicenseView;
+import com.blackducksoftware.integration.hub.api.generated.view.ComplexLicenseView;
+import com.blackducksoftware.integration.hub.bdio.model.externalid.ExternalId;
 
-public class FreeComponentLookupService extends AbstractComponentLookupService{
-    public FreeComponentLookupService(final FreeConnectionService connectionService){
+public class FreeComponentLookupService extends AbstractComponentLookupService {
+    public FreeComponentLookupService(final FreeConnectionService connectionService) {
         super(connectionService);
     }
 
     @Override
-    public ComponentModel lookupComponent(final MavenExternalId externalId) throws IOException, URISyntaxException, IntegrationException {
+    public ComponentModel lookupComponent(final ExternalId externalId) throws IOException, URISyntaxException, IntegrationException {
         final KBLicenseDataService licenseDataService = ((FreeConnectionService) connectionService).getLicenseDataService();
         final KBVulnerabilityDataService vulnerabilityDataService = ((FreeConnectionService) connectionService).getVulnerabilityDataService();
         ComponentModel component = componentLoadingCache.get(externalId);
-        if(component == null){
+        if (component == null) {
             List<CVEVulnerabilityView> vulnerabilities = null;
             ComplexLicenseView complexLicense = null;
             int premiumVulnerabilities = -1;
@@ -76,14 +75,14 @@ public class FreeComponentLookupService extends AbstractComponentLookupService{
             return new int[] { 0, 0, 0, premiumVulnerabilities };
         }
         for (final CVEVulnerabilityView vuln : vulnerabilities) {
-            switch (VulnerabilitySeverityEnum.valueOf(vuln.getSeverity().toUpperCase())) {
-            case HIGH:
+            switch (vuln.getSeverity().toUpperCase()) {
+            case "HIGH":
                 high++;
                 break;
-            case MEDIUM:
+            case "MEDIUM":
                 medium++;
                 break;
-            case LOW:
+            case "LOW":
                 low++;
                 break;
             default:

@@ -1,7 +1,7 @@
 /**
  * com.blackducksoftware.integration.eclipse.plugin
  *
- * Copyright (C) 2017 Black Duck Software, Inc.
+ * Copyright (C) 2018 Black Duck Software, Inc.
  * http://www.blackducksoftware.com/
  *
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -35,22 +35,18 @@ import com.blackducksoftware.integration.eclipse.services.BlackDuckEclipseServic
 import com.blackducksoftware.integration.eclipse.services.WorkspaceInformationService;
 import com.blackducksoftware.integration.eclipse.services.connection.free.FreeConnectionService;
 import com.blackducksoftware.integration.eclipse.services.connection.hub.HubConnectionService;
-import com.blackducksoftware.integration.hub.bdio.simple.model.externalid.MavenExternalId;
+import com.blackducksoftware.integration.hub.bdio.model.externalid.ExternalId;
 
 public class ComponentInspectorService {
     private final InspectionJobQueue inspectionQueue;
-
     private final HubConnectionService hubConnectionService;
-
     private final FreeConnectionService freeConnectionService;
-
     private final ComponentInspectorCacheService inspectorCacheService;
-
     private final ComponentInspectorViewService inspectorViewService;
-
     private final ComponentInspectorPreferencesService inspectorPreferencesService;
 
-    public ComponentInspectorService(final ComponentInspectorViewService inspectorViewService, final HubConnectionService hubConnectionService, final FreeConnectionService freeConnectionService, final ComponentInspectorPreferencesService componentInspectorPreferencesService, final ComponentInspectorCacheService componentInspectorCacheService){
+    public ComponentInspectorService(final ComponentInspectorViewService inspectorViewService, final HubConnectionService hubConnectionService, final FreeConnectionService freeConnectionService,
+            final ComponentInspectorPreferencesService componentInspectorPreferencesService, final ComponentInspectorCacheService componentInspectorCacheService) {
         final InspectionJobChangeListener inspectionJobChangeListener = new InspectionJobChangeListener(inspectorViewService);
         this.inspectorPreferencesService = componentInspectorPreferencesService;
         this.inspectorCacheService = componentInspectorCacheService;
@@ -64,7 +60,7 @@ public class ComponentInspectorService {
         inspectorCacheService.initializeProject(projectName);
     }
 
-    public boolean addComponentToProject(final String projectName, final MavenExternalId externalId) {
+    public boolean addComponentToProject(final String projectName, final ExternalId externalId) {
         try {
             inspectorCacheService.addComponentToProject(projectName, externalId);
         } catch (IOException | URISyntaxException e) {
@@ -73,11 +69,11 @@ public class ComponentInspectorService {
         return true;
     }
 
-    public void removeComponentFromProject(final String projectName, final MavenExternalId externalId) {
+    public void removeComponentFromProject(final String projectName, final ExternalId externalId) {
         inspectorCacheService.removeComponentFromProject(projectName, externalId);
     }
 
-    public boolean inspectProject(final String projectName){
+    public boolean inspectProject(final String projectName) {
         if ((!hubConnectionService.hasActiveConnection() && !freeConnectionService.hasActiveConnection())
                 || !inspectorPreferencesService.isProjectMarkedForInspection(projectName)) {
             return false;
@@ -87,10 +83,10 @@ public class ComponentInspectorService {
         return true;
     }
 
-    public void inspectAllProjects(){
+    public void inspectAllProjects() {
         final WorkspaceInformationService workspaceInformationService = BlackDuckEclipseServicesFactory.getInstance().getWorkspaceInformationService();
         workspaceInformationService.getSupportedProjectNames().forEach(projectName -> {
-            if(inspectorPreferencesService.isProjectMarkedForInspection(projectName)){
+            if (inspectorPreferencesService.isProjectMarkedForInspection(projectName)) {
                 inspectProject(projectName);
             }
         });

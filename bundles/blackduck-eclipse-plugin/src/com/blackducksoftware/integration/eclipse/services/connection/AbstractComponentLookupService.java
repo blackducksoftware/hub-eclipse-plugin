@@ -1,7 +1,7 @@
 /**
  * com.blackducksoftware.integration.eclipse.plugin
  *
- * Copyright (C) 2017 Black Duck Software, Inc.
+ * Copyright (C) 2018 Black Duck Software, Inc.
  * http://www.blackducksoftware.com/
  *
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -28,11 +28,11 @@ import java.net.URISyntaxException;
 
 import com.blackducksoftware.integration.eclipse.internal.ComponentModel;
 import com.blackducksoftware.integration.exception.IntegrationException;
-import com.blackducksoftware.integration.hub.bdio.simple.model.externalid.MavenExternalId;
+import com.blackducksoftware.integration.hub.bdio.model.externalid.ExternalId;
 import com.blackducksoftware.integration.util.TimedLRUCache;
 
 public abstract class AbstractComponentLookupService {
-    protected final TimedLRUCache<MavenExternalId, ComponentModel> componentLoadingCache;
+    protected final TimedLRUCache<ExternalId, ComponentModel> componentLoadingCache;
 
     private final int CACHE_CAPACITY = 10000;
 
@@ -40,14 +40,14 @@ public abstract class AbstractComponentLookupService {
 
     protected final AbstractConnectionService connectionService;
 
-    public AbstractComponentLookupService(final AbstractConnectionService connectionService){
+    public AbstractComponentLookupService(final AbstractConnectionService connectionService) {
         this.componentLoadingCache = new TimedLRUCache<>(CACHE_CAPACITY, CACHE_TTL);
         this.connectionService = connectionService;
     }
 
-    public abstract ComponentModel lookupComponent(final MavenExternalId externalId)  throws IOException, URISyntaxException, IntegrationException;
+    public abstract ComponentModel lookupComponent(final ExternalId externalId) throws IOException, URISyntaxException, IntegrationException;
 
-    public boolean hasActiveConnection(){
+    public boolean hasActiveConnection() {
         return connectionService.hasActiveConnection();
     }
 

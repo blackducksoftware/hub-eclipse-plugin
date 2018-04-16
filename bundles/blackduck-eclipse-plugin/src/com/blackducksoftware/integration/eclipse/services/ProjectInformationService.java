@@ -1,7 +1,7 @@
 /**
  * com.blackducksoftware.integration.eclipse.plugin
  *
- * Copyright (C) 2017 Black Duck Software, Inc.
+ * Copyright (C) 2018 Black Duck Software, Inc.
  * http://www.blackducksoftware.com/
  *
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -36,7 +36,7 @@ import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 
-import com.blackducksoftware.integration.hub.bdio.simple.model.externalid.MavenExternalId;
+import com.blackducksoftware.integration.hub.bdio.model.externalid.ExternalId;
 
 public class ProjectInformationService {
     public static final String GRADLE_NATURE = "org.eclipse.buildship.core.gradleprojectnature";
@@ -63,19 +63,17 @@ public class ProjectInformationService {
                 }
             } catch (final JavaModelException e) {
                 /*
-                 * Occurs if root does not exist or an exception occurs while accessing
-                 * resource. If this happens, assume root is not binary and therefore do
-                 * not increment count
+                 * Occurs if root does not exist or an exception occurs while accessing resource. If this happens, assume root is not binary and therefore do not increment count
                  */
             }
         }
         return numBinary;
     }
 
-    public List<MavenExternalId> getMavenExternalIdsFromFilepaths(final List<URL> mavenAndGradleFilePaths) {
-        final List<MavenExternalId> gavs = new ArrayList<>();
+    public List<ExternalId> getMavenExternalIdsFromFilepaths(final List<URL> mavenAndGradleFilePaths) {
+        final List<ExternalId> gavs = new ArrayList<>();
         for (final URL filePath : mavenAndGradleFilePaths) {
-            final MavenExternalId tempGav = componentInformationService.constructMavenExternalIdFromUrl(filePath);
+            final ExternalId tempGav = componentInformationService.constructMavenExternalIdFromUrl(filePath);
             if (tempGav != null) {
                 gavs.add(tempGav);
             }
@@ -86,7 +84,7 @@ public class ProjectInformationService {
     public List<URL> getProjectComponentUrls(final String projectName) {
         final IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(projectName);
         try {
-            if(project.hasNature(JavaCore.NATURE_ID)){
+            if (project.hasNature(JavaCore.NATURE_ID)) {
                 final IPackageFragmentRoot[] packageFragmentRoots = JavaCore.create(project).getPackageFragmentRoots();
                 final List<URL> dependencyFilepaths = getBinaryDependencyFilepaths(Arrays.asList(packageFragmentRoots));
                 return dependencyFilepaths;
@@ -117,9 +115,7 @@ public class ProjectInformationService {
             }
         } catch (final JavaModelException | MalformedURLException e) {
             /*
-             * If root does not exist or exception occurs while accessing
-             * resource, do not add its filepath to the list of binary
-             * dependency filepaths
+             * If root does not exist or exception occurs while accessing resource, do not add its filepath to the list of binary dependency filepaths
              */
         }
         return null;
@@ -130,9 +126,9 @@ public class ProjectInformationService {
         return this.isSupportedProject(project);
     }
 
-    public boolean isSupportedProject(final IProject project){
+    public boolean isSupportedProject(final IProject project) {
         try {
-            if(project.hasNature(JavaCore.NATURE_ID)){
+            if (project.hasNature(JavaCore.NATURE_ID)) {
                 for (final String nature : SUPPORTED_NATURES) {
                     if (project.hasNature(nature)) {
                         return true;

@@ -1,7 +1,7 @@
 /**
  * com.blackducksoftware.integration.eclipse.plugin
  *
- * Copyright (C) 2017 Black Duck Software, Inc.
+ * Copyright (C) 2018 Black Duck Software, Inc.
  * http://www.blackducksoftware.com/
  *
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -35,13 +35,13 @@ import org.eclipse.swt.widgets.Display;
 import com.blackducksoftware.integration.eclipse.BlackDuckEclipseActivator;
 import com.blackducksoftware.integration.eclipse.internal.ComponentModel;
 import com.blackducksoftware.integration.eclipse.views.ComponentInspectorView;
-import com.blackducksoftware.integration.hub.bdio.simple.model.externalid.MavenExternalId;
+import com.blackducksoftware.integration.hub.bdio.model.externalid.ExternalId;
 
 public class NameColumnLabelProvider extends ComponentTableColumnLabelProvider {
     @Override
     public String getText(final Object input) {
         if (input instanceof ComponentModel) {
-            final MavenExternalId externalId = ((ComponentModel) input).getExternalId();
+            final ExternalId externalId = ((ComponentModel) input).getExternalId();
             final String text = externalId.name + ":" + externalId.version;
             return text;
         }

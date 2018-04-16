@@ -1,7 +1,7 @@
 /**
  * com.blackducksoftware.integration.eclipse.plugin
  *
- * Copyright (C) 2017 Black Duck Software, Inc.
+ * Copyright (C) 2018 Black Duck Software, Inc.
  * http://www.blackducksoftware.com/
  *
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -35,7 +35,7 @@ import org.eclipse.jdt.core.IPackageFragmentRoot;
 
 import com.blackducksoftware.integration.eclipse.services.ComponentInformationService;
 import com.blackducksoftware.integration.eclipse.services.inspector.ComponentInspectorService;
-import com.blackducksoftware.integration.hub.bdio.simple.model.externalid.MavenExternalId;
+import com.blackducksoftware.integration.hub.bdio.model.externalid.ExternalId;
 
 public class ProjectComponentsChangedListener implements IElementChangedListener {
     private final ComponentInspectorService inspectorService;
@@ -70,20 +70,20 @@ public class ProjectComponentsChangedListener implements IElementChangedListener
             break;
 
         case IJavaElement.PACKAGE_FRAGMENT_ROOT:
-            try{
+            try {
                 final IPackageFragmentRoot packageFragmentRoot = (IPackageFragmentRoot) el;
                 packageFragmentRoot.getElementName();
                 final String projectName = el.getJavaProject().getProject().getDescription().getName();
                 final URL componentUrl = el.getPath().toFile().toURI().toURL();
-                final MavenExternalId componentExternalId = componentInformationService.constructMavenExternalIdFromUrl(componentUrl);
+                final ExternalId componentExternalId = componentInformationService.constructMavenExternalIdFromUrl(componentUrl);
                 if ((delta.getFlags() & IJavaElementDelta.F_REMOVED_FROM_CLASSPATH) != 0 || delta.getKind() == IJavaElementDelta.REMOVED) {
                     inspectorService.removeComponentFromProject(projectName, componentExternalId);
                 }
                 if ((delta.getFlags() & IJavaElementDelta.F_ADDED_TO_CLASSPATH) != 0 || delta.getKind() == IJavaElementDelta.ADDED) {
                     inspectorService.addComponentToProject(projectName, componentExternalId);
                 }
-            }catch(final MalformedURLException | NullPointerException | CoreException e){
-                //Component failed to be added or removed
+            } catch (final MalformedURLException | NullPointerException | CoreException e) {
+                // Component failed to be added or removed
             }
             break;
 

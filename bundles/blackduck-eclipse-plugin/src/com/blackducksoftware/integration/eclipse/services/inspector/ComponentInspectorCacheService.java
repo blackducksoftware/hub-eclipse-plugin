@@ -1,7 +1,7 @@
 /**
  * com.blackducksoftware.integration.eclipse.plugin
  *
- * Copyright (C) 2017 Black Duck Software, Inc.
+ * Copyright (C) 2018 Black Duck Software, Inc.
  * http://www.blackducksoftware.com/
  *
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -37,7 +37,7 @@ import com.blackducksoftware.integration.eclipse.internal.ComponentModelVulnerab
 import com.blackducksoftware.integration.eclipse.services.connection.free.FreeComponentLookupService;
 import com.blackducksoftware.integration.eclipse.services.connection.hub.HubComponentLookupService;
 import com.blackducksoftware.integration.exception.IntegrationException;
-import com.blackducksoftware.integration.hub.bdio.simple.model.externalid.MavenExternalId;
+import com.blackducksoftware.integration.hub.bdio.model.externalid.ExternalId;
 
 public class ComponentInspectorCacheService {
     private final Map<String, List<ComponentModel>> inspectorCache;
@@ -63,12 +63,12 @@ public class ComponentInspectorCacheService {
         return inspectorCache.put(projectName, models);
     }
 
-    public void addComponentToProject(final String projectName, final MavenExternalId externalId) throws IOException, URISyntaxException {
+    public void addComponentToProject(final String projectName, final ExternalId externalId) throws IOException, URISyntaxException {
         final List<ComponentModel> components = inspectorCache.get(projectName);
         if (components != null) {
             try {
                 final ComponentModel newComponent;
-                if(hubComponentLookupService.hasActiveConnection()){
+                if (hubComponentLookupService.hasActiveConnection()) {
                     newComponent = hubComponentLookupService.lookupComponent(externalId);
                 } else {
                     newComponent = freeComponentLookupService.lookupComponent(externalId);
@@ -79,9 +79,8 @@ public class ComponentInspectorCacheService {
                 componentInspectorViewService.resetDisplay();
             } catch (final IntegrationException e) {
                 /*
-                 * Thrown if exception occurs when accessing key gav from cache. If an exception is
-                 * thrown, info associated with that gav is inaccessible, and so don't put any
-                 * information related to said gav into hashmap associated with the project
+                 * Thrown if exception occurs when accessing key gav from cache. If an exception is thrown, info associated with that gav is inaccessible, and so don't put any information related to said gav into hashmap associated with the
+                 * project
                  */
             }
         }
@@ -100,7 +99,7 @@ public class ComponentInspectorCacheService {
         componentInspectorViewService.clearProjectDisplay(projectName);
     }
 
-    public void removeComponentFromProject(final String projectName, final MavenExternalId externalId) {
+    public void removeComponentFromProject(final String projectName, final ExternalId externalId) {
         final List<ComponentModel> models = inspectorCache.get(projectName);
         if (models != null) {
             for (final Iterator<ComponentModel> iterator = models.iterator(); iterator.hasNext();) {

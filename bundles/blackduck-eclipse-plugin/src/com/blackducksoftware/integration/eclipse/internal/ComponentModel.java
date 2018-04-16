@@ -1,7 +1,7 @@
 /**
  * com.blackducksoftware.integration.eclipse.plugin
  *
- * Copyright (C) 2017 Black Duck Software, Inc.
+ * Copyright (C) 2018 Black Duck Software, Inc.
  * http://www.blackducksoftware.com/
  *
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -23,11 +23,11 @@
  */
 package com.blackducksoftware.integration.eclipse.internal;
 
-import com.blackducksoftware.integration.hub.bdio.simple.model.externalid.MavenExternalId;
-import com.blackducksoftware.integration.hub.model.view.ComplexLicenseView;
+import com.blackducksoftware.integration.hub.api.generated.view.ComplexLicenseView;
+import com.blackducksoftware.integration.hub.bdio.model.externalid.ExternalId;
 
 public class ComponentModel {
-    private final MavenExternalId gav;
+    private final ExternalId gav;
 
     private final ComplexLicenseView license;
 
@@ -35,14 +35,14 @@ public class ComponentModel {
 
     private final boolean componentIsKnown;
 
-    public ComponentModel(final MavenExternalId gav, final ComplexLicenseView license, final int[] vulnerabilityCount, final boolean componentIsKnown) {
+    public ComponentModel(final ExternalId gav, final ComplexLicenseView license, final int[] vulnerabilityCount, final boolean componentIsKnown) {
         this.gav = gav;
         this.license = license;
         this.vulnerabilityCount = vulnerabilityCount;
         this.componentIsKnown = componentIsKnown;
     }
 
-    public MavenExternalId getExternalId() {
+    public ExternalId getExternalId() {
         return gav;
     }
 

@@ -1,7 +1,7 @@
 /**
  * com.blackducksoftware.integration.eclipse.plugin
  *
- * Copyright (C) 2017 Black Duck Software, Inc.
+ * Copyright (C) 2018 Black Duck Software, Inc.
  * http://www.blackducksoftware.com/
  *
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -28,7 +28,7 @@ import java.net.URL;
 
 import org.eclipse.jdt.core.JavaCore;
 
-import com.blackducksoftware.integration.hub.bdio.simple.model.externalid.MavenExternalId;
+import com.blackducksoftware.integration.hub.bdio.model.externalid.ExternalId;
 import com.blackducksoftware.integration.hub.buildtool.FilePathMavenExternalIdExtractor;
 
 public class ComponentInformationService {
@@ -36,7 +36,7 @@ public class ComponentInformationService {
 
     private final FilePathMavenExternalIdExtractor filePathMavenExternalIdExtractor;
 
-    public ComponentInformationService(){
+    public ComponentInformationService() {
         this.filePathMavenExternalIdExtractor = new FilePathMavenExternalIdExtractor();
     }
 
@@ -79,16 +79,16 @@ public class ComponentInformationService {
         return false;
     }
 
-    public MavenExternalId constructMavenExternalIdFromUrl(final URL filePath) {
-        try{
+    public ExternalId constructMavenExternalIdFromUrl(final URL filePath) {
+        try {
             if (this.isGradleDependency(filePath)) {
                 return filePathMavenExternalIdExtractor.getGradlePathMavenExternalId(filePath);
             } else if (this.isMavenDependency(filePath)) {
                 final URL localMavenPath = JavaCore.getClasspathVariable(M2_REPO).toFile().toURI().toURL();
                 return filePathMavenExternalIdExtractor.getMavenPathMavenExternalId(filePath, localMavenPath);
             }
-        }catch(final MalformedURLException e){
-            //Return null if we can't resolve the maven url
+        } catch (final MalformedURLException e) {
+            // Return null if we can't resolve the maven url
         }
         return null;
     }
