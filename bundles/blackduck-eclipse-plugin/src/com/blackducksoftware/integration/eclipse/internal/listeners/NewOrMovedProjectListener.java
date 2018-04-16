@@ -61,12 +61,12 @@ public class NewOrMovedProjectListener implements IResourceChangeListener {
             if (project instanceof IProject && (projectWasAdded || projectWasMoved)) {
                 final String projectName = project.getName();
                 if (projectInformationService.isProjectSupported(projectName)) {
-                    if (projectWasAdded) {
+                    if (projectWasAdded && delta.getMovedFromPath() != null) {
                         final String oldProjectName = delta.getMovedFromPath().toFile().getName();
                         if (componentInspectorPreferencesService.isProjectMarkedForInspection(oldProjectName)) {
                             componentInspectorPreferencesService.markProjectForInspection(projectName);
                         }
-                    } else if (!componentInspectorPreferencesService.projectExists(projectName)){
+                    } else if (!componentInspectorPreferencesService.projectExists(projectName)) {
                         componentInspectorPreferencesService.setProjectMarkedForInspection(projectName, componentInspectorPreferencesService.getInspectByDefault());
                     }
                     if (componentInspectorPreferencesService.isProjectMarkedForInspection(projectName)) {
