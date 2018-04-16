@@ -12,7 +12,6 @@ Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.ui.workbench,
  org.eclipse.ui,
  org.eclipse.ui.ide,
- org.apache.commons.lang3,
  org.eclipse.jface.text,
  com.blackducksoftware.integration.eclipse.plugin.maven-dependencies
 Bundle-Activator: com.blackducksoftware.integration.eclipse.BlackDuckEclipseActivator

@@ -30,15 +30,10 @@ import com.blackducksoftware.integration.eclipse.preferencepages.hub.HubPreferen
 
 public class HubPreferencesBotUtils extends AbstractPreferenceBotUtils {
     public static final String VALID_HUB_USERNAME = "sysadmin";
-
     public static final String VALID_HUB_PASSWORD = "blackduck";
-
     public static final String VALID_HUB_URL = "http://int-auto01.dc1.lan:9000";
-
     public static final String ALT_VALID_HUB_URL = "http://int-hub01.dc1.lan:8080";
-
     public static final String VALID_HUB_TIMEOUT = "120";
-
     public static final String INVALID_STRING = "INVALID";
 
     public HubPreferencesBotUtils(final BlackDuckBotUtils botUtils) {
@@ -60,26 +55,26 @@ public class HubPreferencesBotUtils extends AbstractPreferenceBotUtils {
     public void enterCredentials(final String hubUsername, final String hubPassword, final String hubUrl, final String hubTimeout,
             final String proxyUsername, final String proxyPassword, final String proxyHost, final String proxyPort) {
         final SWTBotText usernameField = bot.textWithLabel(HubPreferences.HUB_USERNAME_LABEL);
-        usernameField.typeText(hubUsername);
+        usernameField.setText(hubUsername);
         final SWTBotText passwordField = bot.textWithLabel(HubPreferences.HUB_PASSWORD_LABEL);
-        passwordField.typeText(hubPassword);
+        passwordField.setText(hubPassword);
         final SWTBotText urlField = bot.textWithLabel(HubPreferences.HUB_URL_LABEL);
-        urlField.typeText(hubUrl);
+        urlField.setText(hubUrl);
         final SWTBotText timeoutField = bot.textWithLabel(HubPreferences.HUB_TIMEOUT_LABEL);
-        timeoutField.typeText(hubTimeout);
+        timeoutField.setText(hubTimeout);
         final SWTBotText proxyUsernameField = bot.textWithLabel(HubPreferences.PROXY_USERNAME_LABEL);
-        proxyUsernameField.typeText(proxyUsername);
+        proxyUsernameField.setText(proxyUsername);
         final SWTBotText proxyPasswordField = bot.textWithLabel(HubPreferences.PROXY_PASSWORD_LABEL);
-        proxyPasswordField.typeText(proxyPassword);
+        proxyPasswordField.setText(proxyPassword);
         final SWTBotText proxyHostField = bot.textWithLabel(HubPreferences.PROXY_HOST_LABEL);
-        proxyHostField.typeText(proxyHost);
+        proxyHostField.setText(proxyHost);
         final SWTBotText proxyPortField = bot.textWithLabel(HubPreferences.PROXY_PORT_LABEL);
-        proxyPortField.typeText(proxyPort);
+        proxyPortField.setText(proxyPort);
     }
 
     public void resetCredentials() {
         this.enterCredentials("", "", "", "", "", "", "", "");
-        this.pressOK();
+        this.pressApplyAndClose();
     }
 
     public void testCurrentCredentials() {

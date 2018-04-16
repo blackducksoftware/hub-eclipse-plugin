@@ -46,23 +46,14 @@ import com.blackducksoftware.integration.eclipse.test.TestConstants;
 
 public class WorkbenchBotUtils extends AbstractBotUtils {
     public static final String PACKAGE_EXPLORER_VIEW = "Package Explorer";
-
     public static final String PROJECT_EXPLORER_VIEW = "Project Explorer";
-
     public static final String PROJECTS_VIEW = "Projects";
-
     public static final String MENU_WINDOW = "Window";
-
     public static final String MENU_WINDOW_SHOW_VIEW = "Show View";
-
     public static final String MENU_WINDOW_SHOW_VIEW_OTHER = "Other...";
-
     public static final String SHOW_VIEW_WINDOW_TITLE = "Show View";
-
     public static final String VIEW_TYPE_JAVA = "Java";
-
     public static final String VIEW_TYPE_JAVA_BROWSING = "Java Browsing";
-
     public static final String VIEW_TYPE_GENERAL = "General";
 
     private final ProjectCreationBotUtils projectCreationBotUtils;
@@ -96,7 +87,7 @@ public class WorkbenchBotUtils extends AbstractBotUtils {
         final SWTBotTreeItem javaNode = this.expandSuperNode(VIEW_TYPE_JAVA);
         javaNode.expandNode(PACKAGE_EXPLORER_VIEW).select();
         final SWTBot pageBot = bot.activeShell().bot();
-        this.pressButton(pageBot, "OK");
+        this.pressButton(pageBot, "Open");
     }
 
     public void openProjectExplorerview() {
@@ -104,7 +95,7 @@ public class WorkbenchBotUtils extends AbstractBotUtils {
         final SWTBotTreeItem generalNode = this.expandSuperNode(VIEW_TYPE_GENERAL);
         generalNode.expandNode(PROJECT_EXPLORER_VIEW).select();
         final SWTBot pageBot = bot.activeShell().bot();
-        this.pressButton(pageBot, "OK");
+        this.pressButton(pageBot, "Open");
     }
 
     public void openProjectsView() {
@@ -112,7 +103,7 @@ public class WorkbenchBotUtils extends AbstractBotUtils {
         final SWTBotTreeItem javaBrowsingNode = this.expandSuperNode(VIEW_TYPE_JAVA_BROWSING);
         javaBrowsingNode.expandNode(PROJECTS_VIEW).select();
         final SWTBot pageBot = bot.activeShell().bot();
-        this.pressButton(pageBot, "OK");
+        this.pressButton(pageBot, "Open");
     }
 
     public void openComponentInspectorView() {
@@ -120,7 +111,7 @@ public class WorkbenchBotUtils extends AbstractBotUtils {
         final SWTBotTreeItem blackDuckNode = this.expandSuperNode(TestConstants.BLACK_DUCK_CATEGORY_NAME);
         blackDuckNode.getNode(TestConstants.COMPONENT_INSPECTOR_VIEW_NAME).select();
         final SWTBot pageBot = bot.activeShell().bot();
-        this.pressButton(pageBot, "OK");
+        this.pressButton(pageBot, "Open");
     }
 
     private void openShowViewDialog() {
@@ -176,7 +167,7 @@ public class WorkbenchBotUtils extends AbstractBotUtils {
         }
     }
 
-    public SWTBotTreeItem getProjectInPackageExplorer(final String projectName){
+    public SWTBotTreeItem getProjectInPackageExplorer(final String projectName) {
         this.openPackageExplorerView();
         final SWTBotView view = this.getPackageExplorerView();
         view.setFocus();

@@ -53,9 +53,7 @@ public class ComponentInspectorViewBotTest {
     private static final String COMMONS_FILEUPLOAD = "commons-fileupload";
 
     private final String[] testMavenComponents = { "commons-fileupload  1.0 ", "just-a-maven-project  0.0.1-SNAPSHOT ", "junit  3.8.1 " };
-
     private final String filterBoxMessage = "type filter text";
-
     private static BlackDuckBotUtils botUtils;
 
     @BeforeClass
@@ -67,7 +65,7 @@ public class ComponentInspectorViewBotTest {
         botUtils.preferences().pressApply();
         botUtils.preferences().inspectorSettings().openComponentInspectorPreferences();
         botUtils.preferences().inspectorSettings().setInspectNewByDefaultTrue();
-        botUtils.preferences().pressOK();
+        botUtils.preferences().pressApplyAndClose();
         botUtils.workbench().createProject().createMavenProject(TestConstants.TEST_MAVEN_GROUP, TestConstants.TEST_MAVEN_ARTIFACT);
         botUtils.workbench().closeProject(TestConstants.TEST_MAVEN_ARTIFACT);
         botUtils.addJarToProject(TestConstants.TEST_MAVEN_ARTIFACT_JAR, TestConstants.TEST_MAVEN_ARTIFACT);
@@ -79,7 +77,7 @@ public class ComponentInspectorViewBotTest {
     }
 
     @Test
-    public void testThatVulnerabilityViewOpensFromWindowMenu() {
+    public void testVulnerabilityViewOpensFromWindowMenu() {
         botUtils.workbench().openComponentInspectorView();
         final SWTWorkbenchBot bot = botUtils.bot();
         assertNotNull(bot.viewByTitle(TestConstants.COMPONENT_INSPECTOR_VIEW_NAME));
@@ -106,7 +104,7 @@ public class ComponentInspectorViewBotTest {
     public void testConnectionOK() {
         botUtils.preferences().openHubPreferencesFromEclipseMenu();
         botUtils.preferences().hubSettings().enterValidCredentials();
-        botUtils.preferences().pressOK();
+        botUtils.preferences().pressApplyAndClose();
         final SWTBotTreeItem projectNode = botUtils.workbench().getProject(TestConstants.TEST_MAVEN_COMPONENTS_ARTIFACT);
         projectNode.select();
         botUtils.workbench().openComponentInspectorView();
@@ -118,36 +116,12 @@ public class ComponentInspectorViewBotTest {
     public void testConnectionOKNoComponents() {
         botUtils.preferences().openHubPreferencesFromEclipseMenu();
         botUtils.preferences().hubSettings().enterValidCredentials();
-        botUtils.preferences().pressOK();
+        botUtils.preferences().pressApplyAndClose();
         final SWTBotTreeItem projectNode = botUtils.workbench().getProject(TestConstants.TEST_MAVEN_EMPTY_ARTIFACT);
         projectNode.select();
         botUtils.workbench().openComponentInspectorView();
         botUtils.componentInspector().getInspectionResultsTable().setFocus();
         assertNotNull(botUtils.componentInspector().getInspectionStatus(ComponentTableStatusCLabel.HUB_CONNECTION_OK_NO_COMPONENTS_STATUS));
-    }
-
-    @Test
-    public void testKBConnectionOK() {
-        botUtils.preferences().openHubPreferencesFromEclipseMenu();
-        botUtils.preferences().hubSettings().enterInvalidCredentials();
-        botUtils.preferences().pressOK();
-        final SWTBotTreeItem projectNode = botUtils.workbench().getProject(TestConstants.TEST_MAVEN_COMPONENTS_ARTIFACT);
-        projectNode.select();
-        botUtils.workbench().openComponentInspectorView();
-        botUtils.componentInspector().getInspectionResultsTable().setFocus();
-        assertNotNull(botUtils.componentInspector().getInspectionStatus(ComponentTableStatusCLabel.KB_CONNECTION_OK_STATUS));
-    }
-
-    @Test
-    public void testKBConnectionOKNoComponents() {
-        botUtils.preferences().openHubPreferencesFromEclipseMenu();
-        botUtils.preferences().hubSettings().enterInvalidCredentials();
-        botUtils.preferences().pressOK();
-        final SWTBotTreeItem projectNode = botUtils.workbench().getProject(TestConstants.TEST_MAVEN_EMPTY_ARTIFACT);
-        projectNode.select();
-        botUtils.workbench().openComponentInspectorView();
-        botUtils.componentInspector().getInspectionResultsTable().setFocus();
-        assertNotNull(botUtils.componentInspector().getInspectionStatus(ComponentTableStatusCLabel.KB_CONNECTION_OK_NO_COMPONENTS_STATUS));
     }
 
     @Test
@@ -165,18 +139,18 @@ public class ComponentInspectorViewBotTest {
         botUtils.preferences().openHubPreferencesFromEclipseMenu();
         botUtils.preferences().inspectorSettings().openComponentInspectorPreferences();
         botUtils.preferences().inspectorSettings().unmarkProjectForInspection(TestConstants.TEST_MAVEN_COMPONENTS_ARTIFACT);
-        botUtils.preferences().inspectorSettings().pressOK();
-        try{
+        botUtils.preferences().inspectorSettings().pressApplyAndClose();
+        try {
             final SWTBotTreeItem projectNode = botUtils.workbench().getProject(TestConstants.TEST_MAVEN_COMPONENTS_ARTIFACT);
             projectNode.select();
             botUtils.workbench().openComponentInspectorView();
             botUtils.componentInspector().getInspectionResultsTable().setFocus();
             assertNotNull(botUtils.componentInspector().getInspectionStatus(ComponentTableStatusCLabel.PROJECT_NOT_MARKED_FOR_INSPECTION_STATUS));
-        }finally{
+        } finally {
             botUtils.preferences().openHubPreferencesFromEclipseMenu();
             botUtils.preferences().inspectorSettings().openComponentInspectorPreferences();
             botUtils.preferences().inspectorSettings().markProjectForInspection(TestConstants.TEST_MAVEN_COMPONENTS_ARTIFACT);
-            botUtils.preferences().inspectorSettings().pressOK();
+            botUtils.preferences().inspectorSettings().pressApplyAndClose();
         }
     }
 
@@ -207,7 +181,7 @@ public class ComponentInspectorViewBotTest {
     public void testSwitchHubInstance() {
         botUtils.preferences().openHubPreferencesFromEclipseMenu();
         botUtils.preferences().hubSettings().enterValidCredentials();
-        botUtils.preferences().pressOK();
+        botUtils.preferences().pressApplyAndClose();
         botUtils.workbench().openComponentInspectorView();
         final SWTBotTreeItem projectNode = botUtils.workbench().getProject(TestConstants.TEST_MAVEN_COMPONENTS_ARTIFACT);
         projectNode.select();
@@ -215,22 +189,8 @@ public class ComponentInspectorViewBotTest {
         botUtils.preferences().openHubPreferencesFromEclipseMenu();
         botUtils.preferences().hubSettings().enterCredentials(HubPreferencesBotUtils.VALID_HUB_USERNAME, HubPreferencesBotUtils.VALID_HUB_PASSWORD,
                 HubPreferencesBotUtils.ALT_VALID_HUB_URL, HubPreferencesBotUtils.VALID_HUB_TIMEOUT);
-        botUtils.preferences().pressOK();
+        botUtils.preferences().pressApplyAndClose();
         assertNotNull(botUtils.componentInspector().getInspectionStatusIfCompleteOrInProgress());
-    }
-
-    @Test
-    public void testSwitchFromHubToKB() {
-        botUtils.preferences().openHubPreferencesFromEclipseMenu();
-        botUtils.preferences().hubSettings().enterValidCredentials();
-        botUtils.preferences().pressOK();
-        final SWTBotTreeItem projectNode = botUtils.workbench().getProject(TestConstants.TEST_MAVEN_COMPONENTS_ARTIFACT);
-        projectNode.select();
-        assertNotNull(botUtils.componentInspector().getInspectionStatus(ComponentTableStatusCLabel.HUB_CONNECTION_OK_STATUS));
-        botUtils.preferences().openHubPreferencesFromEclipseMenu();
-        botUtils.preferences().hubSettings().enterInvalidCredentials();
-        botUtils.preferences().pressOK();
-        assertNotNull(botUtils.componentInspector().getInspectionStatus(ComponentTableStatusCLabel.KB_CONNECTION_OK_STATUS));
     }
 
     @AfterClass

@@ -38,17 +38,17 @@ public abstract class AbstractPreferenceBotUtils extends AbstractBotUtils {
     }
 
     public void pressApply() {
-        try{
+        try {
             final SWTBot pageBot = bot.activeShell().bot();
             this.pressButton(pageBot, "Apply");
-        }catch(final TimeoutException e){
-            //Do nothing, sometimes this will happen
+        } catch (final TimeoutException e) {
+            // Do nothing, sometimes this will happen
         }
     }
 
-    public void pressOK() {
+    public void pressApplyAndClose() {
         final SWTBot pageBot = bot.activeShell().bot();
-        this.pressButton(pageBot, "OK");
+        this.pressButton(pageBot, "Apply and Close");
         try {
             bot.waitUntil(Conditions.shellCloses(bot.shell(PREFERENCES_WINDOW_TITLE)));
         } catch (final WidgetNotFoundException e) {

@@ -41,12 +41,9 @@ import org.eclipse.ui.PlatformUI;
 import com.blackducksoftware.integration.eclipse.test.TestConstants;
 
 public class PreferenceBotUtils extends AbstractPreferenceBotUtils {
-    public static final String OK_BUTTON_TEXT = "OK";
-
+    public static final String APPLY_AND_CLOSE_BUTTON_TEXT = "Apply and Close";
     public static final String APPLY_BUTTON_TEXT = "Apply";
-
     public static final String DEFAULTS_BUTTON_TEXT = "Restore Defaults";
-
     public static final String CANCEL_BUTTON_TEXT = "Cancel";
 
     private final HubPreferencesBotUtils hubPreferencesBotUtils;

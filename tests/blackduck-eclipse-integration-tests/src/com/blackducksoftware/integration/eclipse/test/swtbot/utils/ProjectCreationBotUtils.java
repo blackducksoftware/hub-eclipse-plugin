@@ -35,39 +35,22 @@ import com.blackducksoftware.integration.eclipse.test.swtbot.utils.conditions.Tr
 
 public class ProjectCreationBotUtils extends AbstractBotUtils {
     public static final String MENU_FILE = "File";
-
     public static final String MENU_FILE_NEW = "New";
-
     public static final String MENU_FILE_NEW_PROJECT = "Project...";
-
     public static final String NEW_PROJECT_WINDOW_TITLE = "New Project";
-
     public static final String FINISH_BUTTON = "Finish";
-
     public static final String NEXT_BUTTON = "Next >";
-
     public static final String PROJECT_NAME_FIELD = "Project name:";
-
     public static final String PROJECT_NAME_FIELD_GRADLE = "Project name";
-
     public static final String OPEN_ASSOCIATED_PERSPECTIVE_WINDOW_TITLE = "Open Associated Perspective?";
-
     public static final String OPEN_ASSOCIATED_PERSPECTIVE_NO_BUTTON = "No";
-
     public static final String PROJECT_TYPE_JAVA = "Java";
-
     public static final String PROJECT_TYPE_GRADLE = "Gradle";
-
     public static final String PROJECT_TYPE_MAVEN = "Maven";
-
     public static final String PROJECT_TYPE_GENERAL = "General";
-
     public static final String JAVA_PROJECT = "Java Project";
-
     public static final String GRADLE_PROJECT = "Gradle Project";
-
     public static final String MAVEN_PROJECT = "Maven Project";
-
     public static final String GENERAL_PROJECT = "Project";
 
     public ProjectCreationBotUtils(final BlackDuckBotUtils botUtils) {

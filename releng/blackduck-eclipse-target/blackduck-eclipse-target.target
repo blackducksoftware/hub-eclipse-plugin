@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<?pde version="3.8"?><target includeMode="feature" name="blackduck-eclipse-target" sequenceNumber="83">
+<?pde version="3.8"?><target includeMode="feature" name="blackduck-eclipse-target" sequenceNumber="84">
 <locations>
-<location path="${eclipse_home}" type="Profile"/>
 <location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="planner" includeSource="true" type="InstallableUnit">
 <unit id="org.eclipse.buildship.feature.group" version="2.2.1.v20180125-1441"/>
 <unit id="org.eclipse.m2e.feature.feature.group" version="1.8.3.20180227-2137"/>

@@ -29,32 +29,24 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 
 import com.blackducksoftware.integration.eclipse.internal.ComponentModel;
 import com.blackducksoftware.integration.eclipse.services.BlackDuckEclipseServicesFactory;
-import com.blackducksoftware.integration.eclipse.services.connection.free.FreeConnectionService;
 import com.blackducksoftware.integration.eclipse.services.connection.hub.HubConnectionService;
 
 public class TableDoubleClickListener implements IDoubleClickListener {
-	private final HubConnectionService hubConnectionService;
-	private final FreeConnectionService freeConnectionService;
+    private final HubConnectionService hubConnectionService;
 
-	public TableDoubleClickListener(){
-		this.hubConnectionService = BlackDuckEclipseServicesFactory.getInstance().getHubConnectionService();
-		this.freeConnectionService = BlackDuckEclipseServicesFactory.getInstance().getFreeConnectionService();
-	}
+    public TableDoubleClickListener() {
+        this.hubConnectionService = BlackDuckEclipseServicesFactory.getInstance().getHubConnectionService();
+    }
 
-	@Override
-	public void doubleClick(final DoubleClickEvent event) {
-		final IStructuredSelection selection = (IStructuredSelection) event.getSelection();
-		if (selection.getFirstElement() instanceof ComponentModel) {
-			final ComponentModel selectedObject = (ComponentModel) selection.getFirstElement();
-			if (!selectedObject.getComponentIsKnown()) {
-				return;
-			}
-			if(hubConnectionService.hasActiveConnection()){
-				hubConnectionService.displayExpandedComponentInformation(selectedObject);
-			}else{
-				freeConnectionService.displayExpandedComponentInformation(selectedObject);
-			}
-		}
-	}
+    @Override
+    public void doubleClick(final DoubleClickEvent event) {
+        final IStructuredSelection selection = (IStructuredSelection) event.getSelection();
+        if (selection.getFirstElement() instanceof ComponentModel) {
+            final ComponentModel selectedObject = (ComponentModel) selection.getFirstElement();
+            if (selectedObject.getComponentIsKnown() && hubConnectionService.hasActiveConnection()) {
+                hubConnectionService.displayExpandedComponentInformation(selectedObject);
+            }
+        }
+    }
 
 }

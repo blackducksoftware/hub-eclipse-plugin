@@ -59,26 +59,6 @@ public class ComponentInspectorBotUtils extends AbstractBotUtils {
         final SWTBot viewBot = this.getComponentInspectorView();
         this.setSWTBotTimeoutShort();
         for (final String statusMessage : Arrays.asList(ComponentTableStatusCLabel.HUB_CONNECTION_OK_STATUS, ComponentTableStatusCLabel.PROJECT_INSPECTION_RUNNING_STATUS,
-                ComponentTableStatusCLabel.PROJECT_INSPECTION_SCHEDULED_STATUS, ComponentTableStatusCLabel.HUB_CONNECTION_OK_NO_COMPONENTS_STATUS, ComponentTableStatusCLabel.KB_CONNECTION_OK_NO_COMPONENTS_STATUS,
-                ComponentTableStatusCLabel.KB_CONNECTION_OK_STATUS)) {
-            try {
-                final SWTBotCLabel clabel = viewBot.clabel(statusMessage);
-                this.setSWTBotTimeoutDefault();
-                return clabel;
-            } catch (final WidgetNotFoundException e) {
-            }
-        }
-        this.setSWTBotTimeoutDefault();
-        throw new WidgetNotFoundException(
-                String.format("Inspection status widget not found with value '%s', '%s', '%s', '%s', '%s', or '%s'", ComponentTableStatusCLabel.HUB_CONNECTION_OK_STATUS, ComponentTableStatusCLabel.PROJECT_INSPECTION_RUNNING_STATUS,
-                        ComponentTableStatusCLabel.PROJECT_INSPECTION_SCHEDULED_STATUS, ComponentTableStatusCLabel.HUB_CONNECTION_OK_NO_COMPONENTS_STATUS, ComponentTableStatusCLabel.KB_CONNECTION_OK_NO_COMPONENTS_STATUS,
-                        ComponentTableStatusCLabel.KB_CONNECTION_OK_STATUS));
-    }
-
-    public SWTBotCLabel getInspectionStatusIfConnectedToHub(){
-        final SWTBot viewBot = this.getComponentInspectorView();
-        this.setSWTBotTimeoutShort();
-        for (final String statusMessage : Arrays.asList(ComponentTableStatusCLabel.HUB_CONNECTION_OK_STATUS, ComponentTableStatusCLabel.PROJECT_INSPECTION_RUNNING_STATUS,
                 ComponentTableStatusCLabel.PROJECT_INSPECTION_SCHEDULED_STATUS, ComponentTableStatusCLabel.HUB_CONNECTION_OK_NO_COMPONENTS_STATUS)) {
             try {
                 final SWTBotCLabel clabel = viewBot.clabel(statusMessage);

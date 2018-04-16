@@ -33,27 +33,24 @@ import com.blackducksoftware.integration.eclipse.internal.datastructures.Inspect
 import com.blackducksoftware.integration.eclipse.internal.listeners.InspectionJobChangeListener;
 import com.blackducksoftware.integration.eclipse.services.BlackDuckEclipseServicesFactory;
 import com.blackducksoftware.integration.eclipse.services.WorkspaceInformationService;
-import com.blackducksoftware.integration.eclipse.services.connection.free.FreeConnectionService;
 import com.blackducksoftware.integration.eclipse.services.connection.hub.HubConnectionService;
 import com.blackducksoftware.integration.hub.bdio.model.externalid.ExternalId;
 
 public class ComponentInspectorService {
     private final InspectionJobQueue inspectionQueue;
     private final HubConnectionService hubConnectionService;
-    private final FreeConnectionService freeConnectionService;
     private final ComponentInspectorCacheService inspectorCacheService;
     private final ComponentInspectorViewService inspectorViewService;
     private final ComponentInspectorPreferencesService inspectorPreferencesService;
 
-    public ComponentInspectorService(final ComponentInspectorViewService inspectorViewService, final HubConnectionService hubConnectionService, final FreeConnectionService freeConnectionService,
-            final ComponentInspectorPreferencesService componentInspectorPreferencesService, final ComponentInspectorCacheService componentInspectorCacheService) {
+    public ComponentInspectorService(final ComponentInspectorViewService inspectorViewService, final HubConnectionService hubConnectionService, final ComponentInspectorPreferencesService componentInspectorPreferencesService,
+            final ComponentInspectorCacheService componentInspectorCacheService) {
         final InspectionJobChangeListener inspectionJobChangeListener = new InspectionJobChangeListener(inspectorViewService);
         this.inspectorPreferencesService = componentInspectorPreferencesService;
         this.inspectorCacheService = componentInspectorCacheService;
         this.inspectionQueue = new InspectionJobQueue(inspectionJobChangeListener);
         this.inspectorViewService = inspectorViewService;
         this.hubConnectionService = hubConnectionService;
-        this.freeConnectionService = freeConnectionService;
     }
 
     public void initializeProjectComponents(final String projectName) {
@@ -74,13 +71,13 @@ public class ComponentInspectorService {
     }
 
     public boolean inspectProject(final String projectName) {
-        if ((!hubConnectionService.hasActiveConnection() && !freeConnectionService.hasActiveConnection())
-                || !inspectorPreferencesService.isProjectMarkedForInspection(projectName)) {
-            return false;
+        boolean success = false;
+        if (hubConnectionService.hasActiveConnection() && inspectorPreferencesService.isProjectMarkedForInspection(projectName)) {
+            final InspectionJob inspection = new InspectionJob(projectName, this, inspectorPreferencesService);
+            inspectionQueue.enqueueInspection(inspection);
+            success = true;
         }
-        final InspectionJob inspection = new InspectionJob(projectName, this, inspectorPreferencesService);
-        inspectionQueue.enqueueInspection(inspection);
-        return true;
+        return success;
     }
 
     public void inspectAllProjects() {

@@ -34,24 +34,18 @@ import java.util.Map;
 
 import com.blackducksoftware.integration.eclipse.internal.ComponentModel;
 import com.blackducksoftware.integration.eclipse.internal.ComponentModelVulnerabilityFirstComparator;
-import com.blackducksoftware.integration.eclipse.services.connection.free.FreeComponentLookupService;
 import com.blackducksoftware.integration.eclipse.services.connection.hub.HubComponentLookupService;
 import com.blackducksoftware.integration.exception.IntegrationException;
 import com.blackducksoftware.integration.hub.bdio.model.externalid.ExternalId;
 
 public class ComponentInspectorCacheService {
     private final Map<String, List<ComponentModel>> inspectorCache;
-
     private final ComponentInspectorViewService componentInspectorViewService;
-
     private final HubComponentLookupService hubComponentLookupService;
 
-    private final FreeComponentLookupService freeComponentLookupService;
-
-    public ComponentInspectorCacheService(final ComponentInspectorViewService componentInspectorViewService, final HubComponentLookupService hubComponentLookupService, final FreeComponentLookupService freeComponentLookupService) {
+    public ComponentInspectorCacheService(final ComponentInspectorViewService componentInspectorViewService, final HubComponentLookupService hubComponentLookupService) {
         this.componentInspectorViewService = componentInspectorViewService;
         this.hubComponentLookupService = hubComponentLookupService;
-        this.freeComponentLookupService = freeComponentLookupService;
         this.inspectorCache = new HashMap<>();
     }
 
@@ -65,14 +59,9 @@ public class ComponentInspectorCacheService {
 
     public void addComponentToProject(final String projectName, final ExternalId externalId) throws IOException, URISyntaxException {
         final List<ComponentModel> components = inspectorCache.get(projectName);
-        if (components != null) {
+        if (components != null && hubComponentLookupService.hasActiveConnection()) {
             try {
-                final ComponentModel newComponent;
-                if (hubComponentLookupService.hasActiveConnection()) {
-                    newComponent = hubComponentLookupService.lookupComponent(externalId);
-                } else {
-                    newComponent = freeComponentLookupService.lookupComponent(externalId);
-                }
+                final ComponentModel newComponent = hubComponentLookupService.lookupComponent(externalId);
                 components.add(newComponent);
                 components.sort(new ComponentModelVulnerabilityFirstComparator());
                 inspectorCache.put(projectName, components);

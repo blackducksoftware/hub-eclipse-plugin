@@ -54,7 +54,7 @@ public class BlackDuckHubPreferencesBotTest {
         botUtils.preferences().openHubPreferencesFromEclipseMenu();
         botUtils.preferences().inspectorSettings().openComponentInspectorPreferences();
         botUtils.preferences().inspectorSettings().setInspectNewByDefaultTrue();
-        botUtils.preferences().inspectorSettings().pressOK();
+        botUtils.preferences().inspectorSettings().pressApplyAndClose();
         botUtils.workbench().createProject().createMavenProject(TestConstants.TEST_MAVEN_GROUP, TestConstants.TEST_MAVEN_ARTIFACT);
     }
 
@@ -175,7 +175,7 @@ public class BlackDuckHubPreferencesBotTest {
         botUtils.workbench().openComponentInspectorView();
         botUtils.preferences().openHubPreferencesFromEclipseMenu();
         botUtils.preferences().hubSettings().enterValidCredentials();
-        botUtils.preferences().pressOK();
+        botUtils.preferences().pressApplyAndClose();
         final SWTBotTreeItem node = botUtils.workbench().getProject(TestConstants.TEST_MAVEN_ARTIFACT);
         node.click();
         try {
@@ -191,14 +191,14 @@ public class BlackDuckHubPreferencesBotTest {
         botUtils.workbench().openComponentInspectorView();
         botUtils.preferences().openHubPreferencesFromEclipseMenu();
         botUtils.preferences().hubSettings().enterInvalidCredentials();
-        botUtils.preferences().pressOK();
+        botUtils.preferences().pressApplyAndClose();
         botUtils.preferences().openHubPreferencesFromEclipseMenu();
         botUtils.preferences().hubSettings().enterValidCredentials();
         botUtils.preferences().pressCancel();
         final SWTBotTreeItem node = botUtils.workbench().getProject(TestConstants.TEST_MAVEN_ARTIFACT);
         node.click();
         try {
-            assertNull(botUtils.componentInspector().getInspectionStatusIfConnectedToHub());
+            assertNull(botUtils.componentInspector().getInspectionStatusIfCompleteOrInProgress());
         } catch (final WidgetNotFoundException e) {
             // Expected
         }

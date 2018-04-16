@@ -48,7 +48,6 @@ import com.blackducksoftware.integration.eclipse.test.swtbot.utils.BlackDuckBotU
 @RunWith(SWTBotJunit4ClassRunner.class)
 public class ComponentInspectorPreferencesBotTest {
     private static BlackDuckBotUtils botUtils;
-
     private static ComponentInspectorPreferencesService componentInspectorPreferencesService;
 
     @BeforeClass
@@ -58,7 +57,7 @@ public class ComponentInspectorPreferencesBotTest {
         botUtils.closeWelcomeView();
         botUtils.preferences().openHubPreferencesFromEclipseMenu();
         botUtils.preferences().hubSettings().enterValidCredentials();
-        botUtils.preferences().hubSettings().pressOK();
+        botUtils.preferences().hubSettings().pressApplyAndClose();
         botUtils.workbench().createProject().createGradleProject(TestConstants.TEST_GRADLE_PROJECT_NAME);
         botUtils.workbench().createProject().createGeneralProject(TestConstants.TEST_NON_JAVA_PROJECT_NAME);
     }
@@ -129,7 +128,7 @@ public class ComponentInspectorPreferencesBotTest {
         final SWTBot pageBot = botUtils.bot().activeShell().bot();
         final SWTBotCheckBox mavenBox = pageBot.checkBox(TestConstants.TEST_MAVEN_ARTIFACT);
         mavenBox.click();
-        botUtils.preferences().inspectorSettings().pressOK();
+        botUtils.preferences().inspectorSettings().pressApplyAndClose();
         assertNotNull(botUtils.componentInspector().getInspectionStatusIfCompleteOrInProgress());
     }
 
@@ -145,7 +144,7 @@ public class ComponentInspectorPreferencesBotTest {
         final SWTBot pageBot = botUtils.bot().activeShell().bot();
         final SWTBotCheckBox mavenBox = pageBot.checkBox(TestConstants.TEST_MAVEN_ARTIFACT);
         mavenBox.click();
-        botUtils.preferences().inspectorSettings().pressOK();
+        botUtils.preferences().inspectorSettings().pressApplyAndClose();
         botUtils.setSWTBotTimeoutShort();
         try {
             assertNull(botUtils.componentInspector().getInspectionStatusIfCompleteOrInProgress());
@@ -183,7 +182,7 @@ public class ComponentInspectorPreferencesBotTest {
     }
 
     @Test
-    public void testMarkNone(){
+    public void testMarkNone() {
         createMavenProject(true);
         botUtils.preferences().openHubPreferencesFromEclipseMenu();
         botUtils.preferences().inspectorSettings().openComponentInspectorPreferences();
@@ -217,15 +216,15 @@ public class ComponentInspectorPreferencesBotTest {
         botUtils.bot().resetWorkbench();
     }
 
-    private static void createMavenProject(final boolean enabled){
+    private static void createMavenProject(final boolean enabled) {
         botUtils.preferences().openHubPreferencesFromEclipseMenu();
         botUtils.preferences().inspectorSettings().openComponentInspectorPreferences();
-        if(enabled){
+        if (enabled) {
             botUtils.preferences().inspectorSettings().setInspectNewByDefaultTrue();
-        }else{
+        } else {
             botUtils.preferences().inspectorSettings().setInspectNewByDefaultFalse();
         }
-        botUtils.preferences().pressOK();
+        botUtils.preferences().pressApplyAndClose();
         botUtils.workbench().createProject().createMavenProject(TestConstants.TEST_MAVEN_GROUP, TestConstants.TEST_MAVEN_ARTIFACT);
     }
 
