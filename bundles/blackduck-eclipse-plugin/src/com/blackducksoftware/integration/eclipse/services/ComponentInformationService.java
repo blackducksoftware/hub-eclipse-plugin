@@ -28,16 +28,16 @@ import java.net.URL;
 
 import org.eclipse.jdt.core.JavaCore;
 
+import com.blackducksoftware.integration.eclipse.internal.utils.externalid.FilePathExternalIdExtractor;
 import com.blackducksoftware.integration.hub.bdio.model.externalid.ExternalId;
-import com.blackducksoftware.integration.hub.buildtool.FilePathMavenExternalIdExtractor;
 
 public class ComponentInformationService {
     public static final String M2_REPO = "M2_REPO";
 
-    private final FilePathMavenExternalIdExtractor filePathMavenExternalIdExtractor;
+    private final FilePathExternalIdExtractor filePathExternalIdExtractor;
 
     public ComponentInformationService() {
-        this.filePathMavenExternalIdExtractor = new FilePathMavenExternalIdExtractor();
+        this.filePathExternalIdExtractor = new FilePathExternalIdExtractor();
     }
 
     public boolean isMavenDependency(final URL filePath) {
@@ -82,10 +82,10 @@ public class ComponentInformationService {
     public ExternalId constructMavenExternalIdFromUrl(final URL filePath) {
         try {
             if (this.isGradleDependency(filePath)) {
-                return filePathMavenExternalIdExtractor.getGradlePathMavenExternalId(filePath);
+                return filePathExternalIdExtractor.getExternalIdFromLocalGradleUrl(filePath);
             } else if (this.isMavenDependency(filePath)) {
                 final URL localMavenPath = JavaCore.getClasspathVariable(M2_REPO).toFile().toURI().toURL();
-                return filePathMavenExternalIdExtractor.getMavenPathMavenExternalId(filePath, localMavenPath);
+                return filePathExternalIdExtractor.getExternalIdFromLocalMavenUrl(filePath, localMavenPath);
             }
         } catch (final MalformedURLException e) {
             // Return null if we can't resolve the maven url
