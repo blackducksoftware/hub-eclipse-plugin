@@ -23,56 +23,80 @@
  */
 package com.blackducksoftware.integration.eclipse.services.inspector;
 
+import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.browser.IWebBrowser;
+
+import com.blackducksoftware.integration.eclipse.internal.ComponentModel;
+import com.blackducksoftware.integration.eclipse.internal.OpenComponentInHubJob;
+import com.blackducksoftware.integration.eclipse.services.BlackDuckEclipseServicesFactory;
+import com.blackducksoftware.integration.eclipse.services.connection.hub.HubConnectionService;
 import com.blackducksoftware.integration.eclipse.views.ComponentInspectorView;
 
 public class ComponentInspectorViewService {
-	private ComponentInspectorView componentInspectorView = null;
+    private ComponentInspectorView componentInspectorView = null;
 
-	public void registerComponentInspectorView(final ComponentInspectorView componentInspectorView){
-		this.componentInspectorView = componentInspectorView;
-	}
+    public void registerComponentInspectorView(final ComponentInspectorView componentInspectorView) {
+        this.componentInspectorView = componentInspectorView;
+    }
 
-	public ComponentInspectorView getView() {
-		return componentInspectorView;
-	}
+    public ComponentInspectorView getView() {
+        return componentInspectorView;
+    }
 
-	public void setProject(final String projectName) {
-		if(componentInspectorView != null){
-			componentInspectorView.setLastSelectedProjectName(projectName);
-		}
-	}
+    public void setProject(final String projectName) {
+        if (componentInspectorView != null) {
+            componentInspectorView.setLastSelectedProjectName(projectName);
+        }
+    }
 
-	public void clearProjectDisplay(final String projectName){
-		if (componentInspectorView != null) {
-			if (componentInspectorView.getLastSelectedProjectName().equals(projectName)) {
-				componentInspectorView.setLastSelectedProjectName("");
-			}
-		}
-	}
+    public void clearProjectDisplay(final String projectName) {
+        if (componentInspectorView != null) {
+            if (componentInspectorView.getLastSelectedProjectName().equals(projectName)) {
+                componentInspectorView.setLastSelectedProjectName("");
+            }
+        }
+    }
 
-	public void resetDisplay(){
-		if (componentInspectorView != null) {
-			componentInspectorView.refreshStatus();
-			componentInspectorView.refreshInput();
-		}
-	}
+    public void resetDisplay() {
+        if (componentInspectorView != null) {
+            componentInspectorView.refreshStatus();
+            componentInspectorView.refreshInput();
+        }
+    }
 
-	public void refreshProjectStatus(final String projectName) {
-		if (componentInspectorView != null) {
-			if(componentInspectorView.getLastSelectedProjectName().equals(projectName)){
-				componentInspectorView.refreshStatus();
-			}
-		}
-	}
+    public void refreshProjectStatus(final String projectName) {
+        if (componentInspectorView != null) {
+            if (componentInspectorView.getLastSelectedProjectName().equals(projectName)) {
+                componentInspectorView.refreshStatus();
+            }
+        }
+    }
 
-	public void disposeComponentInspectorView() {
-		this.componentInspectorView = null;
-	}
+    public void disposeComponentInspectorView() {
+        this.componentInspectorView = null;
+    }
 
-	public void openError(final String string, final String format, final Exception e) {
-		if(componentInspectorView != null){
-			componentInspectorView.openError(string, format, e);
-		}
-	}
+    public void openError(final String string, final String format, final Exception e) {
+        if (componentInspectorView != null) {
+            componentInspectorView.openError(string, format, e);
+        }
+    }
+
+    public void displayExpandedComponentInformation(final ComponentModel component) {
+        final HubConnectionService hubConnectionService = BlackDuckEclipseServicesFactory.getInstance().getHubConnectionService();
+        if (hubConnectionService.hasActiveConnection()) {
+            final Job job = new OpenComponentInHubJob(hubConnectionService, this, component);
+            job.schedule();
+        }
+    }
+
+    public IWebBrowser getBrowser() throws PartInitException {
+        IWebBrowser webBrowser = null;
+        if (componentInspectorView != null) {
+            webBrowser = componentInspectorView.getBrowser();
+        }
+        return webBrowser;
+    }
 
 }

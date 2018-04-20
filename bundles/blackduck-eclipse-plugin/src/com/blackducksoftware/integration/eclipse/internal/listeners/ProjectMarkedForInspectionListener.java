@@ -26,30 +26,30 @@ package com.blackducksoftware.integration.eclipse.internal.listeners;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 
-import com.blackducksoftware.integration.eclipse.services.BlackDuckEclipseServicesFactory;
 import com.blackducksoftware.integration.eclipse.services.inspector.ComponentInspectorPreferencesService;
 import com.blackducksoftware.integration.eclipse.services.inspector.ComponentInspectorService;
 import com.blackducksoftware.integration.eclipse.services.inspector.ComponentInspectorViewService;
 
 public class ProjectMarkedForInspectionListener implements IPropertyChangeListener {
-	private final ComponentInspectorService inspectorService;
-	private final ComponentInspectorViewService inspectorViewService;
+    private final ComponentInspectorService inspectorService;
+    private final ComponentInspectorViewService inspectorViewService;
+    private final ComponentInspectorPreferencesService componentInspectorPreferencesService;
 
-	public ProjectMarkedForInspectionListener(final ComponentInspectorService inspectorService, final ComponentInspectorViewService inspectorViewService) {
-		super();
-		this.inspectorService = inspectorService;
-		this.inspectorViewService = inspectorViewService;
-	}
+    public ProjectMarkedForInspectionListener(final ComponentInspectorService inspectorService, final ComponentInspectorPreferencesService componentInspectorPreferencesService, final ComponentInspectorViewService inspectorViewService) {
+        super();
+        this.inspectorService = inspectorService;
+        this.inspectorViewService = inspectorViewService;
+        this.componentInspectorPreferencesService = componentInspectorPreferencesService;
+    }
 
-	@Override
-	public void propertyChange(final PropertyChangeEvent event) {
-		final ComponentInspectorPreferencesService inspectorPreferencesService = BlackDuckEclipseServicesFactory.getInstance().getComponentInspectorPreferencesService();
-		final String projectName = event.getProperty();
-		if (inspectorPreferencesService.isProjectMarkedForInspection(projectName)) {
-			inspectorService.inspectProject(projectName);
-		} else {
-			inspectorViewService.resetDisplay();
-		}
-	}
+    @Override
+    public void propertyChange(final PropertyChangeEvent event) {
+        final String projectName = event.getProperty();
+        inspectorService.inspectProject(projectName);
+
+        if (!componentInspectorPreferencesService.isProjectMarkedForInspection(projectName)) {
+            inspectorViewService.resetDisplay();
+        }
+    }
 
 }

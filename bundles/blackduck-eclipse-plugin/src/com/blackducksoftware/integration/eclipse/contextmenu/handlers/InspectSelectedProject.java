@@ -35,19 +35,20 @@ import com.blackducksoftware.integration.eclipse.services.inspector.ComponentIns
 import com.blackducksoftware.integration.eclipse.services.inspector.ComponentInspectorService;
 
 public class InspectSelectedProject extends AbstractHandler {
-	@Override
-	public Object execute(final ExecutionEvent event) throws ExecutionException {
-		final WorkspaceInformationService workspaceService = BlackDuckEclipseServicesFactory.getInstance().getWorkspaceInformationService();
-		final ComponentInspectorPreferencesService componentInspectorPreferencesService = BlackDuckEclipseServicesFactory.getInstance().getComponentInspectorPreferencesService();
-		final ComponentInspectorService componentInspectorService = BlackDuckEclipseServicesFactory.getInstance().getComponentInspectorService();
-		final List<String> selectedProjects = workspaceService.getAllSelectedProjects();
-		for (final String selectedProject : selectedProjects) {
-			if (!componentInspectorPreferencesService.isProjectMarkedForInspection(selectedProject)) {
-				componentInspectorPreferencesService.markProjectForInspection(selectedProject);
-			}
-			componentInspectorService.inspectProject(selectedProject);
-		}
-		return null;
-	}
+    @Override
+    public Object execute(final ExecutionEvent event) throws ExecutionException {
+        final BlackDuckEclipseServicesFactory blackDuckEclipseServicesFactory = BlackDuckEclipseServicesFactory.getInstance();
+        final WorkspaceInformationService workspaceService = blackDuckEclipseServicesFactory.getWorkspaceInformationService();
+        final ComponentInspectorPreferencesService componentInspectorPreferencesService = blackDuckEclipseServicesFactory.getComponentInspectorPreferencesService();
+        final ComponentInspectorService componentInspectorService = blackDuckEclipseServicesFactory.getComponentInspectorService();
+        final List<String> selectedProjects = workspaceService.getAllSelectedProjects();
+        for (final String selectedProject : selectedProjects) {
+            if (!componentInspectorPreferencesService.isProjectMarkedForInspection(selectedProject)) {
+                componentInspectorPreferencesService.markProjectForInspection(selectedProject);
+            }
+            componentInspectorService.inspectProject(selectedProject);
+        }
+        return null;
+    }
 
 }

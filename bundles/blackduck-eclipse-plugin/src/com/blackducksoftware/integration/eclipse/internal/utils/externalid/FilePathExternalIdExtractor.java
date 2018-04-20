@@ -24,6 +24,7 @@
 package com.blackducksoftware.integration.eclipse.internal.utils.externalid;
 
 import java.net.URL;
+import java.util.Optional;
 
 import com.blackducksoftware.integration.hub.bdio.model.externalid.ExternalId;
 import com.blackducksoftware.integration.hub.bdio.model.externalid.ExternalIdFactory;
@@ -35,10 +36,9 @@ public class FilePathExternalIdExtractor {
         externalIdFactory = new ExternalIdFactory();
     }
 
-    public ExternalId getExternalIdFromLocalMavenUrl(final URL filePath, final URL localMavenRepoPath) {
-        if (filePath == null || localMavenRepoPath == null) {
-            return null;
-        }
+    public Optional<ExternalId> getExternalIdFromLocalMavenUrl(final URL filePath, final URL localMavenRepoPath) {
+        ExternalId constructedExternalId = null;
+
         String stringPath = filePath.getFile();
         stringPath = stringPath.replace(localMavenRepoPath.getFile(), "");
         final String[] pathArray = stringPath.split("/");
@@ -52,25 +52,25 @@ public class FilePathExternalIdExtractor {
         final String groupId = groupIdBuilder.toString();
         final String artifactId = pathArray[pathArray.length - 3];
         final String version = pathArray[pathArray.length - 2];
+        constructedExternalId = externalIdFactory.createMavenExternalId(groupId, artifactId, version);
 
-        return externalIdFactory.createMavenExternalId(groupId, artifactId, version);
+        return Optional.ofNullable(constructedExternalId);
 
     }
 
-    public ExternalId getExternalIdFromLocalGradleUrl(final URL filePath) {
-        if (filePath == null) {
-            return null;
+    public Optional<ExternalId> getExternalIdFromLocalGradleUrl(final URL filePath) {
+        ExternalId constructedExternalId = null;
+
+        if (filePath != null) {
+            final String[] pathArray = filePath.getFile().split("/");
+            if (pathArray.length > 4) {
+                final String groupId = pathArray[pathArray.length - 5];
+                final String artifactId = pathArray[pathArray.length - 4];
+                final String version = pathArray[pathArray.length - 3];
+                constructedExternalId = externalIdFactory.createMavenExternalId(groupId, artifactId, version);
+            }
         }
-        final String[] pathArray = filePath.getFile().split("/");
 
-        if (pathArray.length < 5) {
-            return null;
-        }
-
-        final String groupId = pathArray[pathArray.length - 5];
-        final String artifactId = pathArray[pathArray.length - 4];
-        final String version = pathArray[pathArray.length - 3];
-
-        return externalIdFactory.createMavenExternalId(groupId, artifactId, version);
+        return Optional.ofNullable(constructedExternalId);
     }
 }

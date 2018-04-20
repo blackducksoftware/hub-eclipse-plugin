@@ -25,6 +25,7 @@ package com.blackducksoftware.integration.eclipse.internal;
 
 import java.net.URL;
 import java.util.List;
+import java.util.Optional;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -32,9 +33,9 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.core.runtime.jobs.Job;
 
-import com.blackducksoftware.integration.eclipse.services.BlackDuckEclipseServicesFactory;
 import com.blackducksoftware.integration.eclipse.services.ComponentInformationService;
 import com.blackducksoftware.integration.eclipse.services.ProjectInformationService;
+import com.blackducksoftware.integration.eclipse.services.connection.hub.HubConnectionService;
 import com.blackducksoftware.integration.eclipse.services.inspector.ComponentInspectorPreferencesService;
 import com.blackducksoftware.integration.eclipse.services.inspector.ComponentInspectorService;
 import com.blackducksoftware.integration.hub.bdio.model.externalid.ExternalId;
@@ -51,13 +52,20 @@ public class InspectionJob extends Job {
     private final ProjectInformationService projectInformationService;
     private final ComponentInformationService componentInformationService;
     private final ComponentInspectorPreferencesService componentInspectorPreferencesService;
+    private final HubConnectionService hubConnectionService;
 
-    public InspectionJob(final String projectName, final ComponentInspectorService componentInspectorService, final ComponentInspectorPreferencesService componentInspectorPreferencesService) {
+    public InspectionJob(final String projectName,
+            final ComponentInspectorService componentInspectorService,
+            final ComponentInspectorPreferencesService componentInspectorPreferencesService,
+            final ComponentInformationService componentInformationService,
+            final ProjectInformationService projectInformationService,
+            final HubConnectionService hubConnectionService) {
         super(JOB_INSPECT_PROJECT_PREFACE + projectName);
         this.projectName = projectName;
         this.componentInspectorService = componentInspectorService;
-        this.projectInformationService = BlackDuckEclipseServicesFactory.getInstance().getProjectInformationService();
-        this.componentInformationService = BlackDuckEclipseServicesFactory.getInstance().getComponentInformationService();
+        this.projectInformationService = projectInformationService;
+        this.componentInformationService = componentInformationService;
+        this.hubConnectionService = hubConnectionService;
         this.componentInspectorPreferencesService = componentInspectorPreferencesService;
         this.setPriority(Job.BUILD);
     }
@@ -68,38 +76,36 @@ public class InspectionJob extends Job {
 
     @Override
     public boolean belongsTo(final Object family) {
-
         return family.equals(FAMILY);
     }
 
     @Override
     protected IStatus run(final IProgressMonitor monitor) {
         try {
-            if (!componentInspectorPreferencesService.isProjectMarkedForInspection(projectName)) {
-                return Status.OK_STATUS;
-            }
-            componentInspectorService.initializeProjectComponents(projectName);
-            final SubMonitor subMonitor = SubMonitor.convert(monitor, ONE_HUNDRED_PERCENT);
-            subMonitor.setTaskName("Gathering dependencies");
-            final List<URL> componentUrls = projectInformationService.getProjectComponentUrls(projectName);
-            subMonitor.split(THIRTY_PERCENT).done();
-            for (final URL componentUrl : componentUrls) {
-                subMonitor.setTaskName(String.format("Inspecting %s", componentUrl));
-                final ExternalId externalId = componentInformationService.constructMavenExternalIdFromUrl(componentUrl);
-                if (externalId != null) {
-                    componentInspectorService.addComponentToProject(projectName, externalId);
-                    if (componentUrls.size() < SEVENTY_PERCENT) {
-                        subMonitor.split(SEVENTY_PERCENT / componentUrls.size()).done();
-                    } else {
-                        subMonitor.split(SEVENTY_PERCENT).done();
+            if (componentInspectorPreferencesService.isProjectMarkedForInspection(projectName) && hubConnectionService.hasActiveConnection()) {
+                componentInspectorService.initializeProjectComponents(projectName);
+                final SubMonitor subMonitor = SubMonitor.convert(monitor, ONE_HUNDRED_PERCENT);
+                subMonitor.setTaskName("Gathering dependencies");
+                final List<URL> componentUrls = projectInformationService.getProjectComponentUrls(projectName);
+                subMonitor.split(THIRTY_PERCENT).done();
+                for (final URL componentUrl : componentUrls) {
+                    subMonitor.setTaskName(String.format("Inspecting %s", componentUrl));
+                    final Optional<ExternalId> optionalExternalId = componentInformationService.constructMavenExternalIdFromUrl(componentUrl);
+                    if (optionalExternalId.isPresent()) {
+                        componentInspectorService.addComponentToProject(projectName, optionalExternalId.get());
+                        if (componentUrls.size() < SEVENTY_PERCENT) {
+                            subMonitor.split(SEVENTY_PERCENT / componentUrls.size()).done();
+                        } else {
+                            subMonitor.split(SEVENTY_PERCENT).done();
+                        }
                     }
                 }
             }
-            return Status.OK_STATUS;
         } catch (final Exception e) {
             e.printStackTrace();
             return Status.CANCEL_STATUS;
         }
+        return Status.OK_STATUS;
     }
 
 }

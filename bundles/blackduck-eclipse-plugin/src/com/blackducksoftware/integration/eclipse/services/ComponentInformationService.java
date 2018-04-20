@@ -25,6 +25,7 @@ package com.blackducksoftware.integration.eclipse.services;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Optional;
 
 import org.eclipse.jdt.core.JavaCore;
 
@@ -79,18 +80,20 @@ public class ComponentInformationService {
         return false;
     }
 
-    public ExternalId constructMavenExternalIdFromUrl(final URL filePath) {
+    public Optional<ExternalId> constructMavenExternalIdFromUrl(final URL filePath) {
+        Optional<ExternalId> optionalExternalId = Optional.empty();
+
         try {
             if (this.isGradleDependency(filePath)) {
-                return filePathExternalIdExtractor.getExternalIdFromLocalGradleUrl(filePath);
+                optionalExternalId = filePathExternalIdExtractor.getExternalIdFromLocalGradleUrl(filePath);
             } else if (this.isMavenDependency(filePath)) {
                 final URL localMavenPath = JavaCore.getClasspathVariable(M2_REPO).toFile().toURI().toURL();
-                return filePathExternalIdExtractor.getExternalIdFromLocalMavenUrl(filePath, localMavenPath);
+                optionalExternalId = filePathExternalIdExtractor.getExternalIdFromLocalMavenUrl(filePath, localMavenPath);
             }
         } catch (final MalformedURLException e) {
-            // Return null if we can't resolve the maven url
         }
-        return null;
+
+        return optionalExternalId;
     }
 
 }

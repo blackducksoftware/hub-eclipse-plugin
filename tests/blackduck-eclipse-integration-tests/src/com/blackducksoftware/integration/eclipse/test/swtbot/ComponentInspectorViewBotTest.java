@@ -185,7 +185,7 @@ public class ComponentInspectorViewBotTest {
         botUtils.workbench().openComponentInspectorView();
         final SWTBotTreeItem projectNode = botUtils.workbench().getProject(TestConstants.TEST_MAVEN_COMPONENTS_ARTIFACT);
         projectNode.select();
-        assertNotNull(botUtils.componentInspector().getInspectionStatus(ComponentTableStatusCLabel.HUB_CONNECTION_OK_STATUS));
+        assertNotNull(botUtils.componentInspector().getInspectionStatusIfCompleteOrInProgress());
         botUtils.preferences().openHubPreferencesFromEclipseMenu();
         botUtils.preferences().hubSettings().enterCredentials(HubPreferencesBotUtils.VALID_HUB_USERNAME, HubPreferencesBotUtils.VALID_HUB_PASSWORD,
                 HubPreferencesBotUtils.ALT_VALID_HUB_URL, HubPreferencesBotUtils.VALID_HUB_TIMEOUT);

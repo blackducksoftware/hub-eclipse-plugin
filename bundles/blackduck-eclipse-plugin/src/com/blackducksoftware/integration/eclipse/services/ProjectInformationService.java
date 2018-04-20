@@ -28,6 +28,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -40,9 +41,7 @@ import com.blackducksoftware.integration.hub.bdio.model.externalid.ExternalId;
 
 public class ProjectInformationService {
     public static final String GRADLE_NATURE = "org.eclipse.buildship.core.gradleprojectnature";
-
     public static final String MAVEN_NATURE = "org.eclipse.m2e.core.maven2Nature";
-
     public static final String[] SUPPORTED_NATURES = {
             GRADLE_NATURE,
             MAVEN_NATURE
@@ -52,6 +51,10 @@ public class ProjectInformationService {
 
     public ProjectInformationService(final ComponentInformationService componentInformationService) {
         this.componentInformationService = componentInformationService;
+    }
+
+    public ComponentInformationService getComponentInformationService() {
+        return componentInformationService;
     }
 
     public int getNumBinaryDependencies(final List<IPackageFragmentRoot> packageFragmentRoots) {
@@ -71,14 +74,14 @@ public class ProjectInformationService {
     }
 
     public List<ExternalId> getMavenExternalIdsFromFilepaths(final List<URL> mavenAndGradleFilePaths) {
-        final List<ExternalId> gavs = new ArrayList<>();
+        final List<ExternalId> externalIdList = new ArrayList<>();
         for (final URL filePath : mavenAndGradleFilePaths) {
-            final ExternalId tempGav = componentInformationService.constructMavenExternalIdFromUrl(filePath);
-            if (tempGav != null) {
-                gavs.add(tempGav);
+            final Optional<ExternalId> optionalExternalId = componentInformationService.constructMavenExternalIdFromUrl(filePath);
+            if (optionalExternalId.isPresent()) {
+                externalIdList.add(optionalExternalId.get());
             }
         }
-        return gavs;
+        return externalIdList;
     }
 
     public List<URL> getProjectComponentUrls(final String projectName) {
@@ -123,10 +126,10 @@ public class ProjectInformationService {
 
     public boolean isProjectSupported(final String projectName) {
         final IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(projectName);
-        return this.isSupportedProject(project);
+        return this.isProjectSupported(project);
     }
 
-    public boolean isSupportedProject(final IProject project) {
+    public boolean isProjectSupported(final IProject project) {
         try {
             if (project.hasNature(JavaCore.NATURE_ID)) {
                 for (final String nature : SUPPORTED_NATURES) {
@@ -136,7 +139,7 @@ public class ProjectInformationService {
                 }
             }
         } catch (final CoreException e) {
-            // CoreException means project is closed/ doesn't exist
+            // CoreException means project is closed / doesn't exist
         }
         return false;
     }

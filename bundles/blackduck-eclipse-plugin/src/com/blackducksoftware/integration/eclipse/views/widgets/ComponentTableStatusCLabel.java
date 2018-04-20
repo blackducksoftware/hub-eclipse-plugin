@@ -71,79 +71,71 @@ public class ComponentTableStatusCLabel extends CLabel {
             final boolean noComponents = ((ComponentModel[]) componentInspectorTableViewer.getInput()).length == 0;
             final boolean noProjectMapping = componentInspectorService.getProjectComponents(projectName) == null;
             final String statusMessage = determineStatusMessage(noComponents, noProjectMapping, projectName);
-            this.setStatusMessage(statusMessage);
+            this.setStatus(statusMessage);
         }
     }
 
     private String determineStatusMessage(final boolean noComponents, final boolean noProjectMapping, final String projectName) {
+        String status = "";
+
         if (projectName.isEmpty()) {
-            return NO_SELECTED_PROJECT_STATUS;
-        }
-
-        if (!projectInformationService.isProjectSupported(projectName)) {
-            return PROJECT_NOT_SUPPORTED_STATUS;
-        }
-
-        if (!componentInspectorPreferencesService.isProjectMarkedForInspection(projectName)) {
-            return PROJECT_NOT_MARKED_FOR_INSPECTION_STATUS;
-        }
-
-        if (!hubConnectionService.hasActiveConnection()) {
-            return CONNECTION_DISCONNECTED_STATUS;
-        }
-
-        if (componentInspectorService.isProjectInspectionRunning(projectName)) {
-            return PROJECT_INSPECTION_RUNNING_STATUS;
-        }
-
-        if (componentInspectorService.isProjectInspectionScheduled(projectName)) {
-            return PROJECT_INSPECTION_SCHEDULED_STATUS;
-        }
-
-        if (noProjectMapping) {
-            return PROJECT_NEEDS_INSPECTION_STATUS;
-        }
-
-        if (hubConnectionService.hasActiveConnection()) {
+            status = NO_SELECTED_PROJECT_STATUS;
+        } else if (!projectInformationService.isProjectSupported(projectName)) {
+            status = PROJECT_NOT_SUPPORTED_STATUS;
+        } else if (!componentInspectorPreferencesService.isProjectMarkedForInspection(projectName)) {
+            status = PROJECT_NOT_MARKED_FOR_INSPECTION_STATUS;
+        } else if (!hubConnectionService.hasActiveConnection()) {
+            status = CONNECTION_DISCONNECTED_STATUS;
+        } else if (componentInspectorService.isProjectInspectionRunning(projectName)) {
+            status = PROJECT_INSPECTION_RUNNING_STATUS;
+        } else if (componentInspectorService.isProjectInspectionScheduled(projectName)) {
+            status = PROJECT_INSPECTION_SCHEDULED_STATUS;
+        } else if (noProjectMapping) {
+            status = PROJECT_NEEDS_INSPECTION_STATUS;
+        } else if (hubConnectionService.hasActiveConnection()) {
             if (noComponents) {
-                return HUB_CONNECTION_OK_NO_COMPONENTS_STATUS;
+                status = HUB_CONNECTION_OK_NO_COMPONENTS_STATUS;
             } else {
-                return HUB_CONNECTION_OK_STATUS;
+                status = HUB_CONNECTION_OK_STATUS;
             }
         }
 
-        return "";
+        return status;
     }
 
-    private void setStatusMessage(final String message) {
+    private void setStatus(final String message) {
         Display.getDefault().asyncExec(new Runnable() {
             @Override
             public void run() {
                 if (!isDisposed() && !message.equals(getText())) {
-                    ImageDescriptor newImageDescriptor = null;
-                    switch (message) {
-                    case PROJECT_INSPECTION_RUNNING_STATUS:
-                        newImageDescriptor = BlackDuckEclipseActivator.imageDescriptorFromPlugin(BlackDuckEclipseActivator.PLUGIN_ID, ComponentInspectorView.WAITING_PNG_PATH);
-                        break;
-                    case PROJECT_INSPECTION_SCHEDULED_STATUS:
-                        newImageDescriptor = BlackDuckEclipseActivator.imageDescriptorFromPlugin(BlackDuckEclipseActivator.PLUGIN_ID, ComponentInspectorView.WAITING_PNG_PATH);
-                        break;
-                    case CONNECTION_DISCONNECTED_STATUS:
-                        newImageDescriptor = BlackDuckEclipseActivator.imageDescriptorFromPlugin(BlackDuckEclipseActivator.PLUGIN_ID, ComponentInspectorView.DISCONNECT_PNG_PATH);
-                        break;
-                    case PROJECT_NEEDS_INSPECTION_STATUS:
-                        newImageDescriptor = BlackDuckEclipseActivator.imageDescriptorFromPlugin(BlackDuckEclipseActivator.PLUGIN_ID, ComponentInspectorView.WARNING_PNG_PATH);
-                        break;
-                    default:
-                        break;
+                    if (message.equals(PROJECT_INSPECTION_RUNNING_STATUS) || message.equals(PROJECT_INSPECTION_SCHEDULED_STATUS)) {
+                        final ImageDescriptor imageDescriptor = createImageDescriptorFromImagePath(ComponentInspectorView.WAITING_PNG_PATH);
+                        setStatusMessageAndImage(imageDescriptor, message);
+                    } else if (message.equals(CONNECTION_DISCONNECTED_STATUS)) {
+                        final ImageDescriptor imageDescriptor = createImageDescriptorFromImagePath(ComponentInspectorView.DISCONNECT_PNG_PATH);
+                        setStatusMessageAndImage(imageDescriptor, message);
+                    } else if (message.equals(PROJECT_NEEDS_INSPECTION_STATUS)) {
+                        final ImageDescriptor imageDescriptor = createImageDescriptorFromImagePath(ComponentInspectorView.WARNING_PNG_PATH);
+                        setStatusMessageAndImage(imageDescriptor, message);
+                    } else {
+                        setStatusMessageNoImage(message);
                     }
-                    Image newImage = null;
-                    if (newImageDescriptor != null) {
-                        newImage = newImageDescriptor.createImage();
-                    }
-                    setImage(newImage);
-                    setText(message);
                 }
+            }
+
+            private ImageDescriptor createImageDescriptorFromImagePath(final String imagePath) {
+                return BlackDuckEclipseActivator.imageDescriptorFromPlugin(BlackDuckEclipseActivator.PLUGIN_ID, imagePath);
+            }
+
+            private void setStatusMessageAndImage(final ImageDescriptor imageDescriptor, final String message) {
+                final Image image = imageDescriptor.createImage();
+                setImage(image);
+                setText(message);
+            }
+
+            private void setStatusMessageNoImage(final String message) {
+                setImage(null);
+                setText(message);
             }
         });
     }

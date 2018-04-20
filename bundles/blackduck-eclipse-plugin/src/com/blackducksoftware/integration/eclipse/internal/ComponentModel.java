@@ -28,11 +28,8 @@ import com.blackducksoftware.integration.hub.bdio.model.externalid.ExternalId;
 
 public class ComponentModel {
     private final ExternalId gav;
-
     private final ComplexLicenseView license;
-
     private final int[] vulnerabilityCount;
-
     private final boolean componentIsKnown;
 
     public ComponentModel(final ExternalId gav, final ComplexLicenseView license, final int[] vulnerabilityCount, final boolean componentIsKnown) {

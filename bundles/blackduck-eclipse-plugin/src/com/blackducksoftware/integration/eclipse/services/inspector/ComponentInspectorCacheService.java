@@ -53,10 +53,6 @@ public class ComponentInspectorCacheService {
         return inspectorCache.put(projectName, Collections.synchronizedList(new ArrayList<ComponentModel>()));
     }
 
-    public List<ComponentModel> addProjectComponents(final String projectName, final List<ComponentModel> models) {
-        return inspectorCache.put(projectName, models);
-    }
-
     public void addComponentToProject(final String projectName, final ExternalId externalId) throws IOException, URISyntaxException {
         final List<ComponentModel> components = inspectorCache.get(projectName);
         if (components != null && hubComponentLookupService.hasActiveConnection()) {

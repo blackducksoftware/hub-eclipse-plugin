@@ -25,6 +25,7 @@ package com.blackducksoftware.integration.eclipse.internal.listeners;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Optional;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jdt.core.ElementChangedEvent;
@@ -75,14 +76,16 @@ public class ProjectComponentsChangedListener implements IElementChangedListener
                 packageFragmentRoot.getElementName();
                 final String projectName = el.getJavaProject().getProject().getDescription().getName();
                 final URL componentUrl = el.getPath().toFile().toURI().toURL();
-                final ExternalId componentExternalId = componentInformationService.constructMavenExternalIdFromUrl(componentUrl);
-                if ((delta.getFlags() & IJavaElementDelta.F_REMOVED_FROM_CLASSPATH) != 0 || delta.getKind() == IJavaElementDelta.REMOVED) {
-                    inspectorService.removeComponentFromProject(projectName, componentExternalId);
+                final Optional<ExternalId> optionalComponentExternalId = componentInformationService.constructMavenExternalIdFromUrl(componentUrl);
+                if (optionalComponentExternalId.isPresent()) {
+                    if ((delta.getFlags() & IJavaElementDelta.F_REMOVED_FROM_CLASSPATH) != 0 || delta.getKind() == IJavaElementDelta.REMOVED) {
+                        inspectorService.removeComponentFromProject(projectName, optionalComponentExternalId.get());
+                    }
+                    if ((delta.getFlags() & IJavaElementDelta.F_ADDED_TO_CLASSPATH) != 0 || delta.getKind() == IJavaElementDelta.ADDED) {
+                        inspectorService.addComponentToProject(projectName, optionalComponentExternalId.get());
+                    }
                 }
-                if ((delta.getFlags() & IJavaElementDelta.F_ADDED_TO_CLASSPATH) != 0 || delta.getKind() == IJavaElementDelta.ADDED) {
-                    inspectorService.addComponentToProject(projectName, componentExternalId);
-                }
-            } catch (final MalformedURLException | NullPointerException | CoreException e) {
+            } catch (final MalformedURLException | CoreException e) {
                 // Component failed to be added or removed
             }
             break;

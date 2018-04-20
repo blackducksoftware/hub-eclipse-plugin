@@ -40,6 +40,9 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.browser.IWebBrowser;
 import org.eclipse.ui.part.ViewPart;
 
 import com.blackducksoftware.integration.eclipse.BlackDuckEclipseActivator;
@@ -58,39 +61,32 @@ import com.blackducksoftware.integration.eclipse.views.widgets.ComponentModelFil
 import com.blackducksoftware.integration.eclipse.views.widgets.ComponentTableStatusCLabel;
 
 public class ComponentInspectorView extends ViewPart {
+    public static final String JOB_GENERATE_URL = "Opening component in the Hub...";
+
     public static final String VIEW_ID = "com.blackducksoftware.integration.eclipse.views.ComponentInspectorView";
-
     public static final String DUCKY_PNG_PATH = "resources/icons/ducky.png";
-
     public static final String DISCONNECT_PNG_PATH = "resources/icons/disconnect_co.gif";
-
     public static final String WAITING_PNG_PATH = "resources/icons/waiting.gif";
-
     public static final String WARNING_PNG_PATH = "resources/icons/warning.gif";
 
+    private final ComponentInspectorViewService componentInspectorViewService;
+    private final ComponentInspectorService componentInspectorService;
+    private final WorkspaceInformationService workspaceInformationService;
+
     private ComponentTableStatusCLabel tableStatus;
-
     private String lastSelectedProjectName = "";
-
     private TableViewer tableViewer;
-
     private Text filterBox;
 
     private ComponentTableContentProvider contentProvider;
-
     private EditorSelectionListener editorSelectionListener;
 
-    private final ComponentInspectorViewService componentInspectorViewService;
-
-    private final ComponentInspectorService componentInspectorService;
-
-    private final WorkspaceInformationService workspaceInformationService;
-
-    public ComponentInspectorView(){
+    public ComponentInspectorView() {
         super();
-        componentInspectorViewService = BlackDuckEclipseServicesFactory.getInstance().getComponentInspectorViewService();
-        componentInspectorService = BlackDuckEclipseServicesFactory.getInstance().getComponentInspectorService();
-        workspaceInformationService = BlackDuckEclipseServicesFactory.getInstance().getWorkspaceInformationService();
+        final BlackDuckEclipseServicesFactory blackDuckEclipseServicesFactory = BlackDuckEclipseServicesFactory.getInstance();
+        componentInspectorViewService = blackDuckEclipseServicesFactory.getComponentInspectorViewService();
+        componentInspectorService = blackDuckEclipseServicesFactory.getComponentInspectorService();
+        workspaceInformationService = blackDuckEclipseServicesFactory.getWorkspaceInformationService();
     }
 
     @Override
@@ -108,7 +104,7 @@ public class ComponentInspectorView extends ViewPart {
         tableViewer.getTable().setHeaderVisible(true);
         tableViewer.getTable().setLinesVisible(true);
         tableViewer.getTable().setLayoutData(new GridData(GridData.FILL_BOTH));
-        tableViewer.addDoubleClickListener(new TableDoubleClickListener());
+        tableViewer.addDoubleClickListener(new TableDoubleClickListener(componentInspectorViewService));
         contentProvider = new ComponentTableContentProvider(tableViewer);
         contentProvider.addFilter(componentFilter);
         tableViewer.setContentProvider(contentProvider);
@@ -135,6 +131,54 @@ public class ComponentInspectorView extends ViewPart {
     @Override
     public void setFocus() {
         tableViewer.getControl().setFocus();
+    }
+
+    public String getLastSelectedProjectName() {
+        return lastSelectedProjectName;
+    }
+
+    public void refreshInput() {
+        Display.getDefault().syncExec(new Runnable() {
+            @Override
+            public void run() {
+                if (!tableViewer.getTable().isDisposed()) {
+                    setTableInput(lastSelectedProjectName);
+                    tableViewer.refresh();
+                }
+            }
+        });
+    }
+
+    public void setLastSelectedProjectName(final String projectName) {
+        lastSelectedProjectName = projectName;
+        this.setTableInput(projectName);
+        this.refreshStatus();
+    }
+
+    public void refreshStatus() {
+        tableStatus.updateStatus(lastSelectedProjectName);
+    }
+
+    public void openError(final String dialogTitle, final String message, final Throwable e) {
+        ErrorDialog.openError(this.getSite().getShell(), dialogTitle, message, new Status(IStatus.ERROR, BlackDuckEclipseActivator.PLUGIN_ID, e.getMessage(), e));
+    }
+
+    public IWebBrowser getBrowser() throws PartInitException {
+        if (PlatformUI.getWorkbench().getBrowserSupport().isInternalWebBrowserAvailable()) {
+            return PlatformUI.getWorkbench().getBrowserSupport().createBrowser(BlackDuckEclipseActivator.PLUGIN_ID);
+        } else {
+            return PlatformUI.getWorkbench().getBrowserSupport().getExternalBrowser();
+        }
+    }
+
+    private void setTableInput(final String projectName) {
+        ComponentModel[] results = new ComponentModel[] {};
+        final List<ComponentModel> componentModels = componentInspectorService.getProjectComponents(projectName);
+        if (componentModels != null) {
+            results = componentModels.toArray(new ComponentModel[componentModels.size()]);
+        }
+        tableViewer.setItemCount(results.length);
+        tableViewer.setInput(results);
     }
 
     private void createColumns() {
@@ -180,46 +224,6 @@ public class ComponentInspectorView extends ViewPart {
         });
         filterBox.setMessage("type filter text");
         return filterComposite;
-    }
-
-    public String getLastSelectedProjectName() {
-        return lastSelectedProjectName;
-    }
-
-    public void refreshInput() {
-        Display.getDefault().syncExec(new Runnable() {
-            @Override
-            public void run() {
-                if (!tableViewer.getTable().isDisposed()) {
-                    setTableInput(lastSelectedProjectName);
-                    tableViewer.refresh();
-                }
-            }
-        });
-    }
-
-    public void setLastSelectedProjectName(final String projectName) {
-        lastSelectedProjectName = projectName;
-        this.setTableInput(projectName);
-        tableStatus.updateStatus(projectName);
-    }
-
-    private void setTableInput(final String projectName){
-        ComponentModel[] results = new ComponentModel[]{};
-        final List<ComponentModel> componentModels = componentInspectorService.getProjectComponents(projectName);
-        if (componentModels != null) {
-            results = componentModels.toArray(new ComponentModel[componentModels.size()]);
-        }
-        tableViewer.setItemCount(results.length);
-        tableViewer.setInput(results);
-    }
-
-    public void refreshStatus() {
-        tableStatus.updateStatus(lastSelectedProjectName);
-    }
-
-    public void openError(final String dialogTitle, final String message, final Throwable e) {
-        ErrorDialog.openError(this.getSite().getShell(), dialogTitle, message, new Status(IStatus.ERROR, BlackDuckEclipseActivator.PLUGIN_ID, e.getMessage(), e));
     }
 
 }

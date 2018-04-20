@@ -44,106 +44,109 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 
 public class WorkspaceInformationService {
-	private final ProjectInformationService projectInformationService;
+    private final ProjectInformationService projectInformationService;
 
-	public WorkspaceInformationService(final ProjectInformationService projectInformationService){
-		this.projectInformationService = projectInformationService;
-	}
+    public WorkspaceInformationService(final ProjectInformationService projectInformationService) {
+        this.projectInformationService = projectInformationService;
+    }
 
-	public Set<IProject> getAllSupportedProjects() {
-		final IProject[] allProjects = ResourcesPlugin.getWorkspace().getRoot().getProjects();
-		final Set<IProject> supportedProjects = new HashSet<>();
-		for (final IProject project : allProjects) {
-			if(projectInformationService.isSupportedProject(project)){
-				supportedProjects.add(project);
-			}
-		}
-		return supportedProjects;
-	}
+    public ProjectInformationService getProjectInformationService() {
+        return projectInformationService;
+    }
 
-	public List<String> getSupportedProjectNames() {
-		final Set<IProject> projects = this.getAllSupportedProjects();
-		final List<String> names = new ArrayList<>();
-		for (final IProject project : projects) {
-			try {
-				final IProjectDescription projectDescription = project.getDescription();
-				if (projectDescription != null) {
-					final String projectName = projectDescription.getName();
-					names.add(projectName);
-				}
-			} catch (final CoreException e) {
-				/*
-				 * If unsuccessful getting project description, means that project doesn't
-				 * exist or is closed. In that case, do not add project
-				 */
-			}
-		}
-		Collections.sort(names, String.CASE_INSENSITIVE_ORDER);
-		return names;
-	}
+    public Set<IProject> getAllSupportedProjects() {
+        final IProject[] allProjects = ResourcesPlugin.getWorkspace().getRoot().getProjects();
+        final Set<IProject> supportedProjects = new HashSet<>();
+        for (final IProject project : allProjects) {
+            if (projectInformationService.isProjectSupported(project)) {
+                supportedProjects.add(project);
+            }
+        }
+        return supportedProjects;
+    }
 
-	public String getSelectedProject() {
-		final IStructuredSelection selection = getWorkspaceSelection();
-		if (selection != null && selection.getFirstElement() != null) {
-			final Object selected = selection.getFirstElement();
-			if (selected instanceof IAdaptable) {
-				return getSelectedProjectName((IAdaptable) selected);
-			}
-		}
-		return "";
-	}
+    public List<String> getSupportedProjectNames() {
+        final Set<IProject> projects = this.getAllSupportedProjects();
+        final List<String> names = new ArrayList<>();
+        for (final IProject project : projects) {
+            try {
+                final IProjectDescription projectDescription = project.getDescription();
+                if (projectDescription != null) {
+                    final String projectName = projectDescription.getName();
+                    names.add(projectName);
+                }
+            } catch (final CoreException e) {
+                /*
+                 * If unsuccessful getting project description, means that project doesn't exist or is closed. In that case, do not add project
+                 */
+            }
+        }
+        Collections.sort(names, String.CASE_INSENSITIVE_ORDER);
+        return names;
+    }
 
-	public List<String> getAllSelectedProjects() {
-		final ArrayList<String> projectNames = new ArrayList<>();
-		final IStructuredSelection selection = getWorkspaceSelection();
-		if (selection != null && !selection.toList().isEmpty()) {
-			final List<?> selectedObjects = selection.toList();
-			for (final Object selected : selectedObjects) {
-				if (selected instanceof IAdaptable) {
-					final String projectName = getSelectedProjectName((IAdaptable) selected);
-					if (!projectName.equals("")) {
-						projectNames.add(projectName);
-					}
-				}
-			}
+    public String getSelectedProject() {
+        final IStructuredSelection selection = getWorkspaceSelection();
+        if (selection != null && selection.getFirstElement() != null) {
+            final Object selected = selection.getFirstElement();
+            if (selected instanceof IAdaptable) {
+                return getSelectedProjectName((IAdaptable) selected);
+            }
+        }
+        return "";
+    }
 
-		}
-		return projectNames;
-	}
+    public List<String> getAllSelectedProjects() {
+        final ArrayList<String> projectNames = new ArrayList<>();
+        final IStructuredSelection selection = getWorkspaceSelection();
+        if (selection != null && !selection.toList().isEmpty()) {
+            final List<?> selectedObjects = selection.toList();
+            for (final Object selected : selectedObjects) {
+                if (selected instanceof IAdaptable) {
+                    final String projectName = getSelectedProjectName((IAdaptable) selected);
+                    if (!projectName.equals("")) {
+                        projectNames.add(projectName);
+                    }
+                }
+            }
 
-	public IResource getFileInputForActiveEditor(final IWorkbench currentWorkbench) {
-		try{
-			final IEditorInput editorInput = currentWorkbench.getActiveWorkbenchWindow().getActivePage().getActiveEditor().getEditorInput();
-			if(editorInput instanceof IFileEditorInput) {
-				return ((IFileEditorInput) editorInput).getFile();
-			}
-		}catch(final NullPointerException e){
-			//Do nothing. This happens if there is no active workbench, page, or editor
-		}
-		return null;
-	}
+        }
+        return projectNames;
+    }
 
-	private IStructuredSelection getWorkspaceSelection() {
-		final IWorkbenchWindow activeWindow = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
-		if (activeWindow != null) {
-			final ISelectionService selectionService = activeWindow.getSelectionService();
-			if (selectionService != null) {
-				return (IStructuredSelection) selectionService.getSelection();
-			}
-		}
-		return null;
-	}
+    public IResource getFileInputForActiveEditor(final IWorkbench currentWorkbench) {
+        try {
+            final IEditorInput editorInput = currentWorkbench.getActiveWorkbenchWindow().getActivePage().getActiveEditor().getEditorInput();
+            if (editorInput instanceof IFileEditorInput) {
+                return ((IFileEditorInput) editorInput).getFile();
+            }
+        } catch (final NullPointerException e) {
+            // Do nothing. This happens if there is no active workbench, page, or editor
+        }
+        return null;
+    }
 
-	private String getSelectedProjectName(final IAdaptable selected) {
-		final IProject project = selected.getAdapter(IProject.class);
-		try {
-			if (project != null && project.getDescription() != null) {
-				return project.getDescription().getName();
-			}
-		} catch (final CoreException e) {
-			// do nothing
-		}
-		return "";
-	}
+    private IStructuredSelection getWorkspaceSelection() {
+        final IWorkbenchWindow activeWindow = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+        if (activeWindow != null) {
+            final ISelectionService selectionService = activeWindow.getSelectionService();
+            if (selectionService != null) {
+                return (IStructuredSelection) selectionService.getSelection();
+            }
+        }
+        return null;
+    }
+
+    private String getSelectedProjectName(final IAdaptable selected) {
+        final IProject project = selected.getAdapter(IProject.class);
+        try {
+            if (project != null && project.getDescription() != null) {
+                return project.getDescription().getName();
+            }
+        } catch (final CoreException e) {
+            // do nothing
+        }
+        return "";
+    }
 
 }

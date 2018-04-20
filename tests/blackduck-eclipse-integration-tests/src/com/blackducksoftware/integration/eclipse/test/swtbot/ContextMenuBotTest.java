@@ -170,6 +170,7 @@ public class ContextMenuBotTest {
         inspectProject.click();
         botUtils.workbench().openComponentInspectorView();
         node.select();
+        botUtils.componentInspector().getComponentInspectorView();
         assertNotNull(botUtils.componentInspector().getInspectionStatusIfCompleteOrInProgress());
     }
 

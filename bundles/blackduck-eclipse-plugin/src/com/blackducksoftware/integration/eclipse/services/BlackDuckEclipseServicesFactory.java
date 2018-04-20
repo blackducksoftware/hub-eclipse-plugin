@@ -34,40 +34,30 @@ import com.blackducksoftware.integration.eclipse.services.inspector.ComponentIns
 
 public class BlackDuckEclipseServicesFactory {
     private static BlackDuckEclipseServicesFactory instance = new BlackDuckEclipseServicesFactory();
-
     private final HubConnectionService hubConnectionService;
-
     private final ComponentInspectorViewService componentInspectorViewService;
-
     private final ComponentInformationService componentInformationService;
-
     private final ProjectInformationService projectInformationService;
-
     private final WorkspaceInformationService workspaceInformationService;
-
     private final HubComponentLookupService hubComponentLookupService;
-
     private final ComponentInspectorPreferencesService componentInspectorPreferencesService;
-
     private final ComponentInspectorService componentInspectorService;
-
     private final ComponentInspectorCacheService componentInspectorCacheService;
-
     private final HubPreferencesService hubPreferencesService;
 
     protected BlackDuckEclipseServicesFactory() {
         instance = this;
         final BlackDuckPreferencesService blackDuckPreferencesService = new BlackDuckPreferencesService(BlackDuckEclipseActivator.getDefault());
         this.hubPreferencesService = new HubPreferencesService(blackDuckPreferencesService);
+        this.hubConnectionService = new HubConnectionService(hubPreferencesService);
         this.componentInspectorPreferencesService = new ComponentInspectorPreferencesService(blackDuckPreferencesService);
         this.componentInformationService = new ComponentInformationService();
         this.projectInformationService = new ProjectInformationService(componentInformationService);
         this.workspaceInformationService = new WorkspaceInformationService(projectInformationService);
         this.componentInspectorViewService = new ComponentInspectorViewService();
-        this.hubConnectionService = new HubConnectionService(componentInspectorViewService);
         this.hubComponentLookupService = new HubComponentLookupService(hubConnectionService);
         this.componentInspectorCacheService = new ComponentInspectorCacheService(componentInspectorViewService, hubComponentLookupService);
-        this.componentInspectorService = new ComponentInspectorService(componentInspectorViewService, hubConnectionService, componentInspectorPreferencesService, componentInspectorCacheService);
+        this.componentInspectorService = new ComponentInspectorService(componentInspectorViewService, hubConnectionService, componentInspectorPreferencesService, workspaceInformationService, componentInspectorCacheService);
     }
 
     public static BlackDuckEclipseServicesFactory getInstance() {
@@ -86,7 +76,7 @@ public class BlackDuckEclipseServicesFactory {
         return workspaceInformationService;
     }
 
-    public ProjectInformationService getProjectInformationService() {
+    public ProjectInformationService blackDuckEclipseServicesFactory() {
         return projectInformationService;
     }
 
@@ -112,6 +102,10 @@ public class BlackDuckEclipseServicesFactory {
 
     public HubPreferencesService getHubPreferencesService() {
         return hubPreferencesService;
+    }
+
+    public ProjectInformationService getProjectInformationService() {
+        return projectInformationService;
     }
 
 }

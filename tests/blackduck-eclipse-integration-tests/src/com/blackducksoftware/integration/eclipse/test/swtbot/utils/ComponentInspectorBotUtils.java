@@ -56,10 +56,20 @@ public class ComponentInspectorBotUtils extends AbstractBotUtils {
     }
 
     public SWTBotCLabel getInspectionStatusIfCompleteOrInProgress() {
+        final String[] expectedStatuses = { ComponentTableStatusCLabel.HUB_CONNECTION_OK_STATUS,
+                ComponentTableStatusCLabel.PROJECT_INSPECTION_RUNNING_STATUS,
+                ComponentTableStatusCLabel.PROJECT_INSPECTION_SCHEDULED_STATUS,
+                ComponentTableStatusCLabel.HUB_CONNECTION_OK_NO_COMPONENTS_STATUS };
+
+        final String[] remainingStatuses = { ComponentTableStatusCLabel.CONNECTION_DISCONNECTED_STATUS,
+                ComponentTableStatusCLabel.NO_SELECTED_PROJECT_STATUS,
+                ComponentTableStatusCLabel.PROJECT_NEEDS_INSPECTION_STATUS,
+                ComponentTableStatusCLabel.PROJECT_NOT_MARKED_FOR_INSPECTION_STATUS,
+                ComponentTableStatusCLabel.PROJECT_NOT_SUPPORTED_STATUS };
+
         final SWTBot viewBot = this.getComponentInspectorView();
         this.setSWTBotTimeoutShort();
-        for (final String statusMessage : Arrays.asList(ComponentTableStatusCLabel.HUB_CONNECTION_OK_STATUS, ComponentTableStatusCLabel.PROJECT_INSPECTION_RUNNING_STATUS,
-                ComponentTableStatusCLabel.PROJECT_INSPECTION_SCHEDULED_STATUS, ComponentTableStatusCLabel.HUB_CONNECTION_OK_NO_COMPONENTS_STATUS)) {
+        for (final String statusMessage : Arrays.asList(expectedStatuses)) {
             try {
                 final SWTBotCLabel clabel = viewBot.clabel(statusMessage);
                 this.setSWTBotTimeoutDefault();
@@ -68,9 +78,20 @@ public class ComponentInspectorBotUtils extends AbstractBotUtils {
             }
         }
         this.setSWTBotTimeoutDefault();
-        throw new WidgetNotFoundException(
-                String.format("Inspection status widget not found with value '%s', '%s', '%s', or '%s'", ComponentTableStatusCLabel.HUB_CONNECTION_OK_STATUS, ComponentTableStatusCLabel.PROJECT_INSPECTION_RUNNING_STATUS,
-                        ComponentTableStatusCLabel.PROJECT_INSPECTION_SCHEDULED_STATUS, ComponentTableStatusCLabel.HUB_CONNECTION_OK_NO_COMPONENTS_STATUS));
+        SWTBotCLabel badclabel = null;
+        for (final String statusMessage : Arrays.asList(remainingStatuses)) {
+            try {
+                badclabel = viewBot.clabel(statusMessage);
+                this.setSWTBotTimeoutDefault();
+            } catch (final WidgetNotFoundException e) {
+            }
+        }
+        if (badclabel == null) {
+            throw new WidgetNotFoundException("Inspection status widget not found with any value.");
+        } else {
+            throw new WidgetNotFoundException(
+                    String.format("Inspection status widget found with value '%s' when '%s', '%s', '%s', or '%s' was expected", badclabel.getText(), expectedStatuses[0], expectedStatuses[1], expectedStatuses[2], expectedStatuses[3]));
+        }
     }
 
     public SWTBotTable getInspectionResultsTable() {

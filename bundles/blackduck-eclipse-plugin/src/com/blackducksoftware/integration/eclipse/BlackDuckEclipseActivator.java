@@ -36,7 +36,6 @@ import com.blackducksoftware.integration.eclipse.internal.listeners.ProjectMarke
 import com.blackducksoftware.integration.eclipse.services.BlackDuckEclipseServicesFactory;
 import com.blackducksoftware.integration.eclipse.services.ComponentInformationService;
 import com.blackducksoftware.integration.eclipse.services.ProjectInformationService;
-import com.blackducksoftware.integration.eclipse.services.connection.hub.HubConnectionService;
 import com.blackducksoftware.integration.eclipse.services.inspector.ComponentInspectorPreferencesService;
 import com.blackducksoftware.integration.eclipse.services.inspector.ComponentInspectorService;
 import com.blackducksoftware.integration.eclipse.services.inspector.ComponentInspectorViewService;
@@ -48,7 +47,6 @@ public class BlackDuckEclipseActivator extends AbstractUIPlugin {
     private ComponentInspectorService componentInspectorService;
     private ComponentInspectorViewService componentInspectorViewService;
     private ComponentInspectorPreferencesService componentInspectorPreferencesService;
-    private HubConnectionService hubConnectionService;
     private ProjectDeletedListener projectDeletedListener;
     private NewOrMovedProjectListener newProjectListener;
     private ProjectComponentsChangedListener projectComponentsChangedListener;
@@ -59,13 +57,13 @@ public class BlackDuckEclipseActivator extends AbstractUIPlugin {
     @Override
     public void start(final BundleContext context) {
         plugin = this;
-        hubConnectionService = BlackDuckEclipseServicesFactory.getInstance().getHubConnectionService();
-        componentInspectorViewService = BlackDuckEclipseServicesFactory.getInstance().getComponentInspectorViewService();
-        componentInspectorService = BlackDuckEclipseServicesFactory.getInstance().getComponentInspectorService();
-        projectInformationService = BlackDuckEclipseServicesFactory.getInstance().getProjectInformationService();
-        componentInformationService = BlackDuckEclipseServicesFactory.getInstance().getComponentInformationService();
-        componentInspectorPreferencesService = BlackDuckEclipseServicesFactory.getInstance().getComponentInspectorPreferencesService();
-        projectMarkedForInspectionListener = new ProjectMarkedForInspectionListener(componentInspectorService, componentInspectorViewService);
+        final BlackDuckEclipseServicesFactory blackDuckEclipseServicesFactory = BlackDuckEclipseServicesFactory.getInstance();
+        componentInspectorViewService = blackDuckEclipseServicesFactory.getComponentInspectorViewService();
+        componentInspectorService = blackDuckEclipseServicesFactory.getComponentInspectorService();
+        projectInformationService = blackDuckEclipseServicesFactory.getProjectInformationService();
+        componentInformationService = blackDuckEclipseServicesFactory.getComponentInformationService();
+        componentInspectorPreferencesService = blackDuckEclipseServicesFactory.getComponentInspectorPreferencesService();
+        projectMarkedForInspectionListener = new ProjectMarkedForInspectionListener(componentInspectorService, componentInspectorPreferencesService, componentInspectorViewService);
         plugin.getPreferenceStore().addPropertyChangeListener(projectMarkedForInspectionListener);
         projectComponentsChangedListener = new ProjectComponentsChangedListener(componentInspectorService, componentInformationService);
         JavaCore.addElementChangedListener(projectComponentsChangedListener);
@@ -81,16 +79,11 @@ public class BlackDuckEclipseActivator extends AbstractUIPlugin {
         }
     }
 
-    public void refreshConnection() {
-        hubConnectionService.reloadConnection();
-    }
-
     @Override
     public void stop(final BundleContext context) {
         plugin.getPreferenceStore().removePropertyChangeListener(projectMarkedForInspectionListener);
         plugin = null;
         componentInspectorService.shutDown();
-        hubConnectionService.shutDown();
         ResourcesPlugin.getWorkspace().removeResourceChangeListener(newProjectListener);
         ResourcesPlugin.getWorkspace().removeResourceChangeListener(projectDeletedListener);
         JavaCore.removeElementChangedListener(projectComponentsChangedListener);

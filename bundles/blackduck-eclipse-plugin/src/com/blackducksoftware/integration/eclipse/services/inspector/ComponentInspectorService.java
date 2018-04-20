@@ -31,7 +31,8 @@ import com.blackducksoftware.integration.eclipse.internal.ComponentModel;
 import com.blackducksoftware.integration.eclipse.internal.InspectionJob;
 import com.blackducksoftware.integration.eclipse.internal.datastructures.InspectionJobQueue;
 import com.blackducksoftware.integration.eclipse.internal.listeners.InspectionJobChangeListener;
-import com.blackducksoftware.integration.eclipse.services.BlackDuckEclipseServicesFactory;
+import com.blackducksoftware.integration.eclipse.services.ComponentInformationService;
+import com.blackducksoftware.integration.eclipse.services.ProjectInformationService;
 import com.blackducksoftware.integration.eclipse.services.WorkspaceInformationService;
 import com.blackducksoftware.integration.eclipse.services.connection.hub.HubConnectionService;
 import com.blackducksoftware.integration.hub.bdio.model.externalid.ExternalId;
@@ -42,15 +43,17 @@ public class ComponentInspectorService {
     private final ComponentInspectorCacheService inspectorCacheService;
     private final ComponentInspectorViewService inspectorViewService;
     private final ComponentInspectorPreferencesService inspectorPreferencesService;
+    private final WorkspaceInformationService workspaceInformationService;
 
     public ComponentInspectorService(final ComponentInspectorViewService inspectorViewService, final HubConnectionService hubConnectionService, final ComponentInspectorPreferencesService componentInspectorPreferencesService,
-            final ComponentInspectorCacheService componentInspectorCacheService) {
+            final WorkspaceInformationService workspaceInformationService, final ComponentInspectorCacheService componentInspectorCacheService) {
         final InspectionJobChangeListener inspectionJobChangeListener = new InspectionJobChangeListener(inspectorViewService);
         this.inspectorPreferencesService = componentInspectorPreferencesService;
         this.inspectorCacheService = componentInspectorCacheService;
         this.inspectionQueue = new InspectionJobQueue(inspectionJobChangeListener);
         this.inspectorViewService = inspectorViewService;
         this.hubConnectionService = hubConnectionService;
+        this.workspaceInformationService = workspaceInformationService;
     }
 
     public void initializeProjectComponents(final String projectName) {
@@ -73,7 +76,9 @@ public class ComponentInspectorService {
     public boolean inspectProject(final String projectName) {
         boolean success = false;
         if (hubConnectionService.hasActiveConnection() && inspectorPreferencesService.isProjectMarkedForInspection(projectName)) {
-            final InspectionJob inspection = new InspectionJob(projectName, this, inspectorPreferencesService);
+            final ProjectInformationService projectInformationService = workspaceInformationService.getProjectInformationService();
+            final ComponentInformationService componentInformationService = projectInformationService.getComponentInformationService();
+            final InspectionJob inspection = new InspectionJob(projectName, this, inspectorPreferencesService, componentInformationService, projectInformationService, hubConnectionService);
             inspectionQueue.enqueueInspection(inspection);
             success = true;
         }
@@ -81,7 +86,6 @@ public class ComponentInspectorService {
     }
 
     public void inspectAllProjects() {
-        final WorkspaceInformationService workspaceInformationService = BlackDuckEclipseServicesFactory.getInstance().getWorkspaceInformationService();
         workspaceInformationService.getSupportedProjectNames().forEach(projectName -> {
             if (inspectorPreferencesService.isProjectMarkedForInspection(projectName)) {
                 inspectProject(projectName);
@@ -108,6 +112,11 @@ public class ComponentInspectorService {
 
     public List<ComponentModel> getProjectComponents(final String projectName) {
         return inspectorCacheService.getProjectComponents(projectName);
+    }
+
+    public void reloadConnection() {
+        hubConnectionService.reloadConnection();
+        inspectAllProjects();
     }
 
 }

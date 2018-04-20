@@ -41,10 +41,9 @@ import com.blackducksoftware.integration.eclipse.services.inspector.ComponentIns
 
 public class EditorSelectionListener implements ISelectionListener {
     private final ComponentInspectorViewService componentInspectorViewService;
-
     private final WorkspaceInformationService workspaceInformationService;
 
-    public EditorSelectionListener(final ComponentInspectorViewService componentInspectorViewService, final WorkspaceInformationService workspaceInformationService){
+    public EditorSelectionListener(final ComponentInspectorViewService componentInspectorViewService, final WorkspaceInformationService workspaceInformationService) {
         super();
         this.componentInspectorViewService = componentInspectorViewService;
         this.workspaceInformationService = workspaceInformationService;
@@ -57,7 +56,7 @@ public class EditorSelectionListener implements ISelectionListener {
         }
         IProject project = null;
         IResource resource = null;
-        if(sel instanceof IStructuredSelection){
+        if (sel instanceof IStructuredSelection) {
             final IStructuredSelection ss = (IStructuredSelection) sel;
             final Object element = ss.getFirstElement();
             if (element instanceof IProject) {
@@ -72,20 +71,21 @@ public class EditorSelectionListener implements ISelectionListener {
                     resource = workspaceInformationService.getFileInputForActiveEditor(PlatformUI.getWorkbench());
                 }
             }
-        }else if (part instanceof IEditorPart){
-            final IEditorInput input = ((IEditorPart)part).getEditorInput();
+        } else if (part instanceof IEditorPart) {
+            final IEditorInput input = ((IEditorPart) part).getEditorInput();
             if (!(input instanceof IFileEditorInput)) {
                 return;
             }
-            resource = ((IFileEditorInput)input).getFile();
+            resource = ((IFileEditorInput) input).getFile();
         }
+
         if (resource != null && project == null) {
             project = resource.getProject();
         }
-        String projectName = "";
+
         try {
             if (project != null && project.getDescription() != null) {
-                projectName = project.getDescription().getName();
+                final String projectName = project.getDescription().getName();
                 componentInspectorViewService.setProject(projectName);
             }
         } catch (final CoreException e) {

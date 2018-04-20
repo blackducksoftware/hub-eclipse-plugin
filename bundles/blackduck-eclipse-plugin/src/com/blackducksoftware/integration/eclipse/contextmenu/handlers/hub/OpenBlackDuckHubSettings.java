@@ -35,14 +35,13 @@ import com.blackducksoftware.integration.eclipse.preferencepages.ComponentInspec
 import com.blackducksoftware.integration.eclipse.preferencepages.hub.HubPreferences;
 
 public class OpenBlackDuckHubSettings extends AbstractHandler {
-	@Override
-	public Object execute(final ExecutionEvent event) throws ExecutionException {
-		final Shell activeShell = HandlerUtil.getActiveShell(event);
-		final String[] pageIds = new String[] { HubPreferences.PREFERENCE_PAGE_ID, ComponentInspectorPreferences.PREFERENCE_PAGE_ID };
-		final PreferenceDialog prefPage = PreferencesUtil.createPreferenceDialogOn(activeShell,
-				HubPreferences.PREFERENCE_PAGE_ID, pageIds, null);
-		prefPage.open();
-		return null;
-	}
+    @Override
+    public Object execute(final ExecutionEvent event) throws ExecutionException {
+        final Shell activeShell = HandlerUtil.getActiveShell(event);
+        final String[] pageIds = new String[] { HubPreferences.PREFERENCE_PAGE_ID, ComponentInspectorPreferences.PREFERENCE_PAGE_ID };
+        final PreferenceDialog prefPage = PreferencesUtil.createPreferenceDialogOn(activeShell, HubPreferences.PREFERENCE_PAGE_ID, pageIds, null);
+        prefPage.open();
+        return null;
+    }
 
 }

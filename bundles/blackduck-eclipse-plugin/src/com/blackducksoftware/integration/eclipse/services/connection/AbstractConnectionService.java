@@ -23,14 +23,8 @@
  */
 package com.blackducksoftware.integration.eclipse.services.connection;
 
-import com.blackducksoftware.integration.eclipse.internal.ComponentModel;
-
 public abstract class AbstractConnectionService {
-	public abstract void reloadConnection();
+    public abstract void reloadConnection();
 
-	public abstract boolean hasActiveConnection();
-
-	public abstract void shutDown();
-
-	public abstract void displayExpandedComponentInformation(ComponentModel selectedObject);
+    public abstract boolean hasActiveConnection();
 }
