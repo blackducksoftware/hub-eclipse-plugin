@@ -31,8 +31,8 @@ import com.blackducksoftware.integration.eclipse.preferencepages.hub.HubPreferen
 public class HubPreferencesBotUtils extends AbstractPreferenceBotUtils {
     public static final String VALID_HUB_USERNAME = "sysadmin";
     public static final String VALID_HUB_PASSWORD = "blackduck";
-    public static final String VALID_HUB_URL = "http://int-auto01.dc1.lan:9000";
-    public static final String ALT_VALID_HUB_URL = "http://int-hub01.dc1.lan:8080";
+    public static final String VALID_HUB_URL = "https://int-hub04.dc1.lan";
+    public static final String ALT_VALID_HUB_URL = "https://int-hub02.dc1.lan";
     public static final String VALID_HUB_TIMEOUT = "120";
     public static final String INVALID_STRING = "INVALID";
 

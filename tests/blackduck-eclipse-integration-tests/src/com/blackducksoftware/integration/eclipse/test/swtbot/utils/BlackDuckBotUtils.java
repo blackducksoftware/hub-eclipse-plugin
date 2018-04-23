@@ -38,13 +38,11 @@ import org.eclipse.swtbot.swt.finder.exceptions.WidgetNotFoundException;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotShell;
 
 public class BlackDuckBotUtils extends AbstractBotUtils {
-    private final ComponentInspectorBotUtils componentInspectorBotUtils;
-
-    private final PreferenceBotUtils preferenceBotUtils;
-
-    private final WorkbenchBotUtils workbenchBotUtils;
-
     public static String WELCOME_VIEW_TITLE = "Welcome";
+
+    private final ComponentInspectorBotUtils componentInspectorBotUtils;
+    private final PreferenceBotUtils preferenceBotUtils;
+    private final WorkbenchBotUtils workbenchBotUtils;
 
     public BlackDuckBotUtils() {
         super(null);

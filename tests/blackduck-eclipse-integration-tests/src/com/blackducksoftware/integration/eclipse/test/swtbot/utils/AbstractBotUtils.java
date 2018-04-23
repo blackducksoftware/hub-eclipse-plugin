@@ -37,7 +37,6 @@ import com.blackducksoftware.integration.eclipse.test.swtbot.utils.conditions.Tr
 
 public abstract class AbstractBotUtils {
     protected final SWTWorkbenchBot bot;
-
     protected final BlackDuckBotUtils botUtils;
 
     public AbstractBotUtils(final BlackDuckBotUtils botUtils) {

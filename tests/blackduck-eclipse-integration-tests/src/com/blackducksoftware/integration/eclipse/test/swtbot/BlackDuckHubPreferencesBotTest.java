@@ -44,7 +44,6 @@ import com.blackducksoftware.integration.eclipse.test.swtbot.utils.HubPreference
 
 @RunWith(SWTBotJunit4ClassRunner.class)
 public class BlackDuckHubPreferencesBotTest {
-
     public static BlackDuckBotUtils botUtils;
 
     @BeforeClass

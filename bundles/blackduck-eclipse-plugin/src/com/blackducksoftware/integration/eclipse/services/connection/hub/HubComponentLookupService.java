@@ -33,7 +33,6 @@ import com.blackducksoftware.integration.exception.IntegrationException;
 import com.blackducksoftware.integration.hub.api.generated.view.ComplexLicenseView;
 import com.blackducksoftware.integration.hub.api.generated.view.VulnerabilityV2View;
 import com.blackducksoftware.integration.hub.bdio.model.externalid.ExternalId;
-import com.blackducksoftware.integration.hub.exception.HubIntegrationException;
 import com.blackducksoftware.integration.hub.service.ComponentService;
 import com.blackducksoftware.integration.hub.service.LicenseService;
 
@@ -53,8 +52,9 @@ public class HubComponentLookupService extends AbstractComponentLookupService {
             try {
                 vulnerabilities = componentService.getVulnerabilitiesFromComponentVersion(externalId);
                 complexLicense = licenseService.getComplexLicenseItemFromComponent(externalId);
-            } catch (final HubIntegrationException e) {
+            } catch (final IntegrationException e) {
                 // Do nothing
+                e.printStackTrace();
             }
             final int[] vulnerabilitySeverityCount = getVulnerabilitySeverityCount(vulnerabilities);
             final boolean componentKnown = (vulnerabilities != null);

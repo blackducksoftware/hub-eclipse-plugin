@@ -33,12 +33,9 @@ import com.blackducksoftware.integration.util.TimedLRUCache;
 
 public abstract class AbstractComponentLookupService {
     protected final TimedLRUCache<ExternalId, ComponentModel> componentLoadingCache;
-
-    private final int CACHE_CAPACITY = 10000;
-
-    private final int CACHE_TTL = 3600000;
-
     protected final AbstractConnectionService connectionService;
+    private final int CACHE_CAPACITY = 10000;
+    private final int CACHE_TTL = 3600000;
 
     public AbstractComponentLookupService(final AbstractConnectionService connectionService) {
         this.componentLoadingCache = new TimedLRUCache<>(CACHE_CAPACITY, CACHE_TTL);

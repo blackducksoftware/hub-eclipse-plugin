@@ -26,6 +26,7 @@ package com.blackducksoftware.integration.eclipse.preferencepages.hub;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.eclipse.jface.preference.BooleanFieldEditor;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.preference.StringFieldEditor;
 import org.eclipse.jface.resource.JFaceResources;
@@ -63,10 +64,13 @@ public class HubPreferences extends PreferencePage implements IWorkbenchPreferen
     public static final String PREFERENCE_PAGE_ID = "com.blackducksoftware.integration.eclipse.preferencepages.HubPreferences";
     public static final String TEST_HUB_CREDENTIALS_TEXT = "Test Connection";
     public static final String LOGIN_SUCCESS_MESSAGE = "Connection successful!";
+
     public static final String HUB_USERNAME_LABEL = "Username";
     public static final String HUB_PASSWORD_LABEL = "Password";
     public static final String HUB_URL_LABEL = "Instance URL";
     public static final String HUB_TIMEOUT_LABEL = "Timeout in Seconds";
+    public static final String HUB_ALWAYS_TRUST_LABEL = "Always Trust Server Certificate";
+
     public static final String PROXY_USERNAME_LABEL = "Proxy Username";
     public static final String PROXY_PASSWORD_LABEL = "Proxy Password";
     public static final String PROXY_HOST_LABEL = "Proxy Host";
@@ -79,6 +83,7 @@ public class HubPreferences extends PreferencePage implements IWorkbenchPreferen
     private StringFieldEditor hubUsernameField;
     private StringFieldEditor hubUrlField;
     private StringFieldEditor hubTimeoutField;
+    private BooleanFieldEditor hubAlwaysTrustField;
     private StringFieldEditor proxyHostField;
     private StringFieldEditor proxyPortField;
     private StringFieldEditor proxyUsernameField;
@@ -115,6 +120,7 @@ public class HubPreferences extends PreferencePage implements IWorkbenchPreferen
         hubPasswordField = createPasswordField(HubPreferencesService.HUB_PASSWORD, HUB_PASSWORD_LABEL, authComposite);
         hubUrlField = createStringField(HubPreferencesService.HUB_URL, HUB_URL_LABEL, authComposite, false);
         hubTimeoutField = createStringField(HubPreferencesService.HUB_TIMEOUT, HUB_TIMEOUT_LABEL, authComposite, true);
+        hubAlwaysTrustField = createBooleanField(HubPreferencesService.HUB_ALWAYS_TRUST, HUB_ALWAYS_TRUST_LABEL, authComposite);
         proxyUsernameField = createStringField(HubPreferencesService.PROXY_USERNAME, PROXY_USERNAME_LABEL, authComposite, false);
         proxyPasswordField = createPasswordField(HubPreferencesService.PROXY_PASSWORD, PROXY_PASSWORD_LABEL, authComposite);
         proxyHostField = createStringField(HubPreferencesService.PROXY_HOST, PROXY_HOST_LABEL, authComposite, false);
@@ -194,13 +200,33 @@ public class HubPreferences extends PreferencePage implements IWorkbenchPreferen
             editor = new StringFieldEditor(preferenceName, label, composite);
         }
         editor.setPage(this);
-        editor.setPreferenceStore(getPreferenceStore());
+        editor.setPreferenceStore(this.getPreferenceStore());
         editor.load();
         editor.fillIntoGrid(composite, NUM_COLUMNS);
         editor.setPropertyChangeListener(new IPropertyChangeListener() {
             @Override
             public void propertyChange(final PropertyChangeEvent event) {
                 if (hubPreferencesService.getPreference(preferenceName).equals(editor.getStringValue())) {
+                    hasChanges.remove(preferenceName);
+                } else {
+                    hasChanges.add(preferenceName);
+                }
+                updateApplyButtonWithChanges();
+            }
+        });
+        return editor;
+    }
+
+    private BooleanFieldEditor createBooleanField(final String preferenceName, final String label, final Composite composite) {
+        final BooleanFieldEditor editor = new BooleanFieldEditor(preferenceName, label, composite);
+        editor.setPage(this);
+        editor.setPreferenceStore(this.getPreferenceStore());
+        editor.load();
+        editor.fillIntoGrid(composite, NUM_COLUMNS);
+        editor.setPropertyChangeListener(new IPropertyChangeListener() {
+            @Override
+            public void propertyChange(final PropertyChangeEvent event) {
+                if (Boolean.parseBoolean(hubPreferencesService.getPreference(preferenceName)) == (editor.getBooleanValue())) {
                     hasChanges.remove(preferenceName);
                 } else {
                     hasChanges.add(preferenceName);
@@ -281,6 +307,7 @@ public class HubPreferences extends PreferencePage implements IWorkbenchPreferen
         hubPreferencesService.saveHubPassword(hubPasswordField.getText());
         hubPreferencesService.saveHubUrl(hubUrlField.getStringValue());
         hubPreferencesService.saveHubTimeout(hubTimeoutField.getStringValue());
+        hubPreferencesService.saveHubAlwaysTrust(hubAlwaysTrustField.getBooleanValue());
         hubPreferencesService.saveHubProxyHost(proxyHostField.getStringValue());
         hubPreferencesService.saveHubProxyPort(proxyPortField.getStringValue());
         hubPreferencesService.saveHubProxyUsername(proxyUsernameField.getStringValue());

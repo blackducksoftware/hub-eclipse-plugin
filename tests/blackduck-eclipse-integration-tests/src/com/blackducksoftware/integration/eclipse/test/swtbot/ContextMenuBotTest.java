@@ -50,7 +50,7 @@ public class ContextMenuBotTest {
     public static BlackDuckBotUtils botUtils;
     private final String validHubUsername = "sysadmin";
     private final String validHubPassword = "blackduck";
-    private final String validHubUrl = "http://int-hub01.dc1.lan:8080";
+    private final String validHubUrl = "https://int-hub04.dc1.lan";
     private final String validHubTimeout = "120";
 
     @BeforeClass

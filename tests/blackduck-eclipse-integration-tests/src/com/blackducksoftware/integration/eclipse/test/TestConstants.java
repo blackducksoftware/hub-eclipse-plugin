@@ -25,37 +25,21 @@ package com.blackducksoftware.integration.eclipse.test;
 
 public class TestConstants {
     public static final String TEST_MAVEN_GROUP = "com.blackducksoftware.integration.eclipse.test";
-
     public static final String TEST_MAVEN_ARTIFACT = "just-a-maven-project";
-
     public static final String TEST_MAVEN_COMPONENTS_ARTIFACT = "just-another-maven-project";
-
     public static final String TEST_MAVEN_EMPTY_ARTIFACT = "just-a-third-maven-project";
-
     public static final String TEST_GRADLE_PROJECT_NAME = "just-a-gradle-project";
-
     public static final String TEST_NON_JAVA_PROJECT_NAME = "just-a-non-java-project";
-
     public static final String TEST_MAVEN_COMPONENTS_ARTIFACT_POM_PATH = "resources/test-maven-components-artifact/pom.xml";
-
     public static final String TEST_MAVEN_ARTIFACT_JAR = "resources/test-maven-components-artifact/just-a-maven-project-0.0.1-SNAPSHOT.jar";
-
     public static final String HUB_PREFERENCE_PAGE_NAME = "Black Duck Hub";
-
     public static final String COMPONENT_INSPECTOR_PREFERENCE_PAGE_NAME = "Component Inspector Settings";
-
     public static final String BLACK_DUCK_HUB_CATEGORY_NAME = "Black Duck Hub";
-
     public static final String BLACK_DUCK_CATEGORY_NAME = "Black Duck";
-
     public static final String COMPONENT_INSPECTOR_VIEW_NAME = "Component Inspector";
-
     public static final String CONTEXT_MENU_INSPECT_PROJECT_ACTION = "Inspect Selected Project";
-
     public static final String CONTEXT_MENU_OPEN_COMPONENT_INSPECTOR_ACTION = "Open Component Inspector";
-
     public static final String CONTEXT_MENU_OPEN_HUB_SETTINGS_ACTION = "Hub Settings...";
-
     public static final String CONTEXT_MENU_BLACK_DUCK_CATEGORY = "Black Duck";
 
 }

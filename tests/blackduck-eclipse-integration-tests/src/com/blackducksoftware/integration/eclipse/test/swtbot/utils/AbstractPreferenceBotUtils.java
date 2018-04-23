@@ -30,7 +30,6 @@ import org.eclipse.swtbot.swt.finder.widgets.TimeoutException;
 
 public abstract class AbstractPreferenceBotUtils extends AbstractBotUtils {
     public static final String PREFERENCES_WINDOW_TITLE = "Preferences";
-
     public static final String PREFERENCES_FILTERED_WINDOW_TITLE = PREFERENCES_WINDOW_TITLE + " (Filtered)";
 
     public AbstractPreferenceBotUtils(final BlackDuckBotUtils botUtils) {

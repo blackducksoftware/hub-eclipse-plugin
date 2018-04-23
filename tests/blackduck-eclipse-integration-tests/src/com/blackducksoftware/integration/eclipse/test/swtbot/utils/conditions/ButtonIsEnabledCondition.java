@@ -27,21 +27,20 @@ import org.eclipse.swtbot.swt.finder.waits.DefaultCondition;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotButton;
 
 public class ButtonIsEnabledCondition extends DefaultCondition {
+    private final SWTBotButton button;
 
-	private final SWTBotButton button;
+    public ButtonIsEnabledCondition(final SWTBotButton button) {
+        this.button = button;
+    }
 
-	public ButtonIsEnabledCondition(final SWTBotButton button) {
-		this.button = button;
-	}
+    @Override
+    public boolean test() throws Exception {
+        return button.isEnabled();
+    }
 
-	@Override
-	public boolean test() throws Exception {
-		return button.isEnabled();
-	}
-
-	@Override
-	public String getFailureMessage() {
-		return "Could not enable " + button.getText() + " button";
-	}
+    @Override
+    public String getFailureMessage() {
+        return "Could not enable " + button.getText() + " button";
+    }
 
 }

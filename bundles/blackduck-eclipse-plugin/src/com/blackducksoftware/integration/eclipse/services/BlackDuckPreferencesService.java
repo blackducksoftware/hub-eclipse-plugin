@@ -27,35 +27,39 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 public class BlackDuckPreferencesService {
-	private final IPreferenceStore preferenceStore;
+    private final IPreferenceStore preferenceStore;
 
-	public BlackDuckPreferencesService(final AbstractUIPlugin plugin) {
-		this.preferenceStore = plugin.getPreferenceStore();
-	}
+    public BlackDuckPreferencesService(final AbstractUIPlugin plugin) {
+        this.preferenceStore = plugin.getPreferenceStore();
+    }
 
-	public String getPreference(final String preferenceName){
-		return preferenceStore.getString(preferenceName);
-	}
+    public String getPreference(final String preferenceName) {
+        return preferenceStore.getString(preferenceName);
+    }
 
-	public void savePreference(final String preferenceName, final String value){
-		preferenceStore.setValue(preferenceName, value);
-	}
+    public void savePreference(final String preferenceName, final String value) {
+        preferenceStore.setValue(preferenceName, value);
+    }
 
-	public void setPreferenceDefault(final String preferenceName, final String defaultValue){
-		preferenceStore.setDefault(preferenceName, defaultValue);
-	}
+    public void setPreferenceDefault(final String preferenceName, final String defaultValue) {
+        preferenceStore.setDefault(preferenceName, defaultValue);
+    }
 
-	public String getPreferenceDefault(final String preferenceName){
-		return preferenceStore.getDefaultString(preferenceName);
-	}
+    public void setPreferenceDefault(final String preferenceName, final Boolean defaultValue) {
+        preferenceStore.setDefault(preferenceName, defaultValue);
+    }
 
-	public void removePreference(final String preferenceName){
-		this.removePreferenceDefault(preferenceName);
-		preferenceStore.setToDefault(preferenceName);
-	}
+    public String getPreferenceDefault(final String preferenceName) {
+        return preferenceStore.getDefaultString(preferenceName);
+    }
 
-	public void removePreferenceDefault(final String preferenceName){
-		preferenceStore.setDefault(preferenceName, "");
-	}
+    public void removePreference(final String preferenceName) {
+        this.removePreferenceDefault(preferenceName);
+        preferenceStore.setToDefault(preferenceName);
+    }
+
+    public void removePreferenceDefault(final String preferenceName) {
+        preferenceStore.setDefault(preferenceName, "");
+    }
 
 }

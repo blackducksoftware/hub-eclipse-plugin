@@ -39,15 +39,20 @@ public class HubPreferencesService {
     public static final String HUB_PASSWORD_LENGTH = "hubPasswordLength";
     public static final String HUB_URL = "hubURL";
     public static final String HUB_TIMEOUT = "hubTimeout";
+    public static final String HUB_ALWAYS_TRUST = "hubAlwaysTrustCert";
     public static final String PROXY_USERNAME = "proxyUsername";
     public static final String PROXY_PASSWORD = "proxyPassword";
     public static final String PROXY_PASSWORD_LENGTH = "proxyPasswordLength";
     public static final String PROXY_HOST = "proxyHost";
     public static final String PROXY_PORT = "proxyPort";
+
     public static final String DEFAULT_HUB_TIMEOUT = "120";
+    public static final boolean DEFAULT_HUB_ALWAYS_TRUST = true;
 
     public HubPreferencesService(final BlackDuckPreferencesService blackDuckPreferenceService) {
         this.blackDuckPreferencesService = blackDuckPreferenceService;
+        blackDuckPreferencesService.setPreferenceDefault(HUB_TIMEOUT, DEFAULT_HUB_TIMEOUT);
+        blackDuckPreferencesService.setPreferenceDefault(HUB_ALWAYS_TRUST, DEFAULT_HUB_ALWAYS_TRUST);
     }
 
     public String getPreference(final String preference) {
@@ -83,6 +88,10 @@ public class HubPreferencesService {
 
     public String getHubTimeout() {
         return this.getPreference(HUB_TIMEOUT);
+    }
+
+    public boolean getHubAlwaysTrust() {
+        return Boolean.parseBoolean(this.getPreference(HUB_ALWAYS_TRUST));
     }
 
     public String getHubProxyUsername() {
@@ -148,6 +157,10 @@ public class HubPreferencesService {
         this.savePreference(HUB_TIMEOUT, timeout);
     }
 
+    public void saveHubAlwaysTrust(final boolean hubAlwaysTrust) {
+        this.savePreference(HUB_ALWAYS_TRUST, Boolean.toString(hubAlwaysTrust));
+    }
+
     public void saveHubProxyUsername(final String proxyUsername) {
         this.savePreference(PROXY_USERNAME, proxyUsername);
     }
@@ -186,6 +199,8 @@ public class HubPreferencesService {
         hubServerConfigBuilder.setHubUrl(hubUrl);
         final String timeout = this.getHubTimeout();
         hubServerConfigBuilder.setTimeout(timeout);
+        final boolean hubAlwaysTrust = this.getHubAlwaysTrust();
+        hubServerConfigBuilder.setAlwaysTrustServerCertificate(hubAlwaysTrust);
         final String proxyUsername = this.getHubProxyUsername();
         hubServerConfigBuilder.setProxyUsername(proxyUsername);
         final String proxyPassword = this.getHubProxyPassword();

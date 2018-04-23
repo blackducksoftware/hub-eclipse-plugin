@@ -53,40 +53,26 @@ import com.blackducksoftware.integration.eclipse.services.inspector.ComponentIns
 
 public class ComponentInspectorPreferences extends PreferencePage implements IWorkbenchPreferencePage {
     public static final String PREFERENCE_PAGE_ID = "com.blackducksoftware.integration.eclipse.preferencepages.ComponentInspectorSettings";
-
     public static final String SUPPORTED_PROJECT_ADDED_ACTION_LABEL = "When supported projects are added to workspace...";
-
     public static final String INSPECT_AUTOMATICALLY_LABEL = "Inspect them automatically";
-
     public static final String DO_NOT_INSPECT_AUTOMATICALLY_LABEL = "Do not inspect them automatically";
-
     public static final String MARKED_PROJECTS_LABEL = "Projects Marked for Inspection";
-
     public static final String CHECK_ALL_BUTTON_LABEL = "Check All";
-
     public static final String UNCHECK_ALL_BUTTON_LABEL = "Uncheck All";
 
     private final String[][] DEFAULT_ACTIVATION_LABELS_AND_VALUES = new String[][] {
-        new String[] { INSPECT_AUTOMATICALLY_LABEL, "true" },
-        new String[] { DO_NOT_INSPECT_AUTOMATICALLY_LABEL, "false" }
+            new String[] { INSPECT_AUTOMATICALLY_LABEL, "true" },
+            new String[] { DO_NOT_INSPECT_AUTOMATICALLY_LABEL, "false" }
     };
 
     private List<BooleanFieldEditor> projectCheckboxes;
-
     private RadioGroupFieldEditor inspectByDefault;
-
     private Composite defaultsComposite;
-
     private Composite inspectedProjectsComposite;
-
     private ComponentInspectorPreferencesService inspectorPreferencesService;
-
     private WorkspaceInformationService workspaceInformationService;
-
     private Button uncheckAllButton;
-
     private Button checkAllButton;
-
     private Set<String> hasChanges;
 
     @Override
@@ -107,15 +93,15 @@ public class ComponentInspectorPreferences extends PreferencePage implements IWo
         inspectByDefault = new RadioGroupFieldEditor(ComponentInspectorPreferencesService.INSPECT_BY_DEFAULT,
                 SUPPORTED_PROJECT_ADDED_ACTION_LABEL, 1, DEFAULT_ACTIVATION_LABELS_AND_VALUES, defaultsComposite);
         inspectByDefault.setPreferenceStore(this.getPreferenceStore());
-        inspectByDefault.setPropertyChangeListener(new IPropertyChangeListener(){
+        inspectByDefault.setPropertyChangeListener(new IPropertyChangeListener() {
             @Override
             public void propertyChange(final PropertyChangeEvent event) {
-                for(final Control control : inspectByDefault.getRadioBoxControl(defaultsComposite).getChildren()){
-                    if(control instanceof Button &&  ( control.getStyle() & SWT.RADIO) != 0 && ((Button) control).getSelection()){
+                for (final Control control : inspectByDefault.getRadioBoxControl(defaultsComposite).getChildren()) {
+                    if (control instanceof Button && (control.getStyle() & SWT.RADIO) != 0 && ((Button) control).getSelection()) {
                         final String value = (String) control.getData();
-                        if(!value.equals(inspectorPreferencesService.getInspectByDefault())){
+                        if (!value.equals(inspectorPreferencesService.getInspectByDefault())) {
                             hasChanges.add(inspectByDefault.getPreferenceName());
-                        }else{
+                        } else {
                             hasChanges.remove(inspectByDefault.getPreferenceName());
                         }
                     }
@@ -140,10 +126,10 @@ public class ComponentInspectorPreferences extends PreferencePage implements IWo
 
     @Override
     protected void contributeButtons(final Composite parent) {
-        ((GridLayout) parent.getLayout()).numColumns+=2;
+        ((GridLayout) parent.getLayout()).numColumns += 2;
         checkAllButton = new Button(parent, SWT.PUSH);
         checkAllButton.setText(CHECK_ALL_BUTTON_LABEL);
-        checkAllButton.addSelectionListener(new SelectionListener(){
+        checkAllButton.addSelectionListener(new SelectionListener() {
             @Override
             public void widgetDefaultSelected(final SelectionEvent e) {
                 markAllProjects();
@@ -156,7 +142,7 @@ public class ComponentInspectorPreferences extends PreferencePage implements IWo
         });
         uncheckAllButton = new Button(parent, SWT.PUSH);
         uncheckAllButton.setText(UNCHECK_ALL_BUTTON_LABEL);
-        uncheckAllButton.addSelectionListener(new SelectionListener(){
+        uncheckAllButton.addSelectionListener(new SelectionListener() {
             @Override
             public void widgetDefaultSelected(final SelectionEvent e) {
                 unmarkAllProjects();
@@ -170,13 +156,13 @@ public class ComponentInspectorPreferences extends PreferencePage implements IWo
     }
 
     protected void markAllProjects() {
-        for (final Control control : inspectedProjectsComposite.getChildren()){
-            if(control instanceof Button && ( control.getStyle() & SWT.CHECK) != 0){
+        for (final Control control : inspectedProjectsComposite.getChildren()) {
+            if (control instanceof Button && (control.getStyle() & SWT.CHECK) != 0) {
                 final Button checkbox = (Button) control;
                 checkbox.setSelection(true);
-                if(!inspectorPreferencesService.isProjectMarkedForInspection(checkbox.getText())){
+                if (!inspectorPreferencesService.isProjectMarkedForInspection(checkbox.getText())) {
                     hasChanges.add(checkbox.getText());
-                }else{
+                } else {
                     hasChanges.remove(checkbox.getText());
                 }
             }
@@ -185,13 +171,13 @@ public class ComponentInspectorPreferences extends PreferencePage implements IWo
     }
 
     protected void unmarkAllProjects() {
-        for (final Control control : inspectedProjectsComposite.getChildren()){
-            if(control instanceof Button && ( control.getStyle() & SWT.CHECK) != 0){
+        for (final Control control : inspectedProjectsComposite.getChildren()) {
+            if (control instanceof Button && (control.getStyle() & SWT.CHECK) != 0) {
                 final Button checkbox = (Button) control;
                 checkbox.setSelection(false);
-                if(inspectorPreferencesService.isProjectMarkedForInspection(checkbox.getText())){
+                if (inspectorPreferencesService.isProjectMarkedForInspection(checkbox.getText())) {
                     hasChanges.add(checkbox.getText());
-                }else{
+                } else {
                     hasChanges.remove(checkbox.getText());
                 }
             }
@@ -206,7 +192,7 @@ public class ComponentInspectorPreferences extends PreferencePage implements IWo
 
     @Override
     public boolean performOk() {
-        if(this.getApplyButton().getEnabled()){
+        if (this.getApplyButton().getEnabled()) {
             this.performApply();
         }
         return super.performOk();
@@ -234,7 +220,7 @@ public class ComponentInspectorPreferences extends PreferencePage implements IWo
     }
 
     private BooleanFieldEditor addProject(final String projectName) {
-        if(!inspectorPreferencesService.projectExists(projectName)){
+        if (!inspectorPreferencesService.projectExists(projectName)) {
             inspectorPreferencesService.addProject(projectName);
         }
         final BooleanFieldEditor projectCheckBox = new BooleanFieldEditor(projectName, projectName, inspectedProjectsComposite);
@@ -242,12 +228,12 @@ public class ComponentInspectorPreferences extends PreferencePage implements IWo
         projectCheckBox.setPreferenceStore(this.getPreferenceStore());
         projectCheckBox.load();
         projectCheckboxes.add(projectCheckBox);
-        projectCheckBox.setPropertyChangeListener(new IPropertyChangeListener(){
+        projectCheckBox.setPropertyChangeListener(new IPropertyChangeListener() {
             @Override
             public void propertyChange(final PropertyChangeEvent event) {
-                if(projectCheckBox.getBooleanValue() == inspectorPreferencesService.isProjectMarkedForInspection(projectName)){
+                if (projectCheckBox.getBooleanValue() == inspectorPreferencesService.isProjectMarkedForInspection(projectName)) {
                     hasChanges.remove(projectCheckBox.getPreferenceName());
-                }else{
+                } else {
                     hasChanges.add(projectCheckBox.getPreferenceName());
                 }
                 updateApplyButtonWithChanges();
@@ -264,7 +250,7 @@ public class ComponentInspectorPreferences extends PreferencePage implements IWo
         projectCheckboxes.forEach(projectCheckBox -> inspectorPreferencesService.setProjectMarkedForInspection(projectCheckBox.getPreferenceName(), Boolean.toString(projectCheckBox.getBooleanValue())));
     }
 
-    public void updateApplyButtonWithChanges(){
+    public void updateApplyButtonWithChanges() {
         getApplyButton().setEnabled(!hasChanges.isEmpty());
     }
 
