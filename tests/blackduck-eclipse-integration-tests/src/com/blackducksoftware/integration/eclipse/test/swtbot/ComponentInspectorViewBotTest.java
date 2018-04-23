@@ -106,8 +106,8 @@ public class ComponentInspectorViewBotTest {
         botUtils.preferences().hubSettings().enterValidCredentials();
         botUtils.preferences().pressApplyAndClose();
         final SWTBotTreeItem projectNode = botUtils.workbench().getProject(TestConstants.TEST_MAVEN_COMPONENTS_ARTIFACT);
-        projectNode.select();
         botUtils.workbench().openComponentInspectorView();
+        projectNode.select();
         botUtils.componentInspector().getInspectionResultsTable().setFocus();
         assertNotNull(botUtils.componentInspector().getInspectionStatus(ComponentTableStatusCLabel.HUB_CONNECTION_OK_STATUS));
     }
@@ -118,8 +118,8 @@ public class ComponentInspectorViewBotTest {
         botUtils.preferences().hubSettings().enterValidCredentials();
         botUtils.preferences().pressApplyAndClose();
         final SWTBotTreeItem projectNode = botUtils.workbench().getProject(TestConstants.TEST_MAVEN_EMPTY_ARTIFACT);
-        projectNode.select();
         botUtils.workbench().openComponentInspectorView();
+        projectNode.select();
         botUtils.componentInspector().getInspectionResultsTable().setFocus();
         assertNotNull(botUtils.componentInspector().getInspectionStatus(ComponentTableStatusCLabel.HUB_CONNECTION_OK_NO_COMPONENTS_STATUS));
     }
@@ -128,8 +128,8 @@ public class ComponentInspectorViewBotTest {
     public void testProjectNotSupported() {
         botUtils.workbench().openComponentInspectorView();
         final SWTBotTreeItem projectNode = botUtils.workbench().getProject(TestConstants.TEST_NON_JAVA_PROJECT_NAME);
-        projectNode.select();
         botUtils.componentInspector().getComponentInspectorView();
+        projectNode.select();
         botUtils.componentInspector().getInspectionResultsTable().setFocus();
         assertNotNull(botUtils.componentInspector().getInspectionStatus(ComponentTableStatusCLabel.PROJECT_NOT_SUPPORTED_STATUS));
     }
@@ -142,8 +142,8 @@ public class ComponentInspectorViewBotTest {
         botUtils.preferences().inspectorSettings().pressApplyAndClose();
         try {
             final SWTBotTreeItem projectNode = botUtils.workbench().getProject(TestConstants.TEST_MAVEN_COMPONENTS_ARTIFACT);
-            projectNode.select();
             botUtils.workbench().openComponentInspectorView();
+            projectNode.select();
             botUtils.componentInspector().getInspectionResultsTable().setFocus();
             assertNotNull(botUtils.componentInspector().getInspectionStatus(ComponentTableStatusCLabel.PROJECT_NOT_MARKED_FOR_INSPECTION_STATUS));
         } finally {

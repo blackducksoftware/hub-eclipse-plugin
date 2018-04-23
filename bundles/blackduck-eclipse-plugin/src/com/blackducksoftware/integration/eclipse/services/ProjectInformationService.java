@@ -31,6 +31,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
@@ -55,6 +56,23 @@ public class ProjectInformationService {
 
     public ComponentInformationService getComponentInformationService() {
         return componentInformationService;
+    }
+
+    public String getProjectNameFromProject(final IProject project) {
+        String projectName = "";
+
+        try {
+            final IProjectDescription projectDescription = project.getDescription();
+            if (projectDescription != null) {
+                projectName = projectDescription.getName();
+            }
+        } catch (final CoreException e) {
+            /*
+             * If unsuccessful getting project description, means that project doesn't exist or is closed. In that case, do not add project
+             */
+        }
+
+        return projectName;
     }
 
     public int getNumBinaryDependencies(final List<IPackageFragmentRoot> packageFragmentRoots) {

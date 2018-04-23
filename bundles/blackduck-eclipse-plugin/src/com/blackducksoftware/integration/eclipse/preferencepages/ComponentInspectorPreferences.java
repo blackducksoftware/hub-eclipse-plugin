@@ -199,7 +199,7 @@ public class ComponentInspectorPreferences extends PreferencePage implements IWo
     }
 
     public void reloadActiveProjects(final String... newProjects) {
-        final List<String> names = workspaceInformationService.getSupportedProjectNames();
+        final List<String> names = workspaceInformationService.getAllSupportedProjectNames();
         if (projectCheckboxes != null) {
             for (final Iterator<BooleanFieldEditor> iterator = projectCheckboxes.iterator(); iterator.hasNext();) {
                 final BooleanFieldEditor projectCheckBox = iterator.next();

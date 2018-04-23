@@ -23,18 +23,11 @@
  */
 package com.blackducksoftware.integration.eclipse.internal.listeners;
 
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.IWorkbenchPart;
-import org.eclipse.ui.PlatformUI;
 
 import com.blackducksoftware.integration.eclipse.services.WorkspaceInformationService;
 import com.blackducksoftware.integration.eclipse.services.inspector.ComponentInspectorViewService;
@@ -51,45 +44,12 @@ public class EditorSelectionListener implements ISelectionListener {
 
     @Override
     public void selectionChanged(final IWorkbenchPart part, final ISelection sel) {
-        if (!(sel instanceof IStructuredSelection) && !(part instanceof IEditorPart)) {
-            return;
-        }
-        IProject project = null;
-        IResource resource = null;
         if (sel instanceof IStructuredSelection) {
-            final IStructuredSelection ss = (IStructuredSelection) sel;
-            final Object element = ss.getFirstElement();
-            if (element instanceof IProject) {
-                project = (IProject) element;
-            } else {
-                if (element instanceof IResource) {
-                    resource = ((IResource) element);
-                } else if (element instanceof IAdaptable) {
-                    final IAdaptable probableProject = ((IAdaptable) element);
-                    resource = probableProject.getAdapter(IResource.class);
-                } else {
-                    resource = workspaceInformationService.getFileInputForActiveEditor(PlatformUI.getWorkbench());
-                }
-            }
+            final String projectName = workspaceInformationService.getFirstProjectNameFromSelection((IStructuredSelection) sel);
+            componentInspectorViewService.setProject(projectName);
         } else if (part instanceof IEditorPart) {
-            final IEditorInput input = ((IEditorPart) part).getEditorInput();
-            if (!(input instanceof IFileEditorInput)) {
-                return;
-            }
-            resource = ((IFileEditorInput) input).getFile();
-        }
-
-        if (resource != null && project == null) {
-            project = resource.getProject();
-        }
-
-        try {
-            if (project != null && project.getDescription() != null) {
-                final String projectName = project.getDescription().getName();
-                componentInspectorViewService.setProject(projectName);
-            }
-        } catch (final CoreException e) {
-            // Do nothing, we just don't set the project name
+            final String projectName = workspaceInformationService.getProjectNameFromEditor((IEditorPart) part);
+            componentInspectorViewService.setProject(projectName);
         }
     }
 

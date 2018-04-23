@@ -86,11 +86,7 @@ public class ComponentInspectorService {
     }
 
     public void inspectAllProjects() {
-        workspaceInformationService.getSupportedProjectNames().forEach(projectName -> {
-            if (inspectorPreferencesService.isProjectMarkedForInspection(projectName)) {
-                inspectProject(projectName);
-            }
-        });
+        workspaceInformationService.getAllSupportedProjectNames().forEach(projectName -> inspectProject(projectName));
     }
 
     public boolean isProjectInspectionRunning(final String projectName) {

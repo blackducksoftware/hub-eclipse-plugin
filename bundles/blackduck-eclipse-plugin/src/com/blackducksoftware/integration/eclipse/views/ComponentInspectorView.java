@@ -24,11 +24,13 @@
 package com.blackducksoftware.integration.eclipse.views;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
@@ -40,6 +42,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.browser.IWebBrowser;
@@ -96,7 +99,7 @@ public class ComponentInspectorView extends ViewPart {
         parentLayout.marginWidth = 0;
         parentLayout.marginHeight = 0;
         parent.setLayout(parentLayout);
-        lastSelectedProjectName = workspaceInformationService.getSelectedProject();
+        lastSelectedProjectName = getProjectNameFromActiveContext();
         this.setUpHeaderComposite(parent);
         final ComponentModelFilter componentFilter = new ComponentModelFilter(filterBox);
         tableViewer = new TableViewer(parent, (SWT.VIRTUAL | SWT.SINGLE | SWT.FULL_SELECTION | SWT.H_SCROLL | SWT.V_SCROLL));
@@ -169,6 +172,20 @@ public class ComponentInspectorView extends ViewPart {
         } else {
             return PlatformUI.getWorkbench().getBrowserSupport().getExternalBrowser();
         }
+    }
+
+    private String getProjectNameFromActiveContext() {
+        final Optional<IEditorPart> activeEditorPart = workspaceInformationService.getActiveEditorPart();
+        final Optional<IStructuredSelection> activeStructuredSelection = workspaceInformationService.getActiveStructuredSelection();
+        String projectName = "";
+
+        if (activeStructuredSelection.isPresent()) {
+            projectName = workspaceInformationService.getFirstProjectNameFromSelection(activeStructuredSelection.get());
+        } else if (activeEditorPart.isPresent()) {
+            projectName = workspaceInformationService.getProjectNameFromEditor(activeEditorPart.get());
+        }
+
+        return projectName;
     }
 
     private void setTableInput(final String projectName) {
