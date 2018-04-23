@@ -52,7 +52,7 @@ import com.blackducksoftware.integration.eclipse.views.widgets.ComponentTableSta
 public class ComponentInspectorViewBotTest {
     private static final String COMMONS_FILEUPLOAD = "commons-fileupload";
 
-    private final String[] testMavenComponents = { "commons-fileupload  1.0 ", "just-a-maven-project  0.0.1-SNAPSHOT ", "junit  3.8.1 " };
+    private final String[] testMavenComponents = { "commons-fileupload  1.0 ", "junit  3.8.1 " };
     private final String filterBoxMessage = "type filter text";
     private static BlackDuckBotUtils botUtils;
 
@@ -67,8 +67,6 @@ public class ComponentInspectorViewBotTest {
         botUtils.preferences().inspectorSettings().setInspectNewByDefaultTrue();
         botUtils.preferences().pressApplyAndClose();
         botUtils.workbench().createProject().createMavenProject(TestConstants.TEST_MAVEN_GROUP, TestConstants.TEST_MAVEN_ARTIFACT);
-        botUtils.workbench().closeProject(TestConstants.TEST_MAVEN_ARTIFACT);
-        botUtils.addJarToProject(TestConstants.TEST_MAVEN_ARTIFACT_JAR, TestConstants.TEST_MAVEN_ARTIFACT);
         botUtils.workbench().createProject().createMavenProject(TestConstants.TEST_MAVEN_GROUP, TestConstants.TEST_MAVEN_COMPONENTS_ARTIFACT);
         botUtils.workbench().copyPomToProject(TestConstants.TEST_MAVEN_COMPONENTS_ARTIFACT_POM_PATH, TestConstants.TEST_MAVEN_COMPONENTS_ARTIFACT);
         botUtils.workbench().updateMavenProject(TestConstants.TEST_MAVEN_COMPONENTS_ARTIFACT);

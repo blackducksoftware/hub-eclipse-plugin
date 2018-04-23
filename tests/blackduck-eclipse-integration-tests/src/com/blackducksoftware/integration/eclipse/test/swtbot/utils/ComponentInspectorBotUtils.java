@@ -101,7 +101,7 @@ public class ComponentInspectorBotUtils extends AbstractBotUtils {
 
     public void waitUntilInspectionResultsTableHasRows(final int numberOfRows) {
         final SWTBot viewBot = this.getComponentInspectorView();
-        viewBot.waitUntil(Conditions.tableHasRows(viewBot.table(), 3));
+        viewBot.waitUntil(Conditions.tableHasRows(viewBot.table(), numberOfRows));
     }
 
     public String[][] getInspectionResults() {
