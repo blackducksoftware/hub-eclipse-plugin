@@ -1,8 +1,8 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Black Duck Plugin for Eclipse
+Bundle-Name: Black Duck Hub Plugin for Eclipse
 Bundle-SymbolicName: com.blackducksoftware.integration.eclipse.plugin;singleton:=true
-Bundle-Version: 1.0.0.qualifier
+Bundle-Version: 2.0.0.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ActivationPolicy: lazy
 Bundle-ClassPath: .
@@ -24,5 +24,5 @@ Export-Package: com.blackducksoftware.integration.eclipse,
  com.blackducksoftware.integration.eclipse.views,
  com.blackducksoftware.integration.eclipse.views.providers,
  com.blackducksoftware.integration.eclipse.views.widgets
-Bundle-Vendor: BlackDuck Software Inc.
+Bundle-Vendor: Black Duck Software Inc.
 Automatic-Module-name: com.blackducksoftware.integration.eclipse
