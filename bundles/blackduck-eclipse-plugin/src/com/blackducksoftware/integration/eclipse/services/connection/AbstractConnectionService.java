@@ -23,8 +23,10 @@
  */
 package com.blackducksoftware.integration.eclipse.services.connection;
 
+import com.blackducksoftware.integration.exception.IntegrationException;
+
 public abstract class AbstractConnectionService {
-    public abstract void reloadConnection();
+    public abstract void reloadConnection() throws IntegrationException;
 
     public abstract boolean hasActiveConnection();
 }

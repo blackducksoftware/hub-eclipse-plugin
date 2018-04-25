@@ -37,7 +37,6 @@ import com.blackducksoftware.integration.hub.rest.RestConnection;
 import com.blackducksoftware.integration.hub.service.ComponentService;
 import com.blackducksoftware.integration.hub.service.HubService;
 import com.blackducksoftware.integration.hub.service.HubServicesFactory;
-import com.blackducksoftware.integration.hub.service.LicenseService;
 import com.blackducksoftware.integration.hub.service.PhoneHomeService;
 import com.blackducksoftware.integration.log.IntBufferedLogger;
 import com.blackducksoftware.integration.log.IntLogger;
@@ -45,26 +44,18 @@ import com.blackducksoftware.integration.phonehome.PhoneHomeRequestBody;
 
 public class HubConnectionService extends AbstractConnectionService {
     private final IntLogger logger;
-
-    private HubServicesFactory hubServicesFactory;
     private RestConnection restConnection;
-
-    private LicenseService licenseService;
-    private ComponentService componentService;
-    private HubService hubService;
 
     private final HubPreferencesService hubPreferencesService;
 
     public HubConnectionService(final HubPreferencesService hubPreferencesService) {
         this.logger = new IntBufferedLogger();
         this.hubPreferencesService = hubPreferencesService;
-        this.reloadConnection();
     }
 
     @Override
-    public void reloadConnection() {
+    public void reloadConnection() throws IntegrationException {
         this.restConnection = this.getHubConnectionFromPreferences();
-        this.hubServicesFactory = new HubServicesFactory(restConnection);
         try {
             this.phoneHome();
         } catch (final IntegrationException e) {
@@ -77,32 +68,18 @@ public class HubConnectionService extends AbstractConnectionService {
         return restConnection != null;
     }
 
+    public HubServicesFactory getHubServicesFactory() {
+        return new HubServicesFactory(restConnection);
+    }
+
     public RestConnection getRestConnection() {
         return restConnection;
     }
 
-    public LicenseService getLicenseDataService() {
-        if (licenseService == null) {
-            licenseService = hubServicesFactory.createLicenseService();
-        }
-        return licenseService;
-    }
-
-    public ComponentService getComponentService() {
-        if (componentService == null) {
-            componentService = hubServicesFactory.createComponentService();
-        }
-        return componentService;
-    }
-
-    public HubService getHubService() {
-        if (hubService == null) {
-            hubService = hubServicesFactory.createHubService();
-        }
-        return hubService;
-    }
-
     public String getComponentVersionLinkFromExternalId(final ExternalId externalId) throws IntegrationException {
+        final HubServicesFactory hubServicesFactory = getHubServicesFactory();
+        final ComponentService componentService = hubServicesFactory.createComponentService();
+        final HubService hubService = hubServicesFactory.createHubService();
         final ComponentVersionView componentVersionView = componentService.getComponentVersion(externalId);
         final String componentVersionLink = hubService.getHref(componentVersionView);
         return componentVersionLink;
@@ -110,6 +87,7 @@ public class HubConnectionService extends AbstractConnectionService {
 
     private void phoneHome() throws IntegrationException {
         if (hasActiveConnection()) {
+            final HubServicesFactory hubServicesFactory = getHubServicesFactory();
             final PhoneHomeService phoneHomeService = hubServicesFactory.createPhoneHomeService();
             final IProduct eclipseProduct = Platform.getProduct();
             final String eclipseVersion = eclipseProduct.getDefiningBundle().getVersion().toString();
@@ -120,18 +98,10 @@ public class HubConnectionService extends AbstractConnectionService {
         }
     }
 
-    private RestConnection getHubConnectionFromPreferences() {
+    private RestConnection getHubConnectionFromPreferences() throws IntegrationException {
         final HubServerConfig hubServerConfig = hubPreferencesService.getHubServerConfig();
-        if (hubServerConfig == null) {
-            return null;
-        }
-        CredentialsRestConnection connection;
-        try {
-            connection = hubServerConfig.createCredentialsRestConnection(logger);
-            connection.connect();
-        } catch (final IntegrationException e) {
-            return null;
-        }
+        final CredentialsRestConnection connection = hubServerConfig.createCredentialsRestConnection(logger);
+        connection.connect();
         return connection;
     }
 

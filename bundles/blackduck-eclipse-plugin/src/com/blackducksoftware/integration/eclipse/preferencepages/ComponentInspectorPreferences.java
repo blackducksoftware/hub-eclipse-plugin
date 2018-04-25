@@ -52,7 +52,7 @@ import com.blackducksoftware.integration.eclipse.services.WorkspaceInformationSe
 import com.blackducksoftware.integration.eclipse.services.inspector.ComponentInspectorPreferencesService;
 
 public class ComponentInspectorPreferences extends PreferencePage implements IWorkbenchPreferencePage {
-    public static final String PREFERENCE_PAGE_ID = "com.blackducksoftware.integration.eclipse.preferencepages.ComponentInspectorSettings";
+    public static final String PREFERENCE_PAGE_ID = "com.blackducksoftware.integration.eclipse.preferencepages.ComponentInspectorPreferences";
     public static final String SUPPORTED_PROJECT_ADDED_ACTION_LABEL = "When supported projects are added to workspace...";
     public static final String INSPECT_AUTOMATICALLY_LABEL = "Inspect them automatically";
     public static final String DO_NOT_INSPECT_AUTOMATICALLY_LABEL = "Do not inspect them automatically";

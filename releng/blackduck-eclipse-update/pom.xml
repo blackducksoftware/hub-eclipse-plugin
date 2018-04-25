@@ -49,9 +49,9 @@
           </applicationsArgs>
           <repositories>
             <repository>
-              <id>neon</id>
+              <id>oxygen</id>
               <layout>p2</layout>
-              <url>http://download.eclipse.org/releases/neon</url>
+              <url>http://download.eclipse.org/releases/oxygen</url>
             </repository>
           </repositories>
           <dependencies>

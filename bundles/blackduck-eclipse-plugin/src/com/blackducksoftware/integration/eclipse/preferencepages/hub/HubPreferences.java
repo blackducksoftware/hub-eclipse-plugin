@@ -56,12 +56,11 @@ import com.blackducksoftware.integration.eclipse.services.inspector.ComponentIns
 import com.blackducksoftware.integration.exception.IntegrationException;
 import com.blackducksoftware.integration.hub.configuration.HubServerConfig;
 import com.blackducksoftware.integration.hub.configuration.HubServerConfigBuilder;
-import com.blackducksoftware.integration.hub.exception.HubIntegrationException;
 import com.blackducksoftware.integration.hub.rest.CredentialsRestConnection;
 import com.blackducksoftware.integration.log.IntBufferedLogger;
 
 public class HubPreferences extends PreferencePage implements IWorkbenchPreferencePage {
-    public static final String PREFERENCE_PAGE_ID = "com.blackducksoftware.integration.eclipse.preferencepages.HubPreferences";
+    public static final String PREFERENCE_PAGE_ID = "com.blackducksoftware.integration.eclipse.preferencepages.hub.HubPreferences";
     public static final String TEST_HUB_CREDENTIALS_TEXT = "Test Connection";
     public static final String LOGIN_SUCCESS_MESSAGE = "Connection successful!";
 
@@ -141,7 +140,7 @@ public class HubPreferences extends PreferencePage implements IWorkbenchPreferen
     public void performApply() {
         try {
             this.storeValues();
-        } catch (final HubIntegrationException e) {
+        } catch (final IntegrationException e) {
         }
     }
 
@@ -300,7 +299,7 @@ public class HubPreferences extends PreferencePage implements IWorkbenchPreferen
         }
     }
 
-    private void storeValues() throws HubIntegrationException {
+    private void storeValues() throws IntegrationException {
         hasChanges = new HashSet<>();
         this.updateApplyButtonWithChanges();
         hubPreferencesService.saveHubUsername(hubUsernameField.getStringValue());

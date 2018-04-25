@@ -51,7 +51,7 @@ public class ComponentTableStatusCLabel extends CLabel {
     public static final String PROJECT_INSPECTION_SCHEDULED_STATUS = "Project scheduled for inspection";
     public static final String PROJECT_NOT_MARKED_FOR_INSPECTION_STATUS = "Inspection not activated for current project";
     public static final String PROJECT_NEEDS_INSPECTION_STATUS = "Project has not yet been inspected";
-    public static final String CONNECTION_DISCONNECTED_STATUS = "No connection was able to be established, please check your internet connection and proxies";
+    public static final String CONNECTION_DISCONNECTED_STATUS = "Disconnected";
     public static final String HUB_CONNECTION_OK_STATUS = "Connected to Hub instance - double-click any component to open it in the Hub";
     public static final String HUB_CONNECTION_OK_NO_COMPONENTS_STATUS = "Connected to Hub instance - No components found.";
     public static final String PROJECT_NOT_SUPPORTED_STATUS = "Cannot inspect selected project - either it is not a Java project or no Maven or Gradle nature was detected";

@@ -23,6 +23,7 @@
  */
 package com.blackducksoftware.integration.eclipse.internal.listeners;
 
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.IEditorPart;
@@ -44,11 +45,15 @@ public class EditorSelectionListener implements ISelectionListener {
 
     @Override
     public void selectionChanged(final IWorkbenchPart part, final ISelection sel) {
+        String projectName = "";
+
         if (sel instanceof IStructuredSelection) {
-            final String projectName = workspaceInformationService.getFirstProjectNameFromSelection((IStructuredSelection) sel);
-            componentInspectorViewService.setProject(projectName);
+            projectName = workspaceInformationService.getFirstProjectNameFromSelection((IStructuredSelection) sel);
         } else if (part instanceof IEditorPart) {
-            final String projectName = workspaceInformationService.getProjectNameFromEditor((IEditorPart) part);
+            projectName = workspaceInformationService.getProjectNameFromEditor((IEditorPart) part);
+        }
+
+        if (StringUtils.isNotBlank(projectName)) {
             componentInspectorViewService.setProject(projectName);
         }
     }

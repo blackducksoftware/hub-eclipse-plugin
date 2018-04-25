@@ -35,6 +35,7 @@ import com.blackducksoftware.integration.eclipse.services.ComponentInformationSe
 import com.blackducksoftware.integration.eclipse.services.ProjectInformationService;
 import com.blackducksoftware.integration.eclipse.services.WorkspaceInformationService;
 import com.blackducksoftware.integration.eclipse.services.connection.hub.HubConnectionService;
+import com.blackducksoftware.integration.exception.IntegrationException;
 import com.blackducksoftware.integration.hub.bdio.model.externalid.ExternalId;
 
 public class ComponentInspectorService {
@@ -110,7 +111,7 @@ public class ComponentInspectorService {
         return inspectorCacheService.getProjectComponents(projectName);
     }
 
-    public void reloadConnection() {
+    public void reloadConnection() throws IntegrationException {
         hubConnectionService.reloadConnection();
         inspectAllProjects();
     }

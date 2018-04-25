@@ -34,6 +34,7 @@ import com.blackducksoftware.integration.hub.api.generated.view.ComplexLicenseVi
 import com.blackducksoftware.integration.hub.api.generated.view.VulnerabilityV2View;
 import com.blackducksoftware.integration.hub.bdio.model.externalid.ExternalId;
 import com.blackducksoftware.integration.hub.service.ComponentService;
+import com.blackducksoftware.integration.hub.service.HubServicesFactory;
 import com.blackducksoftware.integration.hub.service.LicenseService;
 
 public class HubComponentLookupService extends AbstractComponentLookupService {
@@ -43,8 +44,9 @@ public class HubComponentLookupService extends AbstractComponentLookupService {
 
     @Override
     public ComponentModel lookupComponent(final ExternalId externalId) throws IOException, URISyntaxException, IntegrationException {
-        final LicenseService licenseService = ((HubConnectionService) connectionService).getLicenseDataService();
-        final ComponentService componentService = ((HubConnectionService) connectionService).getComponentService();
+        final HubServicesFactory hubServicesFactory = ((HubConnectionService) connectionService).getHubServicesFactory();
+        final ComponentService componentService = hubServicesFactory.createComponentService();
+        final LicenseService licenseService = hubServicesFactory.createLicenseService();
         ComponentModel component = componentLoadingCache.get(externalId);
         if (component == null) {
             List<VulnerabilityV2View> vulnerabilities = null;
@@ -54,7 +56,6 @@ public class HubComponentLookupService extends AbstractComponentLookupService {
                 complexLicense = licenseService.getComplexLicenseItemFromComponent(externalId);
             } catch (final IntegrationException e) {
                 // Do nothing
-                e.printStackTrace();
             }
             final int[] vulnerabilitySeverityCount = getVulnerabilitySeverityCount(vulnerabilities);
             final boolean componentKnown = (vulnerabilities != null);
