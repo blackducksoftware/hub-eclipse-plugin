@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<?pde version="3.8"?><target includeMode="feature" name="blackduck-eclipse-target" sequenceNumber="84">
+<?pde version="3.8"?><target includeMode="feature" name="blackduck-eclipse-target" sequenceNumber="85">
 <locations>
 <location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="planner" includeSource="true" type="InstallableUnit">
 <unit id="org.eclipse.buildship.feature.group" version="2.2.1.v20180125-1441"/>
 <unit id="org.eclipse.m2e.feature.feature.group" version="1.8.3.20180227-2137"/>
+<unit id="org.eclipse.m2e.logback.feature.feature.group" version="1.8.3.20180227-2137"/>
 <unit id="org.eclipse.sdk.feature.group" version="4.7.3.v20180330-0919"/>
 <unit id="org.eclipse.swtbot.eclipse.feature.group" version="2.6.0.201706141832"/>
 <unit id="org.eclipse.swtbot.feature.group" version="2.6.0.201706141832"/>

@@ -92,7 +92,7 @@ public class HubConnectionService extends AbstractConnectionService {
             final IProduct eclipseProduct = Platform.getProduct();
             final String eclipseVersion = eclipseProduct.getDefiningBundle().getVersion().toString();
             final String pluginVersion = Platform.getBundle(BlackDuckEclipseActivator.PLUGIN_ID).getVersion().toString();
-            final PhoneHomeRequestBody.Builder phoneHomeRequestBodyBuilder = phoneHomeService.createInitialPhoneHomeRequestBodyBuilder("Hub-Eclipse", pluginVersion);
+            final PhoneHomeRequestBody.Builder phoneHomeRequestBodyBuilder = phoneHomeService.createInitialPhoneHomeRequestBodyBuilder("hub-eclipse", pluginVersion);
             phoneHomeRequestBodyBuilder.addToMetaData("eclipse.version", eclipseVersion);
             phoneHomeService.phoneHome(phoneHomeRequestBodyBuilder);
         }
