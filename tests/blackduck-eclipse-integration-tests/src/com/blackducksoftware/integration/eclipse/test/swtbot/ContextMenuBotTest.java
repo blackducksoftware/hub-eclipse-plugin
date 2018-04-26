@@ -27,6 +27,9 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
+
 import org.eclipse.swtbot.eclipse.finder.widgets.SWTBotView;
 import org.eclipse.swtbot.swt.finder.SWTBot;
 import org.eclipse.swtbot.swt.finder.exceptions.WidgetNotFoundException;
@@ -54,7 +57,7 @@ public class ContextMenuBotTest {
     private final String validHubTimeout = "120";
 
     @BeforeClass
-    public static void setUpWorkspaceBot() {
+    public static void setUpWorkspaceBot() throws FileNotFoundException, IOException {
         botUtils = new BlackDuckBotUtils();
         botUtils.closeWelcomeView();
         botUtils.workbench().createProject().createMavenProject(TestConstants.TEST_MAVEN_GROUP, TestConstants.TEST_MAVEN_ARTIFACT);

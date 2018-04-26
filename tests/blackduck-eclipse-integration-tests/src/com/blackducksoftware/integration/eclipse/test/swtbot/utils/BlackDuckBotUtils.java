@@ -24,6 +24,7 @@
 package com.blackducksoftware.integration.eclipse.test.swtbot.utils;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.Arrays;
@@ -44,7 +45,7 @@ public class BlackDuckBotUtils extends AbstractBotUtils {
     private final PreferenceBotUtils preferenceBotUtils;
     private final WorkbenchBotUtils workbenchBotUtils;
 
-    public BlackDuckBotUtils() {
+    public BlackDuckBotUtils() throws FileNotFoundException, IOException {
         super(null);
         this.componentInspectorBotUtils = new ComponentInspectorBotUtils(this);
         this.preferenceBotUtils = new PreferenceBotUtils(this);

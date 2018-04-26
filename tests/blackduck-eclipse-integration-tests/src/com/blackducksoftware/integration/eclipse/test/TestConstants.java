@@ -41,4 +41,11 @@ public class TestConstants {
     public static final String CONTEXT_MENU_OPEN_HUB_SETTINGS_ACTION = "Hub Settings...";
     public static final String CONTEXT_MENU_BLACK_DUCK_CATEGORY = "Black Duck";
 
+    public static final String HUB_URL_KEY = "hub.url";
+    public static final String HUB_USERNAME_KEY = "hub.username";
+    public static final String HUB_PASSWORD_KEY = "hub.password";
+    public static final String HUB_TIMEOUT_KEY = "hub.timeout";
+
+    public static final String INVALID_STRING = "INVALID";
+
 }

@@ -29,6 +29,9 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
+
 import org.eclipse.swtbot.swt.finder.SWTBot;
 import org.eclipse.swtbot.swt.finder.exceptions.WidgetNotFoundException;
 import org.eclipse.swtbot.swt.finder.junit.SWTBotJunit4ClassRunner;
@@ -51,7 +54,7 @@ public class ComponentInspectorPreferencesBotTest {
     private static ComponentInspectorPreferencesService componentInspectorPreferencesService;
 
     @BeforeClass
-    public static void setUpWorkspace() {
+    public static void setUpWorkspace() throws FileNotFoundException, IOException {
         componentInspectorPreferencesService = BlackDuckEclipseServicesFactory.getInstance().getComponentInspectorPreferencesService();
         botUtils = new BlackDuckBotUtils();
         botUtils.closeWelcomeView();

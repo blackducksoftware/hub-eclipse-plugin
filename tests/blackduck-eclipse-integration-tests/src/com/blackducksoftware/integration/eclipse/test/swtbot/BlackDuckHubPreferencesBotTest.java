@@ -26,6 +26,9 @@ package com.blackducksoftware.integration.eclipse.test.swtbot;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
+
 import org.eclipse.swtbot.eclipse.finder.SWTWorkbenchBot;
 import org.eclipse.swtbot.swt.finder.exceptions.WidgetNotFoundException;
 import org.eclipse.swtbot.swt.finder.junit.SWTBotJunit4ClassRunner;
@@ -40,14 +43,13 @@ import org.junit.runner.RunWith;
 import com.blackducksoftware.integration.eclipse.preferencepages.hub.HubPreferences;
 import com.blackducksoftware.integration.eclipse.test.TestConstants;
 import com.blackducksoftware.integration.eclipse.test.swtbot.utils.BlackDuckBotUtils;
-import com.blackducksoftware.integration.eclipse.test.swtbot.utils.HubPreferencesBotUtils;
 
 @RunWith(SWTBotJunit4ClassRunner.class)
 public class BlackDuckHubPreferencesBotTest {
     public static BlackDuckBotUtils botUtils;
 
     @BeforeClass
-    public static void setUpWorkspace() {
+    public static void setUpWorkspace() throws FileNotFoundException, IOException {
         botUtils = new BlackDuckBotUtils();
         botUtils.closeWelcomeView();
         botUtils.preferences().openHubPreferencesFromEclipseMenu();
@@ -87,8 +89,8 @@ public class BlackDuckHubPreferencesBotTest {
     @Test
     public void testInvalidHubURL() {
         botUtils.preferences().openHubPreferencesFromEclipseMenu();
-        botUtils.preferences().hubSettings().enterCredentials(HubPreferencesBotUtils.VALID_HUB_USERNAME, HubPreferencesBotUtils.VALID_HUB_PASSWORD,
-                HubPreferencesBotUtils.INVALID_STRING, HubPreferencesBotUtils.VALID_HUB_TIMEOUT);
+        botUtils.preferences().hubSettings().enterValidCredentials();
+        botUtils.preferences().hubSettings().enterUrl(TestConstants.INVALID_STRING);
         botUtils.preferences().hubSettings().testCurrentCredentials();
         final SWTWorkbenchBot bot = botUtils.bot();
         try {
@@ -104,8 +106,8 @@ public class BlackDuckHubPreferencesBotTest {
     @Test
     public void testInvalidHubUsername() {
         botUtils.preferences().openHubPreferencesFromEclipseMenu();
-        botUtils.preferences().hubSettings().enterCredentials(HubPreferencesBotUtils.INVALID_STRING, HubPreferencesBotUtils.VALID_HUB_PASSWORD,
-                HubPreferencesBotUtils.VALID_HUB_URL, HubPreferencesBotUtils.VALID_HUB_TIMEOUT);
+        botUtils.preferences().hubSettings().enterValidCredentials();
+        botUtils.preferences().hubSettings().enterUsername(TestConstants.INVALID_STRING);
         botUtils.preferences().hubSettings().testCurrentCredentials();
         final SWTWorkbenchBot bot = botUtils.bot();
         try {
@@ -121,8 +123,8 @@ public class BlackDuckHubPreferencesBotTest {
     @Test
     public void testInvalidHubPassword() {
         botUtils.preferences().openHubPreferencesFromEclipseMenu();
-        botUtils.preferences().hubSettings().enterCredentials(HubPreferencesBotUtils.VALID_HUB_USERNAME, HubPreferencesBotUtils.INVALID_STRING,
-                HubPreferencesBotUtils.VALID_HUB_URL, HubPreferencesBotUtils.VALID_HUB_TIMEOUT);
+        botUtils.preferences().hubSettings().enterValidCredentials();
+        botUtils.preferences().hubSettings().enterPassword(TestConstants.INVALID_STRING);
         botUtils.preferences().hubSettings().testCurrentCredentials();
         final SWTWorkbenchBot bot = botUtils.bot();
         try {
@@ -138,8 +140,8 @@ public class BlackDuckHubPreferencesBotTest {
     @Test
     public void testInvalidHubTimeout() {
         botUtils.preferences().openHubPreferencesFromEclipseMenu();
-        botUtils.preferences().hubSettings().enterCredentials(HubPreferencesBotUtils.VALID_HUB_USERNAME, HubPreferencesBotUtils.VALID_HUB_PASSWORD,
-                HubPreferencesBotUtils.VALID_HUB_URL, HubPreferencesBotUtils.INVALID_STRING);
+        botUtils.preferences().hubSettings().enterValidCredentials();
+        botUtils.preferences().hubSettings().enterTimeout(TestConstants.INVALID_STRING);
         botUtils.preferences().hubSettings().testCurrentCredentials();
         final SWTWorkbenchBot bot = botUtils.bot();
         try {

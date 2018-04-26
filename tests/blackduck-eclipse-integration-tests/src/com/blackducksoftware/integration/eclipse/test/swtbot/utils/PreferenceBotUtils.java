@@ -23,6 +23,9 @@
  */
 package com.blackducksoftware.integration.eclipse.test.swtbot.utils;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Menu;
@@ -50,7 +53,7 @@ public class PreferenceBotUtils extends AbstractPreferenceBotUtils {
 
     private final InspectorPreferencesBotUtils inspectorPreferencesBotUtils;
 
-    public PreferenceBotUtils(final BlackDuckBotUtils botUtils) {
+    public PreferenceBotUtils(final BlackDuckBotUtils botUtils) throws FileNotFoundException, IOException {
         super(botUtils);
         this.hubPreferencesBotUtils = new HubPreferencesBotUtils(botUtils);
         this.inspectorPreferencesBotUtils = new InspectorPreferencesBotUtils(botUtils);

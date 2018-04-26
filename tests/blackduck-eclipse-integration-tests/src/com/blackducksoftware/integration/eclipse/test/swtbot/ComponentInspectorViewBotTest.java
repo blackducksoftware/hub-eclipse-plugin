@@ -44,7 +44,6 @@ import org.junit.runner.RunWith;
 
 import com.blackducksoftware.integration.eclipse.test.TestConstants;
 import com.blackducksoftware.integration.eclipse.test.swtbot.utils.BlackDuckBotUtils;
-import com.blackducksoftware.integration.eclipse.test.swtbot.utils.HubPreferencesBotUtils;
 import com.blackducksoftware.integration.eclipse.views.ComponentInspectorView;
 import com.blackducksoftware.integration.eclipse.views.widgets.ComponentTableStatusCLabel;
 
@@ -185,8 +184,7 @@ public class ComponentInspectorViewBotTest {
         projectNode.select();
         assertNotNull(botUtils.componentInspector().getInspectionStatusIfCompleteOrInProgress());
         botUtils.preferences().openHubPreferencesFromEclipseMenu();
-        botUtils.preferences().hubSettings().enterCredentials(HubPreferencesBotUtils.VALID_HUB_USERNAME, HubPreferencesBotUtils.VALID_HUB_PASSWORD,
-                HubPreferencesBotUtils.ALT_VALID_HUB_URL, HubPreferencesBotUtils.VALID_HUB_TIMEOUT);
+        botUtils.preferences().hubSettings().enterAlternateValidCredentials();
         botUtils.preferences().pressApplyAndClose();
         assertNotNull(botUtils.componentInspector().getInspectionStatusIfCompleteOrInProgress());
     }
