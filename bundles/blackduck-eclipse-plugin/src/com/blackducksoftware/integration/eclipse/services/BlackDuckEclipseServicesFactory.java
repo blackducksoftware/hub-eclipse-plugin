@@ -58,11 +58,7 @@ public class BlackDuckEclipseServicesFactory {
         this.hubComponentLookupService = new HubComponentLookupService(hubConnectionService);
         this.componentInspectorCacheService = new ComponentInspectorCacheService(componentInspectorViewService, hubComponentLookupService);
         this.componentInspectorService = new ComponentInspectorService(componentInspectorViewService, hubConnectionService, componentInspectorPreferencesService, workspaceInformationService, componentInspectorCacheService);
-        try {
-            hubConnectionService.reloadConnection();
-        } catch (final Exception e) {
-
-        }
+        hubConnectionService.reloadConnection();
     }
 
     public static BlackDuckEclipseServicesFactory getInstance() {

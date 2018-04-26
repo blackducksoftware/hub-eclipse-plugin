@@ -5,7 +5,7 @@ Bundle-SymbolicName: blackduck-eclipse-integration-tests
 Bundle-Version: 2.0.0.qualifier
 Fragment-Host: com.blackducksoftware.integration.eclipse.plugin
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
-Require-Bundle: org.junit;bundle-version="4.12.0",
- org.eclipse.swtbot.junit4_x;bundle-version="2.5.0",
+Require-Bundle: org.junit,
+ org.eclipse.swtbot.junit4_x,
  org.eclipse.swtbot.eclipse.finder
 Automatic-Module-Name: com.blackducksoftware.integration.eclipse.test

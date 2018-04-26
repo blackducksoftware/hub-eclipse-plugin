@@ -26,6 +26,7 @@ package com.blackducksoftware.integration.eclipse.services.connection.hub;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.List;
+import java.util.Optional;
 
 import com.blackducksoftware.integration.eclipse.internal.ComponentModel;
 import com.blackducksoftware.integration.eclipse.services.connection.AbstractComponentLookupService;
@@ -33,6 +34,7 @@ import com.blackducksoftware.integration.exception.IntegrationException;
 import com.blackducksoftware.integration.hub.api.generated.view.ComplexLicenseView;
 import com.blackducksoftware.integration.hub.api.generated.view.VulnerabilityV2View;
 import com.blackducksoftware.integration.hub.bdio.model.externalid.ExternalId;
+import com.blackducksoftware.integration.hub.rest.RestConnection;
 import com.blackducksoftware.integration.hub.service.ComponentService;
 import com.blackducksoftware.integration.hub.service.HubServicesFactory;
 import com.blackducksoftware.integration.hub.service.LicenseService;
@@ -44,7 +46,8 @@ public class HubComponentLookupService extends AbstractComponentLookupService {
 
     @Override
     public ComponentModel lookupComponent(final ExternalId externalId) throws IOException, URISyntaxException, IntegrationException {
-        final HubServicesFactory hubServicesFactory = ((HubConnectionService) connectionService).getHubServicesFactory();
+        final Optional<RestConnection> restConnection = ((HubConnectionService) connectionService).getConnection();
+        final HubServicesFactory hubServicesFactory = new HubServicesFactory(restConnection.get());
         final ComponentService componentService = hubServicesFactory.createComponentService();
         final LicenseService licenseService = hubServicesFactory.createLicenseService();
         ComponentModel component = componentLoadingCache.get(externalId);

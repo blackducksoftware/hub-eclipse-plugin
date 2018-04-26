@@ -32,7 +32,6 @@ import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.swtbot.eclipse.finder.SWTWorkbenchBot;
 import org.eclipse.swtbot.eclipse.finder.widgets.SWTBotView;
 import org.eclipse.swtbot.swt.finder.SWTBot;
 import org.eclipse.swtbot.swt.finder.exceptions.WidgetNotFoundException;
@@ -150,18 +149,7 @@ public class WorkbenchBotUtils extends AbstractBotUtils {
         bot.checkBox().select();
         this.pressButton(bot, "OK");
         try {
-            bot.waitUntil(Conditions.shellCloses(bot.shell("Delete Resources")));
-        } catch (final WidgetNotFoundException e) {
-        }
-    }
-
-    public void deleteProjectFromWorkspace(final String projectName, final SWTWorkbenchBot bot) {
-        this.openPackageExplorerView();
-        final SWTBotTreeItem projectNode = this.getProjectInPackageExplorer(projectName);
-        projectNode.contextMenu().menu("Delete").click();
-        bot.waitUntil(Conditions.shellIsActive("Delete Resources"));
-        this.pressButton(bot, "OK");
-        try {
+            this.pressButton(bot, "Continue");
             bot.waitUntil(Conditions.shellCloses(bot.shell("Delete Resources")));
         } catch (final WidgetNotFoundException e) {
         }

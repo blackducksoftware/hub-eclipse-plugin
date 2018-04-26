@@ -18,11 +18,6 @@
       <artifactId>com.blackducksoftware.integration.eclipse.plugin.maven-dependencies</artifactId>
       <version>${project.version}</version>
     </dependency>
-    <dependency>
-      <groupId>com.blackducksoftware.integration.eclipse</groupId>
-      <artifactId>com.blackducksoftware.integration.eclipse.plugin</artifactId>
-      <version>${project.version}</version>
-    </dependency>
   </dependencies>
 
   <build>
@@ -38,7 +33,6 @@
           <argLine>${tycho.testArgLine} ${os-jvm-flags}</argLine>
           <useUIThread>false</useUIThread>
           <product>org.eclipse.sdk.ide</product>
-          <application>org.eclipse.ui.ide.workbench</application>
           <dependencies>
             <!-- needed for SWTBot -->
             <dependency>

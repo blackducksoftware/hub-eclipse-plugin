@@ -23,6 +23,8 @@
  */
 package com.blackducksoftware.integration.eclipse.services.connection.hub;
 
+import java.util.Optional;
+
 import org.eclipse.core.runtime.IProduct;
 import org.eclipse.core.runtime.Platform;
 
@@ -32,7 +34,6 @@ import com.blackducksoftware.integration.exception.IntegrationException;
 import com.blackducksoftware.integration.hub.api.generated.view.ComponentVersionView;
 import com.blackducksoftware.integration.hub.bdio.model.externalid.ExternalId;
 import com.blackducksoftware.integration.hub.configuration.HubServerConfig;
-import com.blackducksoftware.integration.hub.rest.CredentialsRestConnection;
 import com.blackducksoftware.integration.hub.rest.RestConnection;
 import com.blackducksoftware.integration.hub.service.ComponentService;
 import com.blackducksoftware.integration.hub.service.HubService;
@@ -44,7 +45,7 @@ import com.blackducksoftware.integration.phonehome.PhoneHomeRequestBody;
 
 public class HubConnectionService extends AbstractConnectionService {
     private final IntLogger logger;
-    private RestConnection restConnection;
+    private Optional<RestConnection> connection;
 
     private final HubPreferencesService hubPreferencesService;
 
@@ -54,8 +55,8 @@ public class HubConnectionService extends AbstractConnectionService {
     }
 
     @Override
-    public void reloadConnection() throws IntegrationException {
-        this.restConnection = this.getHubConnectionFromPreferences();
+    public void reloadConnection() {
+        this.connection = this.getHubConnectionFromPreferences();
         try {
             this.phoneHome();
         } catch (final IntegrationException e) {
@@ -65,29 +66,28 @@ public class HubConnectionService extends AbstractConnectionService {
 
     @Override
     public boolean hasActiveConnection() {
-        return restConnection != null;
+        return connection.isPresent();
     }
 
-    public HubServicesFactory getHubServicesFactory() {
-        return new HubServicesFactory(restConnection);
-    }
-
-    public RestConnection getRestConnection() {
-        return restConnection;
+    public Optional<RestConnection> getConnection() {
+        return connection;
     }
 
     public String getComponentVersionLinkFromExternalId(final ExternalId externalId) throws IntegrationException {
-        final HubServicesFactory hubServicesFactory = getHubServicesFactory();
-        final ComponentService componentService = hubServicesFactory.createComponentService();
-        final HubService hubService = hubServicesFactory.createHubService();
-        final ComponentVersionView componentVersionView = componentService.getComponentVersion(externalId);
-        final String componentVersionLink = hubService.getHref(componentVersionView);
-        return componentVersionLink;
+        if (connection.isPresent()) {
+            final HubServicesFactory hubServicesFactory = new HubServicesFactory(connection.get());
+            final ComponentService componentService = hubServicesFactory.createComponentService();
+            final HubService hubService = hubServicesFactory.createHubService();
+            final ComponentVersionView componentVersionView = componentService.getComponentVersion(externalId);
+            final String componentVersionLink = hubService.getHref(componentVersionView);
+            return componentVersionLink;
+        }
+        throw new IntegrationException("No active connection with a Hub server");
     }
 
     private void phoneHome() throws IntegrationException {
         if (hasActiveConnection()) {
-            final HubServicesFactory hubServicesFactory = getHubServicesFactory();
+            final HubServicesFactory hubServicesFactory = new HubServicesFactory(connection.get());
             final PhoneHomeService phoneHomeService = hubServicesFactory.createPhoneHomeService();
             final IProduct eclipseProduct = Platform.getProduct();
             final String eclipseVersion = eclipseProduct.getDefiningBundle().getVersion().toString();
@@ -98,11 +98,17 @@ public class HubConnectionService extends AbstractConnectionService {
         }
     }
 
-    private RestConnection getHubConnectionFromPreferences() throws IntegrationException {
-        final HubServerConfig hubServerConfig = hubPreferencesService.getHubServerConfig();
-        final CredentialsRestConnection connection = hubServerConfig.createCredentialsRestConnection(logger);
-        connection.connect();
-        return connection;
+    private Optional<RestConnection> getHubConnectionFromPreferences() {
+        RestConnection connection = null;
+
+        try {
+            final HubServerConfig hubServerConfig = hubPreferencesService.getHubServerConfig();
+            connection = hubServerConfig.createCredentialsRestConnection(logger);
+            connection.connect();
+        } catch (final Exception e) {
+        }
+
+        return Optional.ofNullable(connection);
     }
 
 }

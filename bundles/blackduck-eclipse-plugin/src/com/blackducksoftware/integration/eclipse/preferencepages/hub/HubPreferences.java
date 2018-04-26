@@ -286,7 +286,7 @@ public class HubPreferences extends PreferencePage implements IWorkbenchPreferen
             final HubServerConfig config = hubServerConfigBuilder.build();
             final CredentialsRestConnection restConnection = config.createCredentialsRestConnection(new IntBufferedLogger());
             restConnection.connect();
-        } catch (final IntegrationException e) {
+        } catch (final Exception e) {
             message = e.getMessage();
         }
         final Display display = Display.getCurrent();

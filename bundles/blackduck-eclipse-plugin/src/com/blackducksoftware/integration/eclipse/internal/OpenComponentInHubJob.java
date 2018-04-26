@@ -62,8 +62,7 @@ public class OpenComponentInHubJob extends UIJob {
             browser.openURL(new URL(link));
         } catch (final MalformedURLException | IntegrationException | PartInitException e) {
             componentInspectorViewService.openError("Could not open Component in Hub instance",
-                    String.format("Problem opening %1$s %2$s in %3$s, are you connected to your hub instance?",
-                            externalId.name, externalId.version, hubConnectionService.getRestConnection().baseUrl),
+                    "Problem opening " + externalId.createExternalId() + " in the configured Hub instance",
                     e);
             return Status.CANCEL_STATUS;
         }

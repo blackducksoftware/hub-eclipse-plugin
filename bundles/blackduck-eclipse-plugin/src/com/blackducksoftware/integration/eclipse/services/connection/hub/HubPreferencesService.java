@@ -189,7 +189,7 @@ public class HubPreferencesService {
         this.savePreference(PROXY_PORT, proxyPort);
     }
 
-    public HubServerConfig getHubServerConfig() {
+    public HubServerConfig getHubServerConfig() throws IllegalStateException {
         final HubServerConfigBuilder hubServerConfigBuilder = new HubServerConfigBuilder();
         final String username = this.getHubUsername();
         hubServerConfigBuilder.setUsername(username);
@@ -209,11 +209,7 @@ public class HubPreferencesService {
         hubServerConfigBuilder.setProxyPort(proxyPort);
         final String proxyHost = this.getHubProxyHost();
         hubServerConfigBuilder.setProxyHost(proxyHost);
-        try {
-            return hubServerConfigBuilder.build();
-        } catch (final Exception e) {
-            return null;
-        }
+        return hubServerConfigBuilder.build();
     }
 
 }
