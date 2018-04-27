@@ -85,30 +85,6 @@
             </environments>
           </configuration>
         </plugin>
-        <plugin>
-          <artifactId>maven-clean-plugin</artifactId>
-          <executions>
-            <execution>
-              <id>default-clean-1</id>
-              <goals>
-                <goal>clean</goal>
-              </goals>
-              <configuration>
-                <!-- If this isn't skipped, the build deletes the zip file containing the update site -->
-                <skip>true</skip>
-              </configuration>
-            </execution>
-            <execution>
-              <id>default-clean</id>
-              <goals>
-                <goal>clean</goal>
-              </goals>
-              <configuration>
-                <skip>true</skip>
-              </configuration>
-            </execution>
-          </executions>
-        </plugin>
       </plugins>
     </pluginManagement>
 

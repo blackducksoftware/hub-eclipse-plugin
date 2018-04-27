@@ -47,6 +47,7 @@
             <args>-Dproject.build.directory=${project.build.directory}</args>
             <args>-DunqualifiedVersion=${unqualifiedVersion}</args>
           </applicationsArgs>
+          <appArgLine>-DbuildQualifier=${buildQualifier}</appArgLine>
           <repositories>
             <repository>
               <id>oxygen</id>
@@ -81,6 +82,22 @@
             </dependency>
           </dependencies>
         </configuration>
+      </plugin>
+      <plugin>
+        <artifactId>maven-clean-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>default-clean-1</id>
+            <goals>
+              <goal>clean</goal>
+            </goals>
+            <configuration>
+              <!-- This is a custom clean that Tycho implemented to avoid accumulating many versions in the target folder. -->
+              <!-- Unfortunately, it does not play nice with Common Maven Parent (as it gets invoked constantly), so we should skip it. -->
+              <skip>true</skip>
+            </configuration>
+          </execution>
+        </executions>
       </plugin>
     </plugins>
   </build>

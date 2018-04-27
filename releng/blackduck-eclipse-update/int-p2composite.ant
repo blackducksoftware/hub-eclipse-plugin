@@ -1,4 +1,4 @@
-<project name="project">
+<project name="project" xmlns:if="ant:if" xmlns:unless="ant:unless">
   <!--
     Based on packaging-p2composite.ant by Lorenzo Bettini in his tutorial at www.lorenzobettini.it
     root.composite.label    The name/title/label of the created composite site
@@ -8,18 +8,19 @@
     <property name="root.repository.directory" location="${root.composite.dir}" />
     <property name="root.composite.name" value="${root.composite.label} All Versions" />
     <property name="child.repository.directory" value="${root.repository.directory}/${unqualifiedVersion}/" />
-    <property name="source.repository" location="${project.build.directory}/repository"/>
-    <echo message="Source repository path: ${source.repository}" />
-    <echo message="Copying to ${child.repository.directory}..." />
-    <mkdir dir="${child.repository.directory}"/>
-    <copy todir="${child.repository.directory}" overwrite="true">
+    <property name="source.repository" location="${project.build.directory}/repository"/>  	
+    <echo unless:set="buildQualifier" message="Source repository path: ${source.repository}" />
+    <echo unless:set="buildQualifier" message="Copying to ${child.repository.directory}..." />
+    <mkdir unless:set="buildQualifier" dir="${child.repository.directory}"/>
+    <copy unless:set="buildQualifier" todir="${child.repository.directory}" overwrite="true">
       <fileset dir="${source.repository}" />
     </copy>
-    <add.composite.repository.internal
+    <add.composite.repository.internal unless:set="buildQualifier"
       composite.repository.location="${root.repository.directory}"
       composite.repository.name="${root.composite.name}"
       composite.repository.child="${unqualifiedVersion}"
     />
+    <echo if:set="buildQualifier" message="Build is not a release, update site will not be updated." />
   </target>
 
   <macrodef name="add.composite.repository.internal">
@@ -33,7 +34,7 @@
       <p2.composite.repository>
         <repository compressed="false" location="@{composite.repository.location}" name="@{composite.repository.name}" />
         <add>
-          <repository location="@{composite.repository.child}" />
+          <repository location="@{composite.repository.child}"/>
         </add>
       </p2.composite.repository>
       <echo file="@{composite.repository.location}/p2.index">version=1
