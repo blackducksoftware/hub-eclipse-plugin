@@ -17,7 +17,7 @@ echo "Solution dependency OSGI bundle created."
 # ...then we can build the rest of the project.
 echo "Building solution..."
 cd ../../
-mvn clean package $@
+mvn clean verify $@
 rc=$?
 if [[ $rc -ne 0 ]] ; then
   echo "Solution was not built successfully."; exit $rc
