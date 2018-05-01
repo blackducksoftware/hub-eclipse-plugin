@@ -30,6 +30,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import org.eclipse.swtbot.eclipse.finder.SWTWorkbenchBot;
+import org.eclipse.swtbot.swt.finder.SWTBot;
 import org.eclipse.swtbot.swt.finder.exceptions.WidgetNotFoundException;
 import org.eclipse.swtbot.swt.finder.junit.SWTBotJunit4ClassRunner;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotTree;
@@ -81,8 +82,8 @@ public class BlackDuckHubPreferencesBotTest {
         botUtils.preferences().openHubPreferencesFromEclipseMenu();
         botUtils.preferences().hubSettings().enterValidCredentials();
         botUtils.preferences().hubSettings().testCurrentCredentials();
-        final SWTWorkbenchBot bot = botUtils.bot();
-        assertNotNull(bot.text(HubPreferences.LOGIN_SUCCESS_MESSAGE));
+        final SWTBot pageBot = botUtils.bot().activeShell().bot();
+        assertNotNull(pageBot.text(HubPreferences.LOGIN_SUCCESS_MESSAGE));
         botUtils.closeActiveShellIfExists();
     }
 
@@ -92,10 +93,10 @@ public class BlackDuckHubPreferencesBotTest {
         botUtils.preferences().hubSettings().enterValidCredentials();
         botUtils.preferences().hubSettings().enterUrl(TestConstants.INVALID_STRING);
         botUtils.preferences().hubSettings().testCurrentCredentials();
-        final SWTWorkbenchBot bot = botUtils.bot();
+        final SWTBot pageBot = botUtils.bot().activeShell().bot();
         try {
             botUtils.setSWTBotTimeoutShort();
-            assertNull(bot.text(HubPreferences.LOGIN_SUCCESS_MESSAGE));
+            assertNull(pageBot.text(HubPreferences.LOGIN_SUCCESS_MESSAGE));
         } catch (final WidgetNotFoundException e) {
             // Expected
         } finally {
@@ -109,10 +110,10 @@ public class BlackDuckHubPreferencesBotTest {
         botUtils.preferences().hubSettings().enterValidCredentials();
         botUtils.preferences().hubSettings().enterUsername(TestConstants.INVALID_STRING);
         botUtils.preferences().hubSettings().testCurrentCredentials();
-        final SWTWorkbenchBot bot = botUtils.bot();
+        final SWTBot pageBot = botUtils.bot().activeShell().bot();
         try {
             botUtils.setSWTBotTimeoutShort();
-            assertNull(bot.text(HubPreferences.LOGIN_SUCCESS_MESSAGE));
+            assertNull(pageBot.text(HubPreferences.LOGIN_SUCCESS_MESSAGE));
         } catch (final WidgetNotFoundException e) {
             // Expected
         } finally {
@@ -126,10 +127,10 @@ public class BlackDuckHubPreferencesBotTest {
         botUtils.preferences().hubSettings().enterValidCredentials();
         botUtils.preferences().hubSettings().enterPassword(TestConstants.INVALID_STRING);
         botUtils.preferences().hubSettings().testCurrentCredentials();
-        final SWTWorkbenchBot bot = botUtils.bot();
+        final SWTBot pageBot = botUtils.bot().activeShell().bot();
         try {
             botUtils.setSWTBotTimeoutShort();
-            assertNull(bot.text(HubPreferences.LOGIN_SUCCESS_MESSAGE));
+            assertNull(pageBot.text(HubPreferences.LOGIN_SUCCESS_MESSAGE));
         } catch (final WidgetNotFoundException e) {
             // Expected
         } finally {
@@ -143,10 +144,10 @@ public class BlackDuckHubPreferencesBotTest {
         botUtils.preferences().hubSettings().enterValidCredentials();
         botUtils.preferences().hubSettings().enterTimeout(TestConstants.INVALID_STRING);
         botUtils.preferences().hubSettings().testCurrentCredentials();
-        final SWTWorkbenchBot bot = botUtils.bot();
+        final SWTBot pageBot = botUtils.bot().activeShell().bot();
         try {
             botUtils.setSWTBotTimeoutShort();
-            assertNull(bot.text(HubPreferences.LOGIN_SUCCESS_MESSAGE));
+            assertNull(pageBot.text(HubPreferences.LOGIN_SUCCESS_MESSAGE));
         } catch (final WidgetNotFoundException e) {
             // Expected
         } finally {
