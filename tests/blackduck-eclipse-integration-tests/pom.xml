@@ -31,6 +31,7 @@
           <useUIHarness>true</useUIHarness>
           <!-- argLine needed for SWTBot to run properly -->
           <argLine>${tycho.testArgLine} ${os-jvm-flags}</argLine>
+          <appArgLine>${use-gtk-2}</appArgLine>
           <useUIThread>false</useUIThread>
           <product>org.eclipse.sdk.ide</product>
           <dependencies>
