@@ -38,6 +38,7 @@ import org.eclipse.swtbot.swt.finder.widgets.SWTBotTreeItem;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -77,6 +78,7 @@ public class BlackDuckHubPreferencesBotTest {
         botUtils.closeActiveShellIfExists();
     }
 
+    @Ignore("Does not work well on our headless Linux servers.")
     @Test
     public void testValidHubConfiguration() {
         botUtils.preferences().openHubPreferencesFromEclipseMenu();
