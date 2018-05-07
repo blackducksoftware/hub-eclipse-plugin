@@ -1,17 +1,23 @@
-target/
-pom.xml.tag
-pom.xml.releaseBackup
-pom.xml.versionsBackup
-pom.xml.next
-pom.xml.bak
-release.properties
-dependency-reduced-pom.xml
-buildNumber.properties
-.mvn/timing.properties
-.project
-.classpath
+# operating system
+.DS_Store
+
+# ide
 .settings/
-.polyglot.build.properties.bak
+.classpath
+.project
+bin/
+.idea
+*.iml
+*.ipr
+*.iws
+
+# build tool
+.gradle/
+build/
+target/
+*.bak
+
+# project specific
 screenshots/
 validHubCredentials.properties
 alternateValidHubCredentials.properties
