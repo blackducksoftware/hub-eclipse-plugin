@@ -11,7 +11,7 @@
 
   <groupId>com.blackducksoftware.integration.eclipse</groupId>
   <artifactId>com.blackducksoftware.integration.eclipse.plugin.maven-dependencies</artifactId>
-  <version>2.0.0</version>
+  <version>2.0.1-SNAPSHOT</version>
   <packaging>bundle</packaging>
 
   <dependencies>
