@@ -143,8 +143,8 @@ public class HubPreferencesService {
         if (!hubPassword.trim().isEmpty()) {
             final EncryptionUtils encryptionUtils = new EncryptionUtils();
             String encryptedPassword;
-            final String ibmKeyFile = "resources/IBM-Key.jceks";
-            final String sunKeyFile = "resources/Sun-Key.jceks";
+            final String ibmKeyFile = "/IBM-Key.jceks";
+            final String sunKeyFile = "/Sun-Key.jceks";
 
             try (InputStream inputStream = this.getClass().getResourceAsStream(ibmKeyFile)) {
                 encryptedPassword = encryptionUtils.alterString(hubPassword, inputStream, Cipher.ENCRYPT_MODE);
