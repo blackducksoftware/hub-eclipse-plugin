@@ -24,6 +24,8 @@
 package com.blackducksoftware.integration.eclipse.services.connection.hub;
 
 import com.blackducksoftware.integration.eclipse.services.BlackDuckPreferencesService;
+import com.blackducksoftware.integration.encryption.PasswordEncrypter;
+import com.blackducksoftware.integration.exception.EncryptionException;
 import com.blackducksoftware.integration.hub.Credentials;
 import com.blackducksoftware.integration.hub.CredentialsBuilder;
 import com.blackducksoftware.integration.hub.configuration.HubServerConfig;
@@ -135,12 +137,15 @@ public class HubPreferencesService {
 
     public void saveHubPassword(final String hubPassword) {
         if (!hubPassword.trim().isEmpty()) {
-            final CredentialsBuilder hubCredentialsBuilder = new CredentialsBuilder();
-            hubCredentialsBuilder.setPassword(hubPassword);
-            final Credentials hubCredentials = hubCredentialsBuilder.buildObject();
+            String encryptedPassword;
             try {
-                this.savePreference(HUB_PASSWORD, hubCredentials.getEncryptedPassword());
-                this.savePreference(HUB_PASSWORD_LENGTH, String.valueOf(hubCredentials.getActualPasswordLength()));
+                encryptedPassword = PasswordEncrypter.encrypt(hubPassword);
+            } catch (final EncryptionException e) {
+                throw new IllegalArgumentException(e);
+            }
+            try {
+                this.savePreference(HUB_PASSWORD, encryptedPassword);
+                this.savePreference(HUB_PASSWORD_LENGTH, Integer.toString(hubPassword.length()));
             } catch (final Exception e) {
                 // TODO: Log properly
             }
