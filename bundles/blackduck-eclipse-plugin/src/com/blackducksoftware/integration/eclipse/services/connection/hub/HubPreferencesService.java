@@ -27,6 +27,7 @@ import java.io.InputStream;
 
 import javax.crypto.Cipher;
 
+import com.blackducksoftware.integration.eclipse.BlackDuckEclipseActivator;
 import com.blackducksoftware.integration.eclipse.services.BlackDuckPreferencesService;
 import com.blackducksoftware.integration.encryption.EncryptionUtils;
 import com.blackducksoftware.integration.exception.EncryptionException;
@@ -143,13 +144,13 @@ public class HubPreferencesService {
         if (!hubPassword.trim().isEmpty()) {
             final EncryptionUtils encryptionUtils = new EncryptionUtils();
             String encryptedPassword;
-            final String ibmKeyFile = "/IBM-Key.jceks";
-            final String sunKeyFile = "/Sun-Key.jceks";
+            final String ibmKeyFile = "resources/IBM-Key.jceks";
+            final String sunKeyFile = "resources/Sun-Key.jceks";
 
-            try (InputStream inputStream = this.getClass().getResourceAsStream(ibmKeyFile)) {
+            try (InputStream inputStream = BlackDuckEclipseActivator.CONTEXT.getBundle().getResource(ibmKeyFile).openStream()) {
                 encryptedPassword = encryptionUtils.alterString(hubPassword, inputStream, Cipher.ENCRYPT_MODE);
             } catch (final Exception e) {
-                try (InputStream inputStream = this.getClass().getResourceAsStream(sunKeyFile)) {
+                try (InputStream inputStream = BlackDuckEclipseActivator.CONTEXT.getBundle().getResource(sunKeyFile).openStream()) {
                     encryptedPassword = encryptionUtils.alterString(hubPassword, inputStream, Cipher.ENCRYPT_MODE);
                 } catch (final Exception e1) {
                     throw new EncryptionException("Failed to retrieve the encryption key from bundle", e1);

@@ -43,6 +43,7 @@ import com.blackducksoftware.integration.eclipse.services.inspector.ComponentIns
 public class BlackDuckEclipseActivator extends AbstractUIPlugin {
     public static final String PLUGIN_ID = "com.blackducksoftware.integration.eclipse.plugin";
     private static BlackDuckEclipseActivator plugin;
+    public static BundleContext CONTEXT;
 
     private ComponentInspectorService componentInspectorService;
     private ComponentInspectorViewService componentInspectorViewService;
@@ -57,6 +58,7 @@ public class BlackDuckEclipseActivator extends AbstractUIPlugin {
     @Override
     public void start(final BundleContext context) {
         plugin = this;
+        this.CONTEXT = context;
         final BlackDuckEclipseServicesFactory blackDuckEclipseServicesFactory = BlackDuckEclipseServicesFactory.getInstance();
         componentInspectorViewService = blackDuckEclipseServicesFactory.getComponentInspectorViewService();
         componentInspectorService = blackDuckEclipseServicesFactory.getComponentInspectorService();
