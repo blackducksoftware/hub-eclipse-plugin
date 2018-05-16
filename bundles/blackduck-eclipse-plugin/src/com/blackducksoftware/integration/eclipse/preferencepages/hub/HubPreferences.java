@@ -26,6 +26,9 @@ package com.blackducksoftware.integration.eclipse.preferencepages.hub;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.preference.BooleanFieldEditor;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.preference.StringFieldEditor;
@@ -141,6 +144,7 @@ public class HubPreferences extends PreferencePage implements IWorkbenchPreferen
         try {
             this.storeValues();
         } catch (final IntegrationException e) {
+            ErrorDialog.openError(this.getShell(), "Problem Storing Preferences", e.getMessage(), new Status(IStatus.ERROR, BlackDuckEclipseActivator.PLUGIN_ID, e.getMessage(), e));
         }
     }
 
