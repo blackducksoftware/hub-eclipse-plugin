@@ -23,8 +23,12 @@
  */
 package com.blackducksoftware.integration.eclipse.services.connection.hub;
 
+import java.io.InputStream;
+
+import javax.crypto.Cipher;
+
 import com.blackducksoftware.integration.eclipse.services.BlackDuckPreferencesService;
-import com.blackducksoftware.integration.encryption.PasswordEncrypter;
+import com.blackducksoftware.integration.encryption.EncryptionUtils;
 import com.blackducksoftware.integration.exception.EncryptionException;
 import com.blackducksoftware.integration.hub.Credentials;
 import com.blackducksoftware.integration.hub.CredentialsBuilder;
@@ -135,14 +139,23 @@ public class HubPreferencesService {
         this.savePreference(HUB_USERNAME, hubUsername);
     }
 
-    public void saveHubPassword(final String hubPassword) {
+    public void saveHubPassword(final String hubPassword) throws EncryptionException {
         if (!hubPassword.trim().isEmpty()) {
+            final EncryptionUtils encryptionUtils = new EncryptionUtils();
             String encryptedPassword;
-            try {
-                encryptedPassword = PasswordEncrypter.encrypt(hubPassword);
-            } catch (final EncryptionException e) {
-                throw new IllegalArgumentException(e);
+            final String ibmKeyFile = "resources/IBM-Key.jceks";
+            final String sunKeyFile = "resources/Sun-Key.jceks";
+
+            try (InputStream inputStream = this.getClass().getResourceAsStream(ibmKeyFile)) {
+                encryptedPassword = encryptionUtils.alterString(hubPassword, null, Cipher.ENCRYPT_MODE);
+            } catch (final Exception e) {
+                try (InputStream inputStream = this.getClass().getResourceAsStream(sunKeyFile)) {
+                    encryptedPassword = encryptionUtils.alterString(hubPassword, null, Cipher.ENCRYPT_MODE);
+                } catch (final Exception e1) {
+                    throw new EncryptionException("Failed to retrieve the encryption key from bundle", e1);
+                }
             }
+
             try {
                 this.savePreference(HUB_PASSWORD, encryptedPassword);
                 this.savePreference(HUB_PASSWORD_LENGTH, Integer.toString(hubPassword.length()));
