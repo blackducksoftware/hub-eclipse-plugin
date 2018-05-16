@@ -144,7 +144,7 @@ public class HubPreferences extends PreferencePage implements IWorkbenchPreferen
         try {
             this.storeValues();
         } catch (final IntegrationException e) {
-            ErrorDialog.openError(this.getShell(), "Problem Storing Preferences", e.getMessage(), new Status(IStatus.ERROR, BlackDuckEclipseActivator.PLUGIN_ID, e.getMessage(), e));
+            ErrorDialog.openError(null, "Problem Storing Preferences", e.getMessage(), new Status(IStatus.ERROR, BlackDuckEclipseActivator.PLUGIN_ID, e.getMessage(), e));
         }
     }
 
