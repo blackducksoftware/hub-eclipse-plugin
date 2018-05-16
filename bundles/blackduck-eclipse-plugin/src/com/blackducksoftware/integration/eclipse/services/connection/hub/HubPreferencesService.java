@@ -147,10 +147,10 @@ public class HubPreferencesService {
             final String sunKeyFile = "resources/Sun-Key.jceks";
 
             try (InputStream inputStream = this.getClass().getResourceAsStream(ibmKeyFile)) {
-                encryptedPassword = encryptionUtils.alterString(hubPassword, null, Cipher.ENCRYPT_MODE);
+                encryptedPassword = encryptionUtils.alterString(hubPassword, inputStream, Cipher.ENCRYPT_MODE);
             } catch (final Exception e) {
                 try (InputStream inputStream = this.getClass().getResourceAsStream(sunKeyFile)) {
-                    encryptedPassword = encryptionUtils.alterString(hubPassword, null, Cipher.ENCRYPT_MODE);
+                    encryptedPassword = encryptionUtils.alterString(hubPassword, inputStream, Cipher.ENCRYPT_MODE);
                 } catch (final Exception e1) {
                     throw new EncryptionException("Failed to retrieve the encryption key from bundle", e1);
                 }
