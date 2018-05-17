@@ -27,6 +27,11 @@ import java.io.InputStream;
 
 import javax.crypto.Cipher;
 
+import org.apache.commons.io.IOUtils;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+
+import com.blackducksoftware.integration.eclipse.BlackDuckEclipseActivator;
 import com.blackducksoftware.integration.eclipse.services.BlackDuckPreferencesService;
 import com.blackducksoftware.integration.encryption.EncryptionUtils;
 import com.blackducksoftware.integration.exception.EncryptionException;
@@ -146,16 +151,21 @@ public class HubPreferencesService {
             String inputStreamString = null;
             final String EMBEDDED_SUN_KEY_FILE = "/Sun-Key.jceks";
             final String EMBEDDED_IBM_KEY_FILE = "/IBM-Key.jceks";
+            BlackDuckEclipseActivator.getDefault().getLog().log(new Status(IStatus.INFO, BlackDuckEclipseActivator.PLUGIN_ID, "### SAVING HUB PASSWORD"));
 
             try (InputStream inputStream = encryptionUtils.getClass().getResourceAsStream(EMBEDDED_SUN_KEY_FILE)) {
-                inputStreamString = inputStream.toString();
+                inputStreamString = IOUtils.toString(inputStream);
+                BlackDuckEclipseActivator.getDefault().getLog().log(new Status(IStatus.INFO, BlackDuckEclipseActivator.PLUGIN_ID, "USING SUN_KEY_FILE"));
+                BlackDuckEclipseActivator.getDefault().getLog().log(new Status(IStatus.INFO, BlackDuckEclipseActivator.PLUGIN_ID, "INPUT_STREAM_STRING = " + inputStreamString));
                 encryptedPassword = encryptionUtils.alterString(hubPassword, inputStream, Cipher.ENCRYPT_MODE);
             } catch (final Exception e) {
                 try (InputStream inputStream = encryptionUtils.getClass().getResourceAsStream(EMBEDDED_IBM_KEY_FILE)) {
-                    inputStreamString = inputStream.toString();
+                    inputStreamString = IOUtils.toString(inputStream);
+                    BlackDuckEclipseActivator.getDefault().getLog().log(new Status(IStatus.INFO, BlackDuckEclipseActivator.PLUGIN_ID, "CAUGHT EXCEPTION PARSING SUN_KEY_FILE, USING IBM_KEY_FILE"));
+                    BlackDuckEclipseActivator.getDefault().getLog().log(new Status(IStatus.INFO, BlackDuckEclipseActivator.PLUGIN_ID, "INPUT_STREAM_STRING = " + inputStreamString));
                     encryptedPassword = encryptionUtils.alterString(hubPassword, inputStream, Cipher.ENCRYPT_MODE);
                 } catch (final Exception e1) {
-                    throw new EncryptionException("Failed to retrieve the encryption key - inputStream.toString()=" + inputStreamString, e1);
+                    throw new EncryptionException("Failed to retrieve the encryption key - inputStream=" + inputStreamString, e1);
                 }
             }
 
