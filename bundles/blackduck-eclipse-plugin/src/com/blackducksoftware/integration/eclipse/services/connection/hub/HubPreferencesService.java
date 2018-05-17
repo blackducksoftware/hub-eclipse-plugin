@@ -27,7 +27,6 @@ import java.io.InputStream;
 
 import javax.crypto.Cipher;
 
-import com.blackducksoftware.integration.eclipse.BlackDuckEclipseActivator;
 import com.blackducksoftware.integration.eclipse.services.BlackDuckPreferencesService;
 import com.blackducksoftware.integration.encryption.EncryptionUtils;
 import com.blackducksoftware.integration.exception.EncryptionException;
@@ -144,16 +143,19 @@ public class HubPreferencesService {
         if (!hubPassword.trim().isEmpty()) {
             final EncryptionUtils encryptionUtils = new EncryptionUtils();
             String encryptedPassword;
-            final String ibmKeyFile = "resources/IBM-Key.jceks";
-            final String sunKeyFile = "resources/Sun-Key.jceks";
+            String inputStreamString = null;
+            final String EMBEDDED_SUN_KEY_FILE = "/Sun-Key.jceks";
+            final String EMBEDDED_IBM_KEY_FILE = "/IBM-Key.jceks";
 
-            try (InputStream inputStream = BlackDuckEclipseActivator.CONTEXT.getBundle().getResource(ibmKeyFile).openStream()) {
+            try (InputStream inputStream = encryptionUtils.getClass().getResourceAsStream(EMBEDDED_SUN_KEY_FILE)) {
+                inputStreamString = inputStream.toString();
                 encryptedPassword = encryptionUtils.alterString(hubPassword, inputStream, Cipher.ENCRYPT_MODE);
             } catch (final Exception e) {
-                try (InputStream inputStream = BlackDuckEclipseActivator.CONTEXT.getBundle().getResource(sunKeyFile).openStream()) {
+                try (InputStream inputStream = encryptionUtils.getClass().getResourceAsStream(EMBEDDED_IBM_KEY_FILE)) {
+                    inputStreamString = inputStream.toString();
                     encryptedPassword = encryptionUtils.alterString(hubPassword, inputStream, Cipher.ENCRYPT_MODE);
                 } catch (final Exception e1) {
-                    throw new EncryptionException("Failed to retrieve the encryption key from bundle", e1);
+                    throw new EncryptionException("Failed to retrieve the encryption key - inputStream.toString()=" + inputStreamString, e1);
                 }
             }
 
