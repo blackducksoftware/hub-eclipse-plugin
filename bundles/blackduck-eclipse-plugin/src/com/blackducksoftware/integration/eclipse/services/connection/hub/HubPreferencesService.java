@@ -24,14 +24,16 @@
 package com.blackducksoftware.integration.eclipse.services.connection.hub;
 
 import java.io.InputStream;
+import java.security.Key;
+import java.security.KeyStore;
+import java.util.Arrays;
 
 import javax.crypto.Cipher;
 
 import org.apache.commons.io.IOUtils;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import com.blackducksoftware.integration.eclipse.BlackDuckEclipseActivator;
 import com.blackducksoftware.integration.eclipse.services.BlackDuckPreferencesService;
 import com.blackducksoftware.integration.encryption.EncryptionUtils;
 import com.blackducksoftware.integration.exception.EncryptionException;
@@ -43,6 +45,8 @@ import com.blackducksoftware.integration.hub.proxy.ProxyInfo;
 import com.blackducksoftware.integration.hub.proxy.ProxyInfoBuilder;
 
 public class HubPreferencesService {
+    private final Logger log = LoggerFactory.getLogger(HubPreferencesService.class);
+
     private final BlackDuckPreferencesService blackDuckPreferencesService;
 
     public static final String HUB_USERNAME = "hubUsername";
@@ -147,27 +151,59 @@ public class HubPreferencesService {
     public void saveHubPassword(final String hubPassword) throws EncryptionException {
         if (!hubPassword.trim().isEmpty()) {
             final EncryptionUtils encryptionUtils = new EncryptionUtils();
-            String encryptedPassword;
-            String inputStreamString = null;
+            String encryptedPassword = null;
+            byte[] inputStreamString = null;
             final String EMBEDDED_SUN_KEY_FILE = "/Sun-Key.jceks";
             final String EMBEDDED_IBM_KEY_FILE = "/IBM-Key.jceks";
-            BlackDuckEclipseActivator.getDefault().getLog().log(new Status(IStatus.INFO, BlackDuckEclipseActivator.PLUGIN_ID, "### SAVING HUB PASSWORD"));
+            final char[] KEY_PASS = { 'b', 'l', 'a', 'c', 'k', 'd', 'u', 'c', 'k', '1', '2', '3', 'I', 'n', 't', 'e', 'g', 'r', 'a', 't', 'i', 'o', 'n' };
 
-            try (InputStream inputStream = encryptionUtils.getClass().getResourceAsStream(EMBEDDED_SUN_KEY_FILE)) {
-                inputStreamString = IOUtils.toString(inputStream);
-                BlackDuckEclipseActivator.getDefault().getLog().log(new Status(IStatus.INFO, BlackDuckEclipseActivator.PLUGIN_ID, "USING SUN_KEY_FILE"));
-                BlackDuckEclipseActivator.getDefault().getLog().log(new Status(IStatus.INFO, BlackDuckEclipseActivator.PLUGIN_ID, "INPUT_STREAM_STRING = " + inputStreamString));
+            log.info("### SAVING HUB PASSWORD");
+            log.info("Default encoding: " + System.getProperty("file.encoding"));
+            log.info("Attempting to encrypt password without input stream... ");
+            try {
+                encryptedPassword = encryptionUtils.alterString(hubPassword, null, Cipher.ENCRYPT_MODE);
+            } catch (final Exception e) {
+                log.info("Failure encrypting the password without input stream", e);
+            }
+            if (encryptedPassword != null) {
+                log.info("Successfully encrypted password.");
+            }
+
+            log.info("Attempting to encrypt password with input stream... ");
+            try {
+                InputStream inputStream = new EncryptionUtils().getClass().getResourceAsStream(EMBEDDED_SUN_KEY_FILE);
+                inputStreamString = IOUtils.toByteArray(inputStream);
+                log.info("Using Sun-Key.jceks, inputStream = " + Arrays.toString(inputStreamString));
+
+                inputStream = new EncryptionUtils().getClass().getResourceAsStream(EMBEDDED_SUN_KEY_FILE);
+                final KeyStore keystore = KeyStore.getInstance("JCEKS");
+                log.info("Keystore = " + keystore.toString());
+                keystore.load(inputStream, KEY_PASS);
+                final Key key = keystore.getKey("keyStore", KEY_PASS);
+                log.info("Got the key, key=" + key.toString());
+
+                inputStream = new EncryptionUtils().getClass().getResourceAsStream(EMBEDDED_SUN_KEY_FILE);
                 encryptedPassword = encryptionUtils.alterString(hubPassword, inputStream, Cipher.ENCRYPT_MODE);
             } catch (final Exception e) {
-                try (InputStream inputStream = encryptionUtils.getClass().getResourceAsStream(EMBEDDED_IBM_KEY_FILE)) {
-                    inputStreamString = IOUtils.toString(inputStream);
-                    BlackDuckEclipseActivator.getDefault().getLog().log(new Status(IStatus.INFO, BlackDuckEclipseActivator.PLUGIN_ID, "CAUGHT EXCEPTION PARSING SUN_KEY_FILE, USING IBM_KEY_FILE"));
-                    BlackDuckEclipseActivator.getDefault().getLog().log(new Status(IStatus.INFO, BlackDuckEclipseActivator.PLUGIN_ID, "INPUT_STREAM_STRING = " + inputStreamString));
+                try {
+                    InputStream inputStream = new EncryptionUtils().getClass().getResourceAsStream(EMBEDDED_IBM_KEY_FILE);
+                    inputStreamString = IOUtils.toByteArray(inputStream);
+                    log.info("Using IBM-Key.jceks, inputStream = " + Arrays.toString(inputStreamString));
+
+                    inputStream = new EncryptionUtils().getClass().getResourceAsStream(EMBEDDED_IBM_KEY_FILE);
+                    final KeyStore keystore = KeyStore.getInstance("JCEKS");
+                    log.info("Keystore = " + keystore.toString());
+                    keystore.load(inputStream, KEY_PASS);
+                    final Key key = keystore.getKey("keyStore", KEY_PASS);
+                    log.info("Got the key, key=" + key.toString());
+
+                    inputStream = new EncryptionUtils().getClass().getResourceAsStream(EMBEDDED_IBM_KEY_FILE);
                     encryptedPassword = encryptionUtils.alterString(hubPassword, inputStream, Cipher.ENCRYPT_MODE);
                 } catch (final Exception e1) {
                     throw new EncryptionException("Failed to retrieve the encryption key - inputStream=" + inputStreamString, e1);
                 }
             }
+            log.info("Successfully encrypted password.");
 
             try {
                 this.savePreference(HUB_PASSWORD, encryptedPassword);

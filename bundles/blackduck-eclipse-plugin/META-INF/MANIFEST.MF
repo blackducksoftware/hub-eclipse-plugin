@@ -26,3 +26,4 @@ Export-Package: com.blackducksoftware.integration.eclipse,
  com.blackducksoftware.integration.eclipse.views.widgets
 Bundle-Vendor: Black Duck Software Inc.
 Automatic-Module-name: com.blackducksoftware.integration.eclipse
+Import-Package: org.slf4j;version="1.7.2"
