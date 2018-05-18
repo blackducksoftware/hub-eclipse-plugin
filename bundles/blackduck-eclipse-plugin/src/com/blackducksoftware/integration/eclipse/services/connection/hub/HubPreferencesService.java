@@ -23,17 +23,19 @@
  */
 package com.blackducksoftware.integration.eclipse.services.connection.hub;
 
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.blackducksoftware.integration.eclipse.services.BlackDuckPreferencesService;
+import com.blackducksoftware.integration.encryption.PasswordDecrypter;
 import com.blackducksoftware.integration.encryption.PasswordEncrypter;
 import com.blackducksoftware.integration.exception.EncryptionException;
-import com.blackducksoftware.integration.hub.Credentials;
-import com.blackducksoftware.integration.hub.CredentialsBuilder;
 import com.blackducksoftware.integration.hub.configuration.HubServerConfig;
 import com.blackducksoftware.integration.hub.configuration.HubServerConfigBuilder;
-import com.blackducksoftware.integration.hub.proxy.ProxyInfo;
-import com.blackducksoftware.integration.hub.proxy.ProxyInfoBuilder;
 
 public class HubPreferencesService {
+    Logger log = LoggerFactory.getLogger(HubPreferencesService.class);
     private final BlackDuckPreferencesService blackDuckPreferencesService;
 
     public static final String HUB_USERNAME = "hubUsername";
@@ -66,22 +68,14 @@ public class HubPreferencesService {
     }
 
     public String getHubPassword() {
-        final CredentialsBuilder hubCredentialsBuilder = new CredentialsBuilder();
-        final String password = this.getPreference(HUB_PASSWORD);
-        if (!password.trim().isEmpty()) {
-            hubCredentialsBuilder.setPassword(password);
-            final String passwordLength = this.getPreference(HUB_PASSWORD_LENGTH);
-            if (passwordLength != null && !passwordLength.equals("")) {
-                hubCredentialsBuilder.setPasswordLength(Integer.parseInt(passwordLength));
-            }
-            final Credentials hubCredentials = hubCredentialsBuilder.buildObject();
-            try {
-                return hubCredentials.getDecryptedPassword();
-            } catch (final Exception e) {
-                // TODO: Log properly
-            }
+        String hubPassword = this.getPreference(HUB_PASSWORD);
+        final String hubPasswordLength = this.getPreference(HUB_PASSWORD_LENGTH);
+
+        if (StringUtils.isNotBlank(hubPassword) && StringUtils.isNotBlank(hubPasswordLength)) {
+            hubPassword = decryptPassword(hubPassword, Integer.parseInt(hubPasswordLength));
         }
-        return password;
+
+        return hubPassword;
     }
 
     public String getHubUrl() {
@@ -109,21 +103,13 @@ public class HubPreferencesService {
     }
 
     public String getHubProxyPassword() {
-        final ProxyInfoBuilder hubProxyInfoBuilder = new ProxyInfoBuilder();
-        final String proxyPassword = this.getPreference(PROXY_PASSWORD);
-        if (!proxyPassword.trim().isEmpty()) {
-            hubProxyInfoBuilder.setPassword(proxyPassword);
-            final String proxyPasswordLength = this.getPreference(PROXY_PASSWORD_LENGTH);
-            if (proxyPasswordLength != null && !proxyPasswordLength.equals("")) {
-                hubProxyInfoBuilder.setPasswordLength(Integer.parseInt(proxyPasswordLength));
-            }
-            final ProxyInfo hubProxyInfo = hubProxyInfoBuilder.buildObject();
-            try {
-                return hubProxyInfo.getDecryptedPassword();
-            } catch (final Exception e) {
-                // TODO: Log properly
-            }
+        String proxyPassword = this.getPreference(PROXY_PASSWORD);
+        final String proxyPasswordLength = this.getPreference(PROXY_PASSWORD_LENGTH);
+
+        if (StringUtils.isNotBlank(proxyPassword) && StringUtils.isNotBlank(proxyPasswordLength)) {
+            proxyPassword = decryptPassword(proxyPassword, Integer.parseInt(proxyPasswordLength));
         }
+
         return proxyPassword;
     }
 
@@ -136,22 +122,17 @@ public class HubPreferencesService {
     }
 
     public void saveHubPassword(final String hubPassword) {
-        if (!hubPassword.trim().isEmpty()) {
-            String encryptedPassword;
-            try {
-                encryptedPassword = PasswordEncrypter.encrypt(hubPassword);
-            } catch (final EncryptionException e) {
-                throw new IllegalArgumentException(e);
-            }
-            try {
-                this.savePreference(HUB_PASSWORD, encryptedPassword);
-                this.savePreference(HUB_PASSWORD_LENGTH, Integer.toString(hubPassword.length()));
-            } catch (final Exception e) {
-                // TODO: Log properly
-            }
-        } else {
-            this.savePreference(HUB_PASSWORD, hubPassword);
+        String encryptedPassword = hubPassword;
+
+        if (StringUtils.isNotBlank(hubPassword)) {
+            encryptedPassword = encryptPassword(hubPassword);
         }
+
+        if (!encryptedPassword.equals(hubPassword)) {
+            this.savePreference(HUB_PASSWORD_LENGTH, Integer.toString(hubPassword.length()));
+        }
+
+        this.savePreference(HUB_PASSWORD, encryptedPassword);
     }
 
     public void saveHubUrl(final String hubUrl) {
@@ -171,19 +152,17 @@ public class HubPreferencesService {
     }
 
     public void saveHubProxyPassword(final String proxyPassword) {
-        if (!proxyPassword.trim().isEmpty()) {
-            final ProxyInfoBuilder hubProxyInfoBuilder = new ProxyInfoBuilder();
-            hubProxyInfoBuilder.setPassword(proxyPassword);
-            final ProxyInfo hubProxyInfo = hubProxyInfoBuilder.buildObject();
-            try {
-                this.savePreference(PROXY_PASSWORD, hubProxyInfo.getEncryptedPassword());
-                this.savePreference(PROXY_PASSWORD_LENGTH, hubProxyInfo.getActualPasswordLength() + "");
-            } catch (final Exception e) {
-                // TODO: Log properlys
-            }
-        } else {
-            this.savePreference(PROXY_PASSWORD, proxyPassword);
+        String encryptedPassword = proxyPassword;
+
+        if (StringUtils.isNotBlank(proxyPassword)) {
+            encryptedPassword = encryptPassword(proxyPassword);
         }
+
+        if (!encryptedPassword.equals(proxyPassword)) {
+            this.savePreference(PROXY_PASSWORD_LENGTH, Integer.toString(proxyPassword.length()));
+        }
+
+        this.savePreference(PROXY_PASSWORD, encryptedPassword);
     }
 
     public void saveHubProxyHost(final String proxyHost) {
@@ -215,6 +194,33 @@ public class HubPreferencesService {
         final String proxyHost = this.getHubProxyHost();
         hubServerConfigBuilder.setProxyHost(proxyHost);
         return hubServerConfigBuilder.build();
+    }
+
+    private String decryptPassword(final String encryptedPassword, final int actualLength) {
+        String decryptedPassword;
+        if (encryptedPassword.length() == actualLength) {
+            decryptedPassword = encryptedPassword;
+        } else {
+            try {
+                decryptedPassword = PasswordDecrypter.decrypt(encryptedPassword);
+            } catch (final Exception e) {
+                log.error("Decryption Failed. Password decrypter encountered an error when decrypting the password: ", e);
+                log.error("If this problem persists, simply re-enter your credentials.");
+                decryptedPassword = encryptedPassword;
+            }
+        }
+        return decryptedPassword;
+    }
+
+    private String encryptPassword(final String plainTextPassword) {
+        String encryptedPassword;
+        try {
+            encryptedPassword = PasswordEncrypter.encrypt(plainTextPassword);
+        } catch (final EncryptionException e) {
+            log.warn("Encryption Failed. Password encryptor encountered an error when encrypting the password: ", e);
+            encryptedPassword = plainTextPassword;
+        }
+        return encryptedPassword;
     }
 
 }

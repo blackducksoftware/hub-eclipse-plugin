@@ -13,7 +13,8 @@ Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.ui,
  org.eclipse.ui.ide,
  org.eclipse.jface.text,
- com.blackducksoftware.integration.eclipse.plugin.maven-dependencies
+ com.blackducksoftware.integration.eclipse.plugin.maven-dependencies,
+ org.slf4j.api
 Bundle-Activator: com.blackducksoftware.integration.eclipse.BlackDuckEclipseActivator
 Export-Package: com.blackducksoftware.integration.eclipse,
  com.blackducksoftware.integration.eclipse.contextmenu.handlers,
