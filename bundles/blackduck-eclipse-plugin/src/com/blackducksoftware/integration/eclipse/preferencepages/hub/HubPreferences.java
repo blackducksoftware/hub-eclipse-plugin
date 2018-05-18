@@ -277,6 +277,7 @@ public class HubPreferences extends PreferencePage implements IWorkbenchPreferen
         hubServerConfigBuilder.setPassword(hubPasswordField.getText());
         hubServerConfigBuilder.setHubUrl(hubUrlField.getStringValue());
         hubServerConfigBuilder.setTimeout(hubTimeoutField.getStringValue());
+        hubServerConfigBuilder.setAlwaysTrustServerCertificate(hubAlwaysTrustField.getBooleanValue());
         hubServerConfigBuilder.setProxyHost(proxyHostField.getStringValue());
         hubServerConfigBuilder.setProxyPort(proxyPortField.getStringValue());
         hubServerConfigBuilder.setProxyUsername(proxyUsernameField.getStringValue());
