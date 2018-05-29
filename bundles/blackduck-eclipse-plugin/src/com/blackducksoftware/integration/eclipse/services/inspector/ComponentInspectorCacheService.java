@@ -31,7 +31,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -74,8 +73,9 @@ public class ComponentInspectorCacheService {
         }
     }
 
-    public Optional<List<ComponentModel>> getProjectComponents(final String projectName) {
-        return Optional.ofNullable(inspectorCache.get(projectName));
+    public List<ComponentModel> getProjectComponents(final String projectName) {
+        final List<ComponentModel> models = inspectorCache.get(projectName);
+        return models;
     }
 
     public void removeProject(final String projectName) {

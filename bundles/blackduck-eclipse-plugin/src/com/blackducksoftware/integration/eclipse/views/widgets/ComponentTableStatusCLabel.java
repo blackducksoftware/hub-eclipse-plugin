@@ -69,7 +69,7 @@ public class ComponentTableStatusCLabel extends CLabel {
     public void updateStatus(final String projectName) {
         if (componentInspectorTableViewer != null && (ComponentModel[]) componentInspectorTableViewer.getInput() != null) {
             final boolean noComponents = ((ComponentModel[]) componentInspectorTableViewer.getInput()).length == 0;
-            final boolean noProjectMapping = !componentInspectorService.getProjectComponents(projectName).isPresent();
+            final boolean noProjectMapping = componentInspectorService.getProjectComponents(projectName) == null;
             final String statusMessage = determineStatusMessage(noComponents, noProjectMapping, projectName);
             this.setStatus(statusMessage);
         }

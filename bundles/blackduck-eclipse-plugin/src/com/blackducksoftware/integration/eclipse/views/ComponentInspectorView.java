@@ -190,9 +190,9 @@ public class ComponentInspectorView extends ViewPart {
 
     private void setTableInput(final String projectName) {
         ComponentModel[] results = new ComponentModel[] {};
-        final Optional<List<ComponentModel>> componentModels = componentInspectorService.getProjectComponents(projectName);
-        if (componentModels.isPresent()) {
-            results = componentModels.get().toArray(new ComponentModel[componentModels.get().size()]);
+        final List<ComponentModel> componentModels = componentInspectorService.getProjectComponents(projectName);
+        if (componentModels != null) {
+            results = componentModels.toArray(new ComponentModel[componentModels.size()]);
         }
         tableViewer.setItemCount(results.length);
         tableViewer.setInput(results);
