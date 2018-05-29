@@ -106,7 +106,7 @@ public class HubConnectionService extends AbstractConnectionService {
             connection = hubServerConfig.createCredentialsRestConnection(new Slf4jIntLogger(log));
             connection.connect();
         } catch (final Exception e) {
-            log.error("Could not get Hub connection from stored preferences", e);
+            log.warn("Could not get Hub connection from stored preferences", e);
         }
 
         return Optional.ofNullable(connection);
