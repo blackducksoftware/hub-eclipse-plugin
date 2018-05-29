@@ -36,13 +36,13 @@ import com.blackducksoftware.integration.exception.IntegrationException;
 import com.blackducksoftware.integration.hub.api.generated.view.ComponentVersionView;
 import com.blackducksoftware.integration.hub.bdio.model.externalid.ExternalId;
 import com.blackducksoftware.integration.hub.configuration.HubServerConfig;
-import com.blackducksoftware.integration.hub.rest.RestConnection;
 import com.blackducksoftware.integration.hub.service.ComponentService;
 import com.blackducksoftware.integration.hub.service.HubService;
 import com.blackducksoftware.integration.hub.service.HubServicesFactory;
 import com.blackducksoftware.integration.hub.service.PhoneHomeService;
 import com.blackducksoftware.integration.log.Slf4jIntLogger;
 import com.blackducksoftware.integration.phonehome.PhoneHomeRequestBody;
+import com.blackducksoftware.integration.rest.connection.RestConnection;
 
 public class HubConnectionService extends AbstractConnectionService {
     private final Logger log = LoggerFactory.getLogger(HubConnectionService.class);
@@ -109,7 +109,8 @@ public class HubConnectionService extends AbstractConnectionService {
             connection = hubServerConfig.createCredentialsRestConnection(new Slf4jIntLogger(log));
             connection.connect();
         } catch (final Exception e) {
-            log.warn("Could not get Hub connection from stored preferences", e);
+            log.warn("Could not get Hub connection from stored preferences: " + e.getMessage());
+            log.debug("Stack trace: ", e);
         }
 
         return Optional.ofNullable(connection);

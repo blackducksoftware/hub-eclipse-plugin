@@ -27,9 +27,9 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 
 import com.blackducksoftware.integration.eclipse.internal.ComponentModel;
+import com.blackducksoftware.integration.eclipse.internal.datastructures.TimedLRUCache;
 import com.blackducksoftware.integration.exception.IntegrationException;
 import com.blackducksoftware.integration.hub.bdio.model.externalid.ExternalId;
-import com.blackducksoftware.integration.util.TimedLRUCache;
 
 public abstract class AbstractComponentLookupService {
     protected final TimedLRUCache<ExternalId, ComponentModel> componentLoadingCache;

@@ -156,6 +156,7 @@ public class ProjectInformationService {
         } catch (final CoreException e) {
             log.debug("Unable to get natures of project" + project.getName() + ". The project probably doesn't exist or is closed.", e);
         }
+        log.debug("Project " + project.getName() + " did not have any supported natures.");
         return false;
     }
 

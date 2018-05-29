@@ -34,10 +34,10 @@ import com.blackducksoftware.integration.exception.IntegrationException;
 import com.blackducksoftware.integration.hub.api.generated.view.ComplexLicenseView;
 import com.blackducksoftware.integration.hub.api.generated.view.VulnerabilityV2View;
 import com.blackducksoftware.integration.hub.bdio.model.externalid.ExternalId;
-import com.blackducksoftware.integration.hub.rest.RestConnection;
 import com.blackducksoftware.integration.hub.service.ComponentService;
 import com.blackducksoftware.integration.hub.service.HubServicesFactory;
 import com.blackducksoftware.integration.hub.service.LicenseService;
+import com.blackducksoftware.integration.rest.connection.RestConnection;
 
 public class HubComponentLookupService extends AbstractComponentLookupService {
     public HubComponentLookupService(final HubConnectionService connectionService) {
