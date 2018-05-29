@@ -33,14 +33,17 @@ import org.eclipse.jdt.core.IElementChangedListener;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaElementDelta;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.blackducksoftware.integration.eclipse.services.ComponentInformationService;
 import com.blackducksoftware.integration.eclipse.services.inspector.ComponentInspectorService;
 import com.blackducksoftware.integration.hub.bdio.model.externalid.ExternalId;
 
 public class ProjectComponentsChangedListener implements IElementChangedListener {
-    private final ComponentInspectorService inspectorService;
+    private final Logger log = LoggerFactory.getLogger(ProjectComponentsChangedListener.class);
 
+    private final ComponentInspectorService inspectorService;
     private final ComponentInformationService componentInformationService;
 
     public ProjectComponentsChangedListener(final ComponentInspectorService inspectorService, final ComponentInformationService componentInformationService) {
@@ -86,7 +89,7 @@ public class ProjectComponentsChangedListener implements IElementChangedListener
                     }
                 }
             } catch (final MalformedURLException | CoreException e) {
-                // Component failed to be added or removed
+                log.warn("Component failed to be added or removed", e);
             }
             break;
 

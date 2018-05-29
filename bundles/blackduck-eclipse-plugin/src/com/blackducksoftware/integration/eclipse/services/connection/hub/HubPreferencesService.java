@@ -35,7 +35,8 @@ import com.blackducksoftware.integration.hub.configuration.HubServerConfig;
 import com.blackducksoftware.integration.hub.configuration.HubServerConfigBuilder;
 
 public class HubPreferencesService {
-    Logger log = LoggerFactory.getLogger(HubPreferencesService.class);
+    private final Logger log = LoggerFactory.getLogger(HubPreferencesService.class);
+
     private final BlackDuckPreferencesService blackDuckPreferencesService;
 
     public static final String HUB_USERNAME = "hubUsername";

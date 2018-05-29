@@ -31,23 +31,28 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.handlers.HandlerUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.blackducksoftware.integration.eclipse.BlackDuckEclipseActivator;
 import com.blackducksoftware.integration.eclipse.views.ComponentInspectorView;
 
 public class OpenComponentInspectorView extends AbstractHandler {
-	@Override
-	public Object execute(final ExecutionEvent event) throws ExecutionException {
-		try {
-			if (HandlerUtil.getActiveWorkbenchWindow(event) != null && HandlerUtil.getActiveWorkbenchWindow(event).getActivePage() != null) {
-				HandlerUtil.getActiveWorkbenchWindow(event).getActivePage().showView(ComponentInspectorView.VIEW_ID);
-			}
-		} catch (final PartInitException e) {
-			ErrorDialog.openError(HandlerUtil.getActiveShell(event), "Error Opening Black Duck Component Inspector View",
-					"An expection occurred while opening the Black Duck Component Inspector view",
-					new Status(IStatus.ERROR, BlackDuckEclipseActivator.PLUGIN_ID, e.getMessage(), e));
-		}
-		return null;
-	}
+    private final Logger log = LoggerFactory.getLogger(OpenComponentInspectorView.class);
+
+    @Override
+    public Object execute(final ExecutionEvent event) throws ExecutionException {
+        try {
+            if (HandlerUtil.getActiveWorkbenchWindow(event) != null && HandlerUtil.getActiveWorkbenchWindow(event).getActivePage() != null) {
+                HandlerUtil.getActiveWorkbenchWindow(event).getActivePage().showView(ComponentInspectorView.VIEW_ID);
+            }
+        } catch (final PartInitException e) {
+            ErrorDialog.openError(HandlerUtil.getActiveShell(event), "Error Opening Black Duck Component Inspector View",
+                    "An expection occurred while opening the Black Duck Component Inspector view",
+                    new Status(IStatus.ERROR, BlackDuckEclipseActivator.PLUGIN_ID, e.getMessage(), e));
+            log.error("An expection occurred while opening the Black Duck Component Inspector view", e);
+        }
+        return null;
+    }
 
 }

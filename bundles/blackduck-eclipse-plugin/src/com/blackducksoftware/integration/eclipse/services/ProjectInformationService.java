@@ -37,10 +37,14 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.blackducksoftware.integration.hub.bdio.model.externalid.ExternalId;
 
 public class ProjectInformationService {
+    private final Logger log = LoggerFactory.getLogger(ProjectInformationService.class);
+
     public static final String GRADLE_NATURE = "org.eclipse.buildship.core.gradleprojectnature";
     public static final String MAVEN_NATURE = "org.eclipse.m2e.core.maven2Nature";
     public static final String[] SUPPORTED_NATURES = {
@@ -67,9 +71,7 @@ public class ProjectInformationService {
                 projectName = projectDescription.getName();
             }
         } catch (final CoreException e) {
-            /*
-             * If unsuccessful getting project description, means that project doesn't exist or is closed. In that case, do not add project
-             */
+            log.debug("Unable to get project description of project" + project.getName() + ". The project probably doesn't exist or is closed.", e);
         }
 
         return projectName;
@@ -83,9 +85,7 @@ public class ProjectInformationService {
                     numBinary++;
                 }
             } catch (final JavaModelException e) {
-                /*
-                 * Occurs if root does not exist or an exception occurs while accessing resource. If this happens, assume root is not binary and therefore do not increment count
-                 */
+                log.debug("Exception occurred while accessing resource, root may not exist. Root is probably not a binary.", e);
             }
         }
         return numBinary;
@@ -111,8 +111,7 @@ public class ProjectInformationService {
                 return dependencyFilepaths;
             }
         } catch (final CoreException e) {
-            // if exception thrown when getting filepaths to source and binary dependencies, assume
-            // there are no dependencies
+            log.warn("Exception occurred while getting paths to source and binary dependencies of project " + projectName + ". No dependencies will be loaded.", e);
         }
 
         return Arrays.asList();
@@ -135,9 +134,7 @@ public class ProjectInformationService {
                 return packageFragmentRoot.getPath().toFile().toURI().toURL();
             }
         } catch (final JavaModelException | MalformedURLException e) {
-            /*
-             * If root does not exist or exception occurs while accessing resource, do not add its filepath to the list of binary dependency filepaths
-             */
+            log.debug("Exception occurred while accessing resource, root may not exist. No binary dependency filepath will be returned.", e);
         }
         return null;
     }
@@ -157,7 +154,7 @@ public class ProjectInformationService {
                 }
             }
         } catch (final CoreException e) {
-            // CoreException means project is closed / doesn't exist
+            log.debug("Unable to get natures of project" + project.getName() + ". The project probably doesn't exist or is closed.", e);
         }
         return false;
     }

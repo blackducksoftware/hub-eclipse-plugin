@@ -27,6 +27,8 @@ import java.util.Optional;
 
 import org.eclipse.core.runtime.IProduct;
 import org.eclipse.core.runtime.Platform;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.blackducksoftware.integration.eclipse.BlackDuckEclipseActivator;
 import com.blackducksoftware.integration.eclipse.services.connection.AbstractConnectionService;
@@ -39,18 +41,16 @@ import com.blackducksoftware.integration.hub.service.ComponentService;
 import com.blackducksoftware.integration.hub.service.HubService;
 import com.blackducksoftware.integration.hub.service.HubServicesFactory;
 import com.blackducksoftware.integration.hub.service.PhoneHomeService;
-import com.blackducksoftware.integration.log.IntBufferedLogger;
-import com.blackducksoftware.integration.log.IntLogger;
+import com.blackducksoftware.integration.log.Slf4jIntLogger;
 import com.blackducksoftware.integration.phonehome.PhoneHomeRequestBody;
 
 public class HubConnectionService extends AbstractConnectionService {
-    private final IntLogger logger;
-    private Optional<RestConnection> connection;
+    private final Logger log = LoggerFactory.getLogger(HubConnectionService.class);
 
+    private Optional<RestConnection> connection;
     private final HubPreferencesService hubPreferencesService;
 
     public HubConnectionService(final HubPreferencesService hubPreferencesService) {
-        this.logger = new IntBufferedLogger();
         this.hubPreferencesService = hubPreferencesService;
     }
 
@@ -60,7 +60,7 @@ public class HubConnectionService extends AbstractConnectionService {
         try {
             this.phoneHome();
         } catch (final IntegrationException e) {
-            // TODO: Log properly
+            log.debug("Phone home failed", e);
         }
     }
 
@@ -103,9 +103,10 @@ public class HubConnectionService extends AbstractConnectionService {
 
         try {
             final HubServerConfig hubServerConfig = hubPreferencesService.getHubServerConfig();
-            connection = hubServerConfig.createCredentialsRestConnection(logger);
+            connection = hubServerConfig.createCredentialsRestConnection(new Slf4jIntLogger(log));
             connection.connect();
         } catch (final Exception e) {
+            log.error("Could not get Hub connection from stored preferences", e);
         }
 
         return Optional.ofNullable(connection);

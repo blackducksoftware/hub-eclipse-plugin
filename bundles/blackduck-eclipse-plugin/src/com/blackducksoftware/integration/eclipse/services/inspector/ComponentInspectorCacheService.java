@@ -31,6 +31,10 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.blackducksoftware.integration.eclipse.internal.ComponentModel;
 import com.blackducksoftware.integration.eclipse.internal.ComponentModelVulnerabilityFirstComparator;
@@ -39,6 +43,8 @@ import com.blackducksoftware.integration.exception.IntegrationException;
 import com.blackducksoftware.integration.hub.bdio.model.externalid.ExternalId;
 
 public class ComponentInspectorCacheService {
+    private final Logger log = LoggerFactory.getLogger(ComponentInspectorCacheService.class);
+
     private final Map<String, List<ComponentModel>> inspectorCache;
     private final ComponentInspectorViewService componentInspectorViewService;
     private final HubComponentLookupService hubComponentLookupService;
@@ -63,21 +69,13 @@ public class ComponentInspectorCacheService {
                 inspectorCache.put(projectName, components);
                 componentInspectorViewService.resetDisplay();
             } catch (final IntegrationException e) {
-                e.printStackTrace();
-                /*
-                 * Thrown if exception occurs when accessing key gav from cache. If an exception is thrown, info associated with that gav is inaccessible, and so don't put any information related to said gav into hashmap associated with the
-                 * project
-                 */
+                log.warn(String.format("Could not add component %s to project %s.", externalId.createExternalId(), projectName), e);
             }
         }
     }
 
-    public List<ComponentModel> getProjectComponents(final String projectName) {
-        final List<ComponentModel> models = inspectorCache.get(projectName);
-        if (models == null) {
-            return null;
-        }
-        return inspectorCache.get(projectName);
+    public Optional<List<ComponentModel>> getProjectComponents(final String projectName) {
+        return Optional.ofNullable(inspectorCache.get(projectName));
     }
 
     public void removeProject(final String projectName) {

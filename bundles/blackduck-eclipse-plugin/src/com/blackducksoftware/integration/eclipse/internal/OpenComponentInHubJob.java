@@ -32,6 +32,8 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.browser.IWebBrowser;
 import org.eclipse.ui.progress.UIJob;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.blackducksoftware.integration.eclipse.services.connection.hub.HubConnectionService;
 import com.blackducksoftware.integration.eclipse.services.inspector.ComponentInspectorViewService;
@@ -39,6 +41,8 @@ import com.blackducksoftware.integration.exception.IntegrationException;
 import com.blackducksoftware.integration.hub.bdio.model.externalid.ExternalId;
 
 public class OpenComponentInHubJob extends UIJob {
+    private final Logger log = LoggerFactory.getLogger(OpenComponentInHubJob.class);
+
     public static final String JOB_OPEN_COMPONENT_PREFACE = "Black Duck Component Inspector opening ";
     public static final String JOB_OPEN_COMPONENT_SUFFIX = " in the Hub...";
 
@@ -64,6 +68,7 @@ public class OpenComponentInHubJob extends UIJob {
             componentInspectorViewService.openError("Could not open Component in Hub instance",
                     "Problem opening " + externalId.createExternalId() + " in the configured Hub instance",
                     e);
+            log.error("Problem opening " + externalId.createExternalId() + " in the configured Hub instance", e);
             return Status.CANCEL_STATUS;
         }
         return Status.OK_STATUS;

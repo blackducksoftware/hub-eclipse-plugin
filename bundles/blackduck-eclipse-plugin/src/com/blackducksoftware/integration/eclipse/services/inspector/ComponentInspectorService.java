@@ -26,6 +26,7 @@ package com.blackducksoftware.integration.eclipse.services.inspector;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.List;
+import java.util.Optional;
 
 import com.blackducksoftware.integration.eclipse.internal.ComponentModel;
 import com.blackducksoftware.integration.eclipse.internal.InspectionJob;
@@ -106,7 +107,7 @@ public class ComponentInspectorService {
         inspectorViewService.clearProjectDisplay(projectName);
     }
 
-    public List<ComponentModel> getProjectComponents(final String projectName) {
+    public Optional<List<ComponentModel>> getProjectComponents(final String projectName) {
         return inspectorCacheService.getProjectComponents(projectName);
     }
 

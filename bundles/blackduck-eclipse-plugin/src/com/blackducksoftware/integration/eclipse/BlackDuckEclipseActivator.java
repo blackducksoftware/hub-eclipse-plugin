@@ -28,6 +28,8 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.blackducksoftware.integration.eclipse.internal.listeners.NewOrMovedProjectListener;
 import com.blackducksoftware.integration.eclipse.internal.listeners.ProjectComponentsChangedListener;
@@ -41,6 +43,7 @@ import com.blackducksoftware.integration.eclipse.services.inspector.ComponentIns
 import com.blackducksoftware.integration.eclipse.services.inspector.ComponentInspectorViewService;
 
 public class BlackDuckEclipseActivator extends AbstractUIPlugin {
+    private final Logger log = LoggerFactory.getLogger(BlackDuckEclipseActivator.class);
     public static final String PLUGIN_ID = "com.blackducksoftware.integration.eclipse.plugin";
     private static BlackDuckEclipseActivator plugin;
 
@@ -75,7 +78,7 @@ public class BlackDuckEclipseActivator extends AbstractUIPlugin {
         try {
             super.start(context);
         } catch (final Exception e) {
-            // TODO: Log properly
+            log.error("Failed to start the Black Duck Eclipse plugin " + PLUGIN_ID, e);
         }
     }
 
@@ -90,7 +93,7 @@ public class BlackDuckEclipseActivator extends AbstractUIPlugin {
         try {
             super.stop(context);
         } catch (final Exception e) {
-            // TODO: Log properly
+            log.error("Failed to stop the Black Duck Eclipse plugin " + PLUGIN_ID, e);
         }
     }
 

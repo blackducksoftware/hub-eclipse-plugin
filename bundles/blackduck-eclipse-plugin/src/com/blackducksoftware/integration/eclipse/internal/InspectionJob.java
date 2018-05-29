@@ -32,6 +32,8 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.core.runtime.jobs.Job;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.blackducksoftware.integration.eclipse.services.ComponentInformationService;
 import com.blackducksoftware.integration.eclipse.services.ProjectInformationService;
@@ -41,6 +43,8 @@ import com.blackducksoftware.integration.eclipse.services.inspector.ComponentIns
 import com.blackducksoftware.integration.hub.bdio.model.externalid.ExternalId;
 
 public class InspectionJob extends Job {
+    private final Logger log = LoggerFactory.getLogger(InspectionJob.class);
+
     public static final String FAMILY = "Black Duck Component Inspection";
     public static final String JOB_INSPECT_PROJECT_PREFACE = "Black Duck Component Inspector inspecting ";
     private static final int ONE_HUNDRED_PERCENT = 100000;
@@ -102,7 +106,7 @@ public class InspectionJob extends Job {
                 }
             }
         } catch (final Exception e) {
-            e.printStackTrace();
+            log.error("An unexpected exception occurred while the Black Duck Component Inspector was inspecting " + projectName, e);
             return Status.CANCEL_STATUS;
         }
         return Status.OK_STATUS;
