@@ -66,6 +66,9 @@ public class HubConnectionService extends AbstractConnectionService {
 
     @Override
     public boolean hasActiveConnection() {
+        if (!connection.isPresent()) {
+            this.connection = this.getHubConnectionFromPreferences();
+        }
         return connection.isPresent();
     }
 
