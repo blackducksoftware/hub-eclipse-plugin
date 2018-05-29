@@ -27,6 +27,7 @@ import java.util.Optional;
 
 import org.eclipse.core.runtime.IProduct;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.swt.widgets.Display;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -57,18 +58,11 @@ public class HubConnectionService extends AbstractConnectionService {
     @Override
     public void reloadConnection() {
         this.connection = this.getHubConnectionFromPreferences();
-        try {
-            this.phoneHome();
-        } catch (final IntegrationException e) {
-            log.debug("Phone home failed", e);
-        }
+        this.phoneHome();
     }
 
     @Override
     public boolean hasActiveConnection() {
-        if (!connection.isPresent()) {
-            this.connection = this.getHubConnectionFromPreferences();
-        }
         return connection.isPresent();
     }
 
@@ -88,16 +82,21 @@ public class HubConnectionService extends AbstractConnectionService {
         throw new IntegrationException("No active connection with a Hub server");
     }
 
-    private void phoneHome() throws IntegrationException {
+    private void phoneHome() {
         if (hasActiveConnection()) {
-            final HubServicesFactory hubServicesFactory = new HubServicesFactory(connection.get());
-            final PhoneHomeService phoneHomeService = hubServicesFactory.createPhoneHomeService();
-            final IProduct eclipseProduct = Platform.getProduct();
-            final String eclipseVersion = eclipseProduct.getDefiningBundle().getVersion().toString();
-            final String pluginVersion = Platform.getBundle(BlackDuckEclipseActivator.PLUGIN_ID).getVersion().toString();
-            final PhoneHomeRequestBody.Builder phoneHomeRequestBodyBuilder = phoneHomeService.createInitialPhoneHomeRequestBodyBuilder("hub-eclipse", pluginVersion);
-            phoneHomeRequestBodyBuilder.addToMetaData("eclipse.version", eclipseVersion);
-            phoneHomeService.phoneHome(phoneHomeRequestBodyBuilder);
+            Display.getDefault().asyncExec(new Runnable() {
+                @Override
+                public void run() {
+                    final HubServicesFactory hubServicesFactory = new HubServicesFactory(connection.get());
+                    final PhoneHomeService phoneHomeService = hubServicesFactory.createPhoneHomeService();
+                    final IProduct eclipseProduct = Platform.getProduct();
+                    final String eclipseVersion = eclipseProduct.getDefiningBundle().getVersion().toString();
+                    final String pluginVersion = Platform.getBundle(BlackDuckEclipseActivator.PLUGIN_ID).getVersion().toString();
+                    final PhoneHomeRequestBody.Builder phoneHomeRequestBodyBuilder = phoneHomeService.createInitialPhoneHomeRequestBodyBuilder("hub-eclipse", pluginVersion);
+                    phoneHomeRequestBodyBuilder.addToMetaData("eclipse.version", eclipseVersion);
+                    phoneHomeService.phoneHome(phoneHomeRequestBodyBuilder);
+                }
+            });
         }
     }
 

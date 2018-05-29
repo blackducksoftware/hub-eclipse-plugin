@@ -112,7 +112,7 @@ public class ComponentInspectorView extends ViewPart {
         contentProvider.addFilter(componentFilter);
         tableViewer.setContentProvider(contentProvider);
         editorSelectionListener = new EditorSelectionListener(componentInspectorViewService, workspaceInformationService);
-        getSite().getPage().addPostSelectionListener(editorSelectionListener);
+        this.getSite().getPage().addSelectionListener(editorSelectionListener);
         this.createColumns();
         this.refreshInput();
         tableStatus = new ComponentTableStatusCLabel(parent, SWT.LEFT, tableViewer, componentInspectorService);
@@ -128,7 +128,7 @@ public class ComponentInspectorView extends ViewPart {
     @Override
     public void dispose() {
         super.dispose();
-        getSite().getPage().removePostSelectionListener(editorSelectionListener);
+        getSite().getPage().removeSelectionListener(editorSelectionListener);
     }
 
     @Override

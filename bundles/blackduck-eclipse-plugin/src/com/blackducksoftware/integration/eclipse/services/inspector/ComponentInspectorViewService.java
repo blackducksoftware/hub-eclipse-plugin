@@ -47,7 +47,6 @@ public class ComponentInspectorViewService {
     public void setProject(final String projectName) {
         if (componentInspectorView != null) {
             componentInspectorView.setLastSelectedProjectName(projectName);
-
         }
     }
 

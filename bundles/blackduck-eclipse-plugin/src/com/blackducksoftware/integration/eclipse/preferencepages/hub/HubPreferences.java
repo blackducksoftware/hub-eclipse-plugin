@@ -47,6 +47,8 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.blackducksoftware.integration.eclipse.BlackDuckEclipseActivator;
 import com.blackducksoftware.integration.eclipse.services.BlackDuckEclipseServicesFactory;
@@ -60,6 +62,8 @@ import com.blackducksoftware.integration.hub.rest.CredentialsRestConnection;
 import com.blackducksoftware.integration.log.IntBufferedLogger;
 
 public class HubPreferences extends PreferencePage implements IWorkbenchPreferencePage {
+    private final Logger log = LoggerFactory.getLogger(HubPreferences.class);
+
     public static final String PREFERENCE_PAGE_ID = "com.blackducksoftware.integration.eclipse.preferencepages.hub.HubPreferences";
     public static final String TEST_HUB_CREDENTIALS_TEXT = "Test Connection";
     public static final String LOGIN_SUCCESS_MESSAGE = "Connection successful!";
@@ -141,6 +145,7 @@ public class HubPreferences extends PreferencePage implements IWorkbenchPreferen
         try {
             this.storeValues();
         } catch (final IntegrationException e) {
+            log.error("Error encountered when storing values for Hub preferences", e);
         }
     }
 
@@ -275,9 +280,9 @@ public class HubPreferences extends PreferencePage implements IWorkbenchPreferen
         final HubServerConfigBuilder hubServerConfigBuilder = new HubServerConfigBuilder();
         hubServerConfigBuilder.setUsername(hubUsernameField.getStringValue());
         hubServerConfigBuilder.setPassword(hubPasswordField.getText());
-        hubServerConfigBuilder.setHubUrl(hubUrlField.getStringValue());
+        hubServerConfigBuilder.setUrl(hubUrlField.getStringValue());
         hubServerConfigBuilder.setTimeout(hubTimeoutField.getStringValue());
-        hubServerConfigBuilder.setAlwaysTrustServerCertificate(hubAlwaysTrustField.getBooleanValue());
+        hubServerConfigBuilder.setTrustCert(hubAlwaysTrustField.getBooleanValue());
         hubServerConfigBuilder.setProxyHost(proxyHostField.getStringValue());
         hubServerConfigBuilder.setProxyPort(proxyPortField.getStringValue());
         hubServerConfigBuilder.setProxyUsername(proxyUsernameField.getStringValue());

@@ -181,11 +181,11 @@ public class HubPreferencesService {
         final String password = this.getHubPassword();
         hubServerConfigBuilder.setPassword(password);
         final String hubUrl = this.getHubUrl();
-        hubServerConfigBuilder.setHubUrl(hubUrl);
+        hubServerConfigBuilder.setUrl(hubUrl);
         final String timeout = this.getHubTimeout();
         hubServerConfigBuilder.setTimeout(timeout);
         final boolean hubAlwaysTrust = this.getHubAlwaysTrust();
-        hubServerConfigBuilder.setAlwaysTrustServerCertificate(hubAlwaysTrust);
+        hubServerConfigBuilder.setTrustCert(hubAlwaysTrust);
         final String proxyUsername = this.getHubProxyUsername();
         hubServerConfigBuilder.setProxyUsername(proxyUsername);
         final String proxyPassword = this.getHubProxyPassword();
