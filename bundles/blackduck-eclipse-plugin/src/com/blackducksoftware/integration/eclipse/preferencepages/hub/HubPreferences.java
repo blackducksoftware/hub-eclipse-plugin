@@ -52,14 +52,12 @@ import org.slf4j.LoggerFactory;
 
 import com.blackducksoftware.integration.eclipse.BlackDuckEclipseActivator;
 import com.blackducksoftware.integration.eclipse.services.BlackDuckEclipseServicesFactory;
+import com.blackducksoftware.integration.eclipse.services.connection.hub.HubConnectionService;
 import com.blackducksoftware.integration.eclipse.services.connection.hub.HubPreferencesService;
 import com.blackducksoftware.integration.eclipse.services.inspector.ComponentInspectorService;
 import com.blackducksoftware.integration.eclipse.services.inspector.ComponentInspectorViewService;
 import com.blackducksoftware.integration.exception.IntegrationException;
-import com.blackducksoftware.integration.hub.configuration.HubServerConfig;
-import com.blackducksoftware.integration.hub.configuration.HubServerConfigBuilder;
 import com.blackducksoftware.integration.hub.rest.CredentialsRestConnection;
-import com.blackducksoftware.integration.log.IntBufferedLogger;
 
 public class HubPreferences extends PreferencePage implements IWorkbenchPreferencePage {
     private final Logger log = LoggerFactory.getLogger(HubPreferences.class);
@@ -82,6 +80,7 @@ public class HubPreferences extends PreferencePage implements IWorkbenchPreferen
     private static final String INTEGER_FIELD_EDITOR_ERROR_STRING = "IntegerFieldEditor.errorMessage";
     private final int NUM_COLUMNS = 2;
 
+    private HubConnectionService hubConnectionService;
     private HubPreferencesService hubPreferencesService;
     private StringFieldEditor hubUsernameField;
     private StringFieldEditor hubUrlField;
@@ -106,6 +105,7 @@ public class HubPreferences extends PreferencePage implements IWorkbenchPreferen
     @Override
     public void init(final IWorkbench workbench) {
         hubPreferencesService = BlackDuckEclipseServicesFactory.getInstance().getHubPreferencesService();
+        hubConnectionService = BlackDuckEclipseServicesFactory.getInstance().getHubConnectionService();
         this.setPreferenceStore(BlackDuckEclipseActivator.getDefault().getPreferenceStore());
         this.noDefaultButton();
     }
@@ -277,20 +277,18 @@ public class HubPreferences extends PreferencePage implements IWorkbenchPreferen
     }
 
     private void attemptToConnect() {
-        final HubServerConfigBuilder hubServerConfigBuilder = new HubServerConfigBuilder();
-        hubServerConfigBuilder.setUsername(hubUsernameField.getStringValue());
-        hubServerConfigBuilder.setPassword(hubPasswordField.getText());
-        hubServerConfigBuilder.setUrl(hubUrlField.getStringValue());
-        hubServerConfigBuilder.setTimeout(hubTimeoutField.getStringValue());
-        hubServerConfigBuilder.setTrustCert(hubAlwaysTrustField.getBooleanValue());
-        hubServerConfigBuilder.setProxyHost(proxyHostField.getStringValue());
-        hubServerConfigBuilder.setProxyPort(proxyPortField.getStringValue());
-        hubServerConfigBuilder.setProxyUsername(proxyUsernameField.getStringValue());
-        hubServerConfigBuilder.setProxyPassword(proxyPasswordField.getText());
         String message = LOGIN_SUCCESS_MESSAGE;
         try {
-            final HubServerConfig config = hubServerConfigBuilder.build();
-            final CredentialsRestConnection restConnection = config.createCredentialsRestConnection(new IntBufferedLogger());
+            final CredentialsRestConnection restConnection = hubConnectionService.getCredentialsRestConnection(
+                    hubUsernameField.getStringValue(),
+                    hubPasswordField.getText(),
+                    hubUrlField.getStringValue(),
+                    hubTimeoutField.getStringValue(),
+                    hubAlwaysTrustField.getBooleanValue(),
+                    proxyHostField.getStringValue(),
+                    proxyPortField.getStringValue(),
+                    proxyUsernameField.getStringValue(),
+                    proxyPasswordField.getText());
             restConnection.connect();
         } catch (final Exception e) {
             message = e.getMessage();
@@ -320,7 +318,7 @@ public class HubPreferences extends PreferencePage implements IWorkbenchPreferen
         final BlackDuckEclipseServicesFactory blackDuckEclipseServicesFactory = BlackDuckEclipseServicesFactory.getInstance();
         final ComponentInspectorViewService inspectorViewService = blackDuckEclipseServicesFactory.getComponentInspectorViewService();
         final ComponentInspectorService componentInspectorService = blackDuckEclipseServicesFactory.getComponentInspectorService();
-        componentInspectorService.reloadConnection();
+        componentInspectorService.inspectAllProjects();
         inspectorViewService.resetDisplay();
     }
 

@@ -34,7 +34,7 @@ import com.blackducksoftware.integration.eclipse.BlackDuckEclipseActivator;
 import com.blackducksoftware.integration.eclipse.internal.ComponentModel;
 import com.blackducksoftware.integration.eclipse.services.BlackDuckEclipseServicesFactory;
 import com.blackducksoftware.integration.eclipse.services.ProjectInformationService;
-import com.blackducksoftware.integration.eclipse.services.connection.hub.HubConnectionService;
+import com.blackducksoftware.integration.eclipse.services.connection.hub.HubPreferencesService;
 import com.blackducksoftware.integration.eclipse.services.inspector.ComponentInspectorPreferencesService;
 import com.blackducksoftware.integration.eclipse.services.inspector.ComponentInspectorService;
 import com.blackducksoftware.integration.eclipse.views.ComponentInspectorView;
@@ -44,7 +44,7 @@ public class ComponentTableStatusCLabel extends CLabel {
     private final ProjectInformationService projectInformationService;
     private final TableViewer componentInspectorTableViewer;
     private final ComponentInspectorService componentInspectorService;
-    private final HubConnectionService hubConnectionService;
+    private final HubPreferencesService hubPreferencesService;
 
     public static final String NO_SELECTED_PROJECT_STATUS = "No open project selected";
     public static final String PROJECT_INSPECTION_RUNNING_STATUS = "Inspecting project...";
@@ -58,10 +58,11 @@ public class ComponentTableStatusCLabel extends CLabel {
 
     public ComponentTableStatusCLabel(final Composite parent, final int style, final TableViewer componentInspectorTableViewer, final ComponentInspectorService componentInspectorService) {
         super(parent, style);
-        this.componentInspectorPreferencesService = BlackDuckEclipseServicesFactory.getInstance().getComponentInspectorPreferencesService();
-        this.projectInformationService = BlackDuckEclipseServicesFactory.getInstance().getProjectInformationService();
+        final BlackDuckEclipseServicesFactory blackDuckEclipseServicesFactory = BlackDuckEclipseServicesFactory.getInstance();
+        this.componentInspectorPreferencesService = blackDuckEclipseServicesFactory.getComponentInspectorPreferencesService();
+        this.hubPreferencesService = blackDuckEclipseServicesFactory.getHubPreferencesService();
+        this.projectInformationService = blackDuckEclipseServicesFactory.getProjectInformationService();
         this.componentInspectorTableViewer = componentInspectorTableViewer;
-        this.hubConnectionService = BlackDuckEclipseServicesFactory.getInstance().getHubConnectionService();
         this.componentInspectorService = componentInspectorService;
         this.setText(NO_SELECTED_PROJECT_STATUS);
     }
@@ -70,12 +71,13 @@ public class ComponentTableStatusCLabel extends CLabel {
         if (componentInspectorTableViewer != null && componentInspectorTableViewer.getInput() != null) {
             final boolean noComponents = ((ComponentModel[]) componentInspectorTableViewer.getInput()).length == 0;
             final boolean noProjectMapping = componentInspectorService.getProjectComponents(projectName) == null;
-            final String statusMessage = determineStatusMessage(noComponents, noProjectMapping, projectName);
+            final boolean activeHubConnection = hubPreferencesService.hasActiveHubConnection();
+            final String statusMessage = determineStatusMessage(noComponents, noProjectMapping, activeHubConnection, projectName);
             this.setStatus(statusMessage);
         }
     }
 
-    private String determineStatusMessage(final boolean noComponents, final boolean noProjectMapping, final String projectName) {
+    private String determineStatusMessage(final boolean noComponents, final boolean noProjectMapping, final boolean activeHubConnection, final String projectName) {
         String status = "";
 
         if (projectName.isEmpty()) {
@@ -84,7 +86,7 @@ public class ComponentTableStatusCLabel extends CLabel {
             status = PROJECT_NOT_SUPPORTED_STATUS;
         } else if (!componentInspectorPreferencesService.isProjectMarkedForInspection(projectName)) {
             status = PROJECT_NOT_MARKED_FOR_INSPECTION_STATUS;
-        } else if (!hubConnectionService.hasActiveConnection()) {
+        } else if (!hubPreferencesService.hasActiveHubConnection()) {
             status = CONNECTION_DISCONNECTED_STATUS;
         } else if (componentInspectorService.isProjectInspectionRunning(projectName)) {
             status = PROJECT_INSPECTION_RUNNING_STATUS;
@@ -92,7 +94,7 @@ public class ComponentTableStatusCLabel extends CLabel {
             status = PROJECT_INSPECTION_SCHEDULED_STATUS;
         } else if (noProjectMapping) {
             status = PROJECT_NEEDS_INSPECTION_STATUS;
-        } else if (hubConnectionService.hasActiveConnection()) {
+        } else if (hubPreferencesService.hasActiveHubConnection()) {
             if (noComponents) {
                 status = HUB_CONNECTION_OK_NO_COMPONENTS_STATUS;
             } else {

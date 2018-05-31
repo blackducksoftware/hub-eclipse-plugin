@@ -29,12 +29,19 @@ import org.eclipse.ui.browser.IWebBrowser;
 
 import com.blackducksoftware.integration.eclipse.internal.ComponentModel;
 import com.blackducksoftware.integration.eclipse.internal.OpenComponentInHubJob;
-import com.blackducksoftware.integration.eclipse.services.BlackDuckEclipseServicesFactory;
 import com.blackducksoftware.integration.eclipse.services.connection.hub.HubConnectionService;
+import com.blackducksoftware.integration.eclipse.services.connection.hub.HubPreferencesService;
 import com.blackducksoftware.integration.eclipse.views.ComponentInspectorView;
 
 public class ComponentInspectorViewService {
     private ComponentInspectorView componentInspectorView = null;
+    private final HubConnectionService hubConnectionService;
+    private final HubPreferencesService hubPreferencesService;
+
+    public ComponentInspectorViewService(final HubConnectionService hubConnectionService, final HubPreferencesService hubPreferencesService) {
+        this.hubConnectionService = hubConnectionService;
+        this.hubPreferencesService = hubPreferencesService;
+    }
 
     public void registerComponentInspectorView(final ComponentInspectorView componentInspectorView) {
         this.componentInspectorView = componentInspectorView;
@@ -84,11 +91,8 @@ public class ComponentInspectorViewService {
     }
 
     public void displayExpandedComponentInformation(final ComponentModel component) {
-        final HubConnectionService hubConnectionService = BlackDuckEclipseServicesFactory.getInstance().getHubConnectionService();
-        if (hubConnectionService.hasActiveConnection()) {
-            final Job job = new OpenComponentInHubJob(hubConnectionService, this, component);
-            job.schedule();
-        }
+        final Job job = new OpenComponentInHubJob(hubConnectionService, hubPreferencesService, this, component);
+        job.schedule();
     }
 
     public IWebBrowser getBrowser() throws PartInitException {

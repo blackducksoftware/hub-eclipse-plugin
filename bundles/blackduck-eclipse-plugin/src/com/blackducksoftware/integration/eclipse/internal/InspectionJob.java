@@ -37,7 +37,7 @@ import org.slf4j.LoggerFactory;
 
 import com.blackducksoftware.integration.eclipse.services.ComponentInformationService;
 import com.blackducksoftware.integration.eclipse.services.ProjectInformationService;
-import com.blackducksoftware.integration.eclipse.services.connection.hub.HubConnectionService;
+import com.blackducksoftware.integration.eclipse.services.connection.hub.HubPreferencesService;
 import com.blackducksoftware.integration.eclipse.services.inspector.ComponentInspectorPreferencesService;
 import com.blackducksoftware.integration.eclipse.services.inspector.ComponentInspectorService;
 import com.blackducksoftware.integration.hub.bdio.model.externalid.ExternalId;
@@ -56,20 +56,20 @@ public class InspectionJob extends Job {
     private final ProjectInformationService projectInformationService;
     private final ComponentInformationService componentInformationService;
     private final ComponentInspectorPreferencesService componentInspectorPreferencesService;
-    private final HubConnectionService hubConnectionService;
+    private final HubPreferencesService hubPreferencesService;
 
     public InspectionJob(final String projectName,
             final ComponentInspectorService componentInspectorService,
             final ComponentInspectorPreferencesService componentInspectorPreferencesService,
+            final HubPreferencesService hubPreferencesService,
             final ComponentInformationService componentInformationService,
-            final ProjectInformationService projectInformationService,
-            final HubConnectionService hubConnectionService) {
+            final ProjectInformationService projectInformationService) {
         super(JOB_INSPECT_PROJECT_PREFACE + projectName);
         this.projectName = projectName;
         this.componentInspectorService = componentInspectorService;
+        this.hubPreferencesService = hubPreferencesService;
         this.projectInformationService = projectInformationService;
         this.componentInformationService = componentInformationService;
-        this.hubConnectionService = hubConnectionService;
         this.componentInspectorPreferencesService = componentInspectorPreferencesService;
         this.setPriority(Job.BUILD);
     }
@@ -86,7 +86,7 @@ public class InspectionJob extends Job {
     @Override
     protected IStatus run(final IProgressMonitor monitor) {
         try {
-            if (componentInspectorPreferencesService.isProjectMarkedForInspection(projectName) && hubConnectionService.hasActiveConnection()) {
+            if (componentInspectorPreferencesService.isProjectMarkedForInspection(projectName) && hubPreferencesService.hasActiveHubConnection()) {
                 componentInspectorService.initializeProjectComponents(projectName);
                 final SubMonitor subMonitor = SubMonitor.convert(monitor, ONE_HUNDRED_PERCENT);
                 subMonitor.setTaskName("Gathering dependencies");

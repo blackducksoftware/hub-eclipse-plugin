@@ -25,6 +25,7 @@ package com.blackducksoftware.integration.eclipse.internal;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Optional;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -36,9 +37,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.blackducksoftware.integration.eclipse.services.connection.hub.HubConnectionService;
+import com.blackducksoftware.integration.eclipse.services.connection.hub.HubPreferencesService;
 import com.blackducksoftware.integration.eclipse.services.inspector.ComponentInspectorViewService;
 import com.blackducksoftware.integration.exception.IntegrationException;
 import com.blackducksoftware.integration.hub.bdio.model.externalid.ExternalId;
+import com.blackducksoftware.integration.rest.connection.RestConnection;
 
 public class OpenComponentInHubJob extends UIJob {
     private final Logger log = LoggerFactory.getLogger(OpenComponentInHubJob.class);
@@ -48,12 +51,14 @@ public class OpenComponentInHubJob extends UIJob {
 
     private final ComponentModel component;
     private final HubConnectionService hubConnectionService;
+    private final HubPreferencesService hubPreferencesService;
     private final ComponentInspectorViewService componentInspectorViewService;
 
-    public OpenComponentInHubJob(final HubConnectionService hubConnectionService, final ComponentInspectorViewService componentInspectorViewService, final ComponentModel component) {
+    public OpenComponentInHubJob(final HubConnectionService hubConnectionService, final HubPreferencesService hubPreferencesService, final ComponentInspectorViewService componentInspectorViewService, final ComponentModel component) {
         super(JOB_OPEN_COMPONENT_PREFACE + component.toString() + JOB_OPEN_COMPONENT_SUFFIX);
-        this.component = component;
         this.hubConnectionService = hubConnectionService;
+        this.hubPreferencesService = hubPreferencesService;
+        this.component = component;
         this.componentInspectorViewService = componentInspectorViewService;
     }
 
@@ -61,7 +66,8 @@ public class OpenComponentInHubJob extends UIJob {
     public IStatus runInUIThread(final IProgressMonitor monitor) {
         final ExternalId externalId = component.getExternalId();
         try {
-            final String link = hubConnectionService.getComponentVersionLinkFromExternalId(externalId);
+            final Optional<RestConnection> restConnection = hubPreferencesService.getHubConnectionFromPreferences();
+            final String link = hubConnectionService.getComponentVersionLinkFromExternalId(restConnection, externalId);
             final IWebBrowser browser = componentInspectorViewService.getBrowser();
             browser.openURL(new URL(link));
         } catch (final MalformedURLException | IntegrationException | PartInitException e) {

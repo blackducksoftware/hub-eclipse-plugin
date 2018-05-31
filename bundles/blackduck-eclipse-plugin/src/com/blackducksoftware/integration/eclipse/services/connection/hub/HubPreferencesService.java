@@ -23,6 +23,8 @@
  */
 package com.blackducksoftware.integration.eclipse.services.connection.hub;
 
+import java.util.Optional;
+
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,13 +33,13 @@ import com.blackducksoftware.integration.eclipse.services.BlackDuckPreferencesSe
 import com.blackducksoftware.integration.encryption.PasswordDecrypter;
 import com.blackducksoftware.integration.encryption.PasswordEncrypter;
 import com.blackducksoftware.integration.exception.EncryptionException;
-import com.blackducksoftware.integration.hub.configuration.HubServerConfig;
-import com.blackducksoftware.integration.hub.configuration.HubServerConfigBuilder;
+import com.blackducksoftware.integration.rest.connection.RestConnection;
 
 public class HubPreferencesService {
     private final Logger log = LoggerFactory.getLogger(HubPreferencesService.class);
 
     private final BlackDuckPreferencesService blackDuckPreferencesService;
+    private final HubConnectionService hubConnectionService;
 
     public static final String HUB_USERNAME = "hubUsername";
     public static final String HUB_PASSWORD = "hubPassword";
@@ -54,8 +56,9 @@ public class HubPreferencesService {
     public static final String DEFAULT_HUB_TIMEOUT = "120";
     public static final boolean DEFAULT_HUB_ALWAYS_TRUST = true;
 
-    public HubPreferencesService(final BlackDuckPreferencesService blackDuckPreferenceService) {
-        this.blackDuckPreferencesService = blackDuckPreferenceService;
+    public HubPreferencesService(final HubConnectionService hubConnectionService, final BlackDuckPreferencesService blackDuckPreferencesService) {
+        this.hubConnectionService = hubConnectionService;
+        this.blackDuckPreferencesService = blackDuckPreferencesService;
         blackDuckPreferencesService.setPreferenceDefault(HUB_TIMEOUT, DEFAULT_HUB_TIMEOUT);
         blackDuckPreferencesService.setPreferenceDefault(HUB_ALWAYS_TRUST, DEFAULT_HUB_ALWAYS_TRUST);
     }
@@ -174,27 +177,31 @@ public class HubPreferencesService {
         this.savePreference(PROXY_PORT, proxyPort);
     }
 
-    public HubServerConfig getHubServerConfig() throws IllegalStateException {
-        final HubServerConfigBuilder hubServerConfigBuilder = new HubServerConfigBuilder();
-        final String username = this.getHubUsername();
-        hubServerConfigBuilder.setUsername(username);
-        final String password = this.getHubPassword();
-        hubServerConfigBuilder.setPassword(password);
-        final String hubUrl = this.getHubUrl();
-        hubServerConfigBuilder.setUrl(hubUrl);
-        final String timeout = this.getHubTimeout();
-        hubServerConfigBuilder.setTimeout(timeout);
-        final boolean hubAlwaysTrust = this.getHubAlwaysTrust();
-        hubServerConfigBuilder.setTrustCert(hubAlwaysTrust);
-        final String proxyUsername = this.getHubProxyUsername();
-        hubServerConfigBuilder.setProxyUsername(proxyUsername);
-        final String proxyPassword = this.getHubProxyPassword();
-        hubServerConfigBuilder.setProxyPassword(proxyPassword);
-        final String proxyPort = this.getHubProxyPort();
-        hubServerConfigBuilder.setProxyPort(proxyPort);
-        final String proxyHost = this.getHubProxyHost();
-        hubServerConfigBuilder.setProxyHost(proxyHost);
-        return hubServerConfigBuilder.build();
+    public Optional<RestConnection> getHubConnectionFromPreferences() {
+        RestConnection connection = null;
+
+        try {
+            connection = hubConnectionService.getCredentialsRestConnection(
+                    getHubUsername(),
+                    getHubPassword(),
+                    getHubUrl(),
+                    getHubTimeout(),
+                    getHubAlwaysTrust(),
+                    getHubProxyUsername(),
+                    getHubProxyPassword(),
+                    getHubProxyPort(),
+                    getHubProxyHost());
+            connection.connect();
+        } catch (final Exception e) {
+            log.warn("Could not get Hub connection from stored preferences: " + e.getMessage());
+            log.debug("Stack trace: ", e);
+        }
+
+        return Optional.ofNullable(connection);
+    }
+
+    public boolean hasActiveHubConnection() {
+        return getHubConnectionFromPreferences().isPresent();
     }
 
     private String decryptPassword(final String encryptedPassword, final int actualLength) {

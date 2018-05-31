@@ -38,6 +38,7 @@ import org.slf4j.LoggerFactory;
 import com.blackducksoftware.integration.eclipse.internal.ComponentModel;
 import com.blackducksoftware.integration.eclipse.internal.ComponentModelVulnerabilityFirstComparator;
 import com.blackducksoftware.integration.eclipse.services.connection.hub.HubComponentLookupService;
+import com.blackducksoftware.integration.eclipse.services.connection.hub.HubPreferencesService;
 import com.blackducksoftware.integration.exception.IntegrationException;
 import com.blackducksoftware.integration.hub.bdio.model.externalid.ExternalId;
 
@@ -47,10 +48,12 @@ public class ComponentInspectorCacheService {
     private final Map<String, List<ComponentModel>> inspectorCache;
     private final ComponentInspectorViewService componentInspectorViewService;
     private final HubComponentLookupService hubComponentLookupService;
+    private final HubPreferencesService hubPreferencesService;
 
-    public ComponentInspectorCacheService(final ComponentInspectorViewService componentInspectorViewService, final HubComponentLookupService hubComponentLookupService) {
+    public ComponentInspectorCacheService(final ComponentInspectorViewService componentInspectorViewService, final HubComponentLookupService hubComponentLookupService, final HubPreferencesService hubPreferencesService) {
         this.componentInspectorViewService = componentInspectorViewService;
         this.hubComponentLookupService = hubComponentLookupService;
+        this.hubPreferencesService = hubPreferencesService;
         this.inspectorCache = new HashMap<>();
     }
 
@@ -60,7 +63,7 @@ public class ComponentInspectorCacheService {
 
     public void addComponentToProject(final String projectName, final ExternalId externalId) throws IOException, URISyntaxException {
         final List<ComponentModel> components = inspectorCache.get(projectName);
-        if (components != null && hubComponentLookupService.hasActiveConnection()) {
+        if (components != null && hubPreferencesService.hasActiveHubConnection()) {
             try {
                 final ComponentModel newComponent = hubComponentLookupService.lookupComponent(externalId);
                 components.add(newComponent);

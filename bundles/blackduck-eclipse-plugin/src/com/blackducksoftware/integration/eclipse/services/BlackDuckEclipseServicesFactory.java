@@ -47,18 +47,18 @@ public class BlackDuckEclipseServicesFactory {
 
     protected BlackDuckEclipseServicesFactory() {
         instance = this;
-        final BlackDuckPreferencesService blackDuckPreferencesService = new BlackDuckPreferencesService(BlackDuckEclipseActivator.getDefault());
-        this.hubPreferencesService = new HubPreferencesService(blackDuckPreferencesService);
-        this.hubConnectionService = new HubConnectionService(hubPreferencesService);
-        this.componentInspectorPreferencesService = new ComponentInspectorPreferencesService(blackDuckPreferencesService);
         this.componentInformationService = new ComponentInformationService();
         this.projectInformationService = new ProjectInformationService(componentInformationService);
         this.workspaceInformationService = new WorkspaceInformationService(projectInformationService);
-        this.componentInspectorViewService = new ComponentInspectorViewService();
-        this.hubComponentLookupService = new HubComponentLookupService(hubConnectionService);
-        this.componentInspectorCacheService = new ComponentInspectorCacheService(componentInspectorViewService, hubComponentLookupService);
-        this.componentInspectorService = new ComponentInspectorService(componentInspectorViewService, hubConnectionService, componentInspectorPreferencesService, workspaceInformationService, componentInspectorCacheService);
-        hubConnectionService.reloadConnection();
+
+        final BlackDuckPreferencesService blackDuckPreferencesService = new BlackDuckPreferencesService(BlackDuckEclipseActivator.getDefault());
+        this.hubConnectionService = new HubConnectionService();
+        this.hubPreferencesService = new HubPreferencesService(hubConnectionService, blackDuckPreferencesService);
+        this.componentInspectorPreferencesService = new ComponentInspectorPreferencesService(blackDuckPreferencesService);
+        this.componentInspectorViewService = new ComponentInspectorViewService(hubConnectionService, hubPreferencesService);
+        this.hubComponentLookupService = new HubComponentLookupService(hubPreferencesService);
+        this.componentInspectorCacheService = new ComponentInspectorCacheService(componentInspectorViewService, hubComponentLookupService, hubPreferencesService);
+        this.componentInspectorService = new ComponentInspectorService(componentInspectorViewService, hubPreferencesService, componentInspectorPreferencesService, workspaceInformationService, componentInspectorCacheService);
     }
 
     public static BlackDuckEclipseServicesFactory getInstance() {
