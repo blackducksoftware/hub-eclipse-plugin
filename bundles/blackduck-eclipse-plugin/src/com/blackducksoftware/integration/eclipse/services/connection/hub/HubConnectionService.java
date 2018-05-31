@@ -85,8 +85,8 @@ public class HubConnectionService {
 
             decryptedHubServerConfig = (DecryptedHubServerConfig) decryptedHubServerConfigBuilder.build();
 
-            log.error("Encryption or decryption failed: ", e);
-            log.error("If this problem persists, simply re-enter your credentials.");
+            log.error("Encryption or decryption failed. Your passwords may not be stored in an encrypted format!");
+            log.debug("Stack trace:", e);
         }
 
         final IntLogger logger = new SilentLogger();

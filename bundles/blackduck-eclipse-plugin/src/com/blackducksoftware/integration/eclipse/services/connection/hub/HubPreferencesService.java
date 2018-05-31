@@ -212,8 +212,9 @@ public class HubPreferencesService {
             try {
                 decryptedPassword = PasswordDecrypter.decrypt(encryptedPassword);
             } catch (final Exception e) {
-                log.error("Decryption Failed. Password decrypter encountered an error when decrypting the password: ", e);
-                log.error("If this problem persists, simply re-enter your credentials.");
+                log.error("Decryption Failed. Password decrypter encountered an error when decrypting the password.");
+                log.debug("Stack trace:", e);
+                log.error("If this problem persists, re-enter your credentials.");
                 decryptedPassword = encryptedPassword;
             }
         }
@@ -225,7 +226,8 @@ public class HubPreferencesService {
         try {
             encryptedPassword = PasswordEncrypter.encrypt(plainTextPassword);
         } catch (final EncryptionException e) {
-            log.warn("Encryption Failed. Password encryptor encountered an error when encrypting the password: ", e);
+            log.warn("Encryption Failed. Password encryptor encountered an error when encrypting the password. Your password will not be encrypted!");
+            log.debug("Stack trace:", e);
             encryptedPassword = plainTextPassword;
         }
         return encryptedPassword;
