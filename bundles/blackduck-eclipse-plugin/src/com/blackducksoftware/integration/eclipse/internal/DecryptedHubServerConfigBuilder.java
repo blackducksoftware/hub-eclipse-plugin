@@ -41,7 +41,6 @@ import com.blackducksoftware.integration.log.LogLevel;
 import com.blackducksoftware.integration.log.PrintStreamIntLogger;
 import com.blackducksoftware.integration.rest.credentials.Credentials;
 import com.blackducksoftware.integration.rest.proxy.ProxyInfo;
-import com.blackducksoftware.integration.rest.proxy.ProxyInfoBuilder;
 import com.blackducksoftware.integration.validator.AbstractValidator;
 
 public class DecryptedHubServerConfigBuilder extends HubServerConfigBuilder {
@@ -89,30 +88,30 @@ public class DecryptedHubServerConfigBuilder extends HubServerConfigBuilder {
 
         final ProxyInfo proxyInfo = getHubProxyInfo();
         if (StringUtils.isNotBlank(apiToken())) {
-            return new HubServerConfig(hubURL, timeoutSeconds(), apiToken(), proxyInfo, trustCert());
+            return new DecryptedHubServerConfig(hubURL, timeoutSeconds(), apiToken(), proxyInfo, trustCert());
         } else {
             final Credentials credentials = getHubCredentials();
-            return new HubServerConfig(hubURL, timeoutSeconds(), credentials, proxyInfo, trustCert());
+            return new DecryptedHubServerConfig(hubURL, timeoutSeconds(), credentials, proxyInfo, trustCert());
         }
     }
 
     private Credentials getHubCredentials() {
-        final DecryptedCredentialsBuilder credentialsBuilder = new DecryptedCredentialsBuilder();
-        credentialsBuilder.setUsername(values.get(Property.USERNAME));
-        credentialsBuilder.setPassword(values.get(Property.PASSWORD));
-        return credentialsBuilder.buildObject();
+        final DecryptedCredentialsBuilder decryptedCredentialsBuilder = new DecryptedCredentialsBuilder();
+        decryptedCredentialsBuilder.setUsername(values.get(Property.USERNAME));
+        decryptedCredentialsBuilder.setPassword(values.get(Property.PASSWORD));
+        return decryptedCredentialsBuilder.buildObject();
     }
 
     private ProxyInfo getHubProxyInfo() {
-        final ProxyInfoBuilder proxyBuilder = new ProxyInfoBuilder();
-        proxyBuilder.setHost(values.get(Property.PROXY_HOST));
-        proxyBuilder.setPort(values.get(Property.PROXY_PORT));
-        proxyBuilder.setIgnoredProxyHosts(values.get(Property.IGNORED_PROXY_HOSTS));
-        proxyBuilder.setUsername(values.get(Property.PROXY_USERNAME));
-        proxyBuilder.setPassword(values.get(Property.PROXY_PASSWORD));
-        proxyBuilder.setNtlmDomain(values.get(Property.PROXY_NTLM_DOMAIN));
-        proxyBuilder.setNtlmWorkstation(values.get(Property.PROXY_NTLM_WORKSTATION));
-        return proxyBuilder.buildObject();
+        final DecryptedProxyInfoBuilder decryptedProxyInfoBuilder = new DecryptedProxyInfoBuilder();
+        decryptedProxyInfoBuilder.setHost(values.get(Property.PROXY_HOST));
+        decryptedProxyInfoBuilder.setPort(values.get(Property.PROXY_PORT));
+        decryptedProxyInfoBuilder.setIgnoredProxyHosts(values.get(Property.IGNORED_PROXY_HOSTS));
+        decryptedProxyInfoBuilder.setUsername(values.get(Property.PROXY_USERNAME));
+        decryptedProxyInfoBuilder.setPassword(values.get(Property.PROXY_PASSWORD));
+        decryptedProxyInfoBuilder.setNtlmDomain(values.get(Property.PROXY_NTLM_DOMAIN));
+        decryptedProxyInfoBuilder.setNtlmWorkstation(values.get(Property.PROXY_NTLM_WORKSTATION));
+        return decryptedProxyInfoBuilder.buildObject();
     }
 
     @Override
