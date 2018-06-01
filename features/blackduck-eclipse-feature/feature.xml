@@ -2,7 +2,7 @@
 <feature
       id="com.blackducksoftware.integration.eclipse.feature"
       label="Black Duck Hub Plugin for Eclipse"
-      version="2.0.1"
+      version="2.0.2.qualifier"
       provider-name="Black Duck Software Inc.">
 
    <description url="https://github.com/blackducksoftware/hub-eclipse-plugin">
