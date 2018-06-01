@@ -15,4 +15,4 @@ The Black Duck Hub plugin for Eclipse uses your Black Duck Hub instance to provi
 <a href="http://marketplace.eclipse.org/marketplace-client-intro?mpc_install=3300019" class="drag" title="Drag to your running Eclipse workspace."><img class="img-responsive" src="https://marketplace.eclipse.org/sites/all/themes/solstice/public/images/marketplace/btn-install.png" alt="Drag to your running Eclipse workspace." /></a>
 
 ## Documentation ##
-All documentation for the hub-eclipse-plugin can be found on our public [Black Duck Confluence](https://blackducksoftware.atlassian.net/wiki/spaces/INTDOCS/pages/47191063/Hub+Eclipse+Plugin)
+All documentation for the Black Duck Hub plugin for Eclipse can be found on our public [Black Duck Confluence](https://blackducksoftware.atlassian.net/wiki/spaces/INTDOCS/pages/47191063/Hub+Eclipse+Plugin)
