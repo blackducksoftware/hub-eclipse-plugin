@@ -23,62 +23,78 @@
  */
 package com.blackducksoftware.integration.eclipse.internal.datastructures;
 
-import java.sql.Timestamp;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Map.Entry;
+import java.time.Instant;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
-
-import com.blackducksoftware.integration.exception.IntegrationException;
+import java.util.concurrent.ConcurrentMap;
 
 public class TimedLRUCache<T, S> {
-    private final ConcurrentHashMap<T, S> cache;
-    private final ConcurrentHashMap<T, Timestamp> cacheKeyTTL;
-    private Timestamp oldestKeyAge;
+    private final ConcurrentMap<T, S> cache;
+    private final ConcurrentMap<T, Instant> expirationCache;
     private final int cacheTimeout;
     private final int cacheCapacity;
+    private Optional<T> oldestKey;
 
     public TimedLRUCache(final int cacheCapacity, final int cacheTimeout) {
         this.cacheCapacity = cacheCapacity;
         this.cacheTimeout = cacheTimeout;
+        oldestKey = Optional.empty();
         cache = new ConcurrentHashMap<>();
-        cacheKeyTTL = new ConcurrentHashMap<>();
+        expirationCache = new ConcurrentHashMap<>();
     }
 
-    public S get(final T key) throws IntegrationException {
-        final S value = cache.get(key);
-        final Timestamp staleTime = new Timestamp(System.currentTimeMillis() - cacheTimeout);
-        if (oldestKeyAge != null && oldestKeyAge.before(staleTime)) {
-            removeStaleKeys(staleTime);
-        }
-        return value;
+    public S get(final T key) {
+        removeStaleKeys();
+        return cache.get(key);
     }
 
     public void put(final T key, final S value) {
-        if (cache.size() == cacheCapacity) {
-            cache.remove(Collections.min(cacheKeyTTL.entrySet(), new Comparator<Entry<T, Timestamp>>() {
-                @Override
-                public int compare(final Entry<T, Timestamp> entry1, final Entry<T, Timestamp> entry2) {
-                    return entry1.getValue().getNanos() - entry2.getValue().getNanos();
-                }
-            }).getKey());
+        removeStaleKeys();
+
+        if (cache.size() == cacheCapacity && oldestKey.isPresent()) {
+            cache.remove(oldestKey.get());
+            oldestKey = Optional.empty();
         }
+
         cache.put(key, value);
-        cacheKeyTTL.put(key, new Timestamp(System.currentTimeMillis()));
+        expirationCache.put(key, Instant.now().plusMillis(cacheTimeout));
+
+        if (!oldestKey.isPresent()) {
+            oldestKey = getOldestKey();
+        }
     }
 
-    private void removeStaleKeys(final Timestamp staleTime) {
-        oldestKeyAge = null;
-        for (final Entry<T, Timestamp> entry : cacheKeyTTL.entrySet()) {
-            final T livingKey = entry.getKey();
-            final Timestamp keyStaleTime = entry.getValue();
-            if (keyStaleTime.before(staleTime)) {
-                cache.remove(livingKey);
-                cacheKeyTTL.remove(livingKey);
-            } else {
-                oldestKeyAge = (oldestKeyAge == null || oldestKeyAge.after(keyStaleTime)) ? keyStaleTime : oldestKeyAge;
-            }
+    public Optional<T> getOldestKey() {
+        return cache.keySet().stream().reduce((key1, key2) -> getOlderKey(key1, key2));
+    }
+
+    public T getOlderKey(final T key1, final T key2) {
+        final Instant key1Expiration = expirationCache.get(key1);
+        final Instant key2Expiration = expirationCache.get(key2);
+
+        if (key1Expiration.isBefore(key2Expiration)) {
+            return key1;
         }
+        return key2;
+    }
+
+    public boolean isExpired(final T key) {
+        return expirationCache.get(key).isBefore(Instant.now());
+    }
+
+    private void removeStaleKeys() {
+        if (oldestKey.isPresent() && isExpired(oldestKey.get())) {
+            oldestKey = Optional.empty();
+            cache.keySet().stream()
+                    .filter(key -> isExpired(key))
+                    .forEach(key -> removeStaleKey(key));
+            oldestKey = getOldestKey();
+        }
+    }
+
+    private void removeStaleKey(final T key) {
+        cache.remove(key);
+        expirationCache.remove(key);
     }
 
 }
