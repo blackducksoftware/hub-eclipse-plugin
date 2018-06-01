@@ -32,9 +32,8 @@ import org.eclipse.swt.widgets.Display;
 
 import com.blackducksoftware.integration.eclipse.BlackDuckEclipseActivator;
 import com.blackducksoftware.integration.eclipse.internal.ComponentModel;
-import com.blackducksoftware.integration.eclipse.services.BlackDuckEclipseServicesFactory;
 import com.blackducksoftware.integration.eclipse.services.ProjectInformationService;
-import com.blackducksoftware.integration.eclipse.services.connection.hub.HubConnectionService;
+import com.blackducksoftware.integration.eclipse.services.connection.hub.HubPreferencesService;
 import com.blackducksoftware.integration.eclipse.services.inspector.ComponentInspectorPreferencesService;
 import com.blackducksoftware.integration.eclipse.services.inspector.ComponentInspectorService;
 import com.blackducksoftware.integration.eclipse.views.ComponentInspectorView;
@@ -44,7 +43,7 @@ public class ComponentTableStatusCLabel extends CLabel {
     private final ProjectInformationService projectInformationService;
     private final TableViewer componentInspectorTableViewer;
     private final ComponentInspectorService componentInspectorService;
-    private final HubConnectionService hubConnectionService;
+    private final HubPreferencesService hubPreferencesService;
 
     public static final String NO_SELECTED_PROJECT_STATUS = "No open project selected";
     public static final String PROJECT_INSPECTION_RUNNING_STATUS = "Inspecting project...";
@@ -56,51 +55,48 @@ public class ComponentTableStatusCLabel extends CLabel {
     public static final String HUB_CONNECTION_OK_NO_COMPONENTS_STATUS = "Connected to Hub instance - No components found.";
     public static final String PROJECT_NOT_SUPPORTED_STATUS = "Cannot inspect selected project - either it is not a Java project or no Maven or Gradle nature was detected";
 
-    public ComponentTableStatusCLabel(final Composite parent, final int style, final TableViewer componentInspectorTableViewer, final ComponentInspectorService componentInspectorService) {
+    public ComponentTableStatusCLabel(final Composite parent, final int style, final TableViewer componentInspectorTableViewer, final ComponentInspectorService componentInspectorService, final ComponentInspectorPreferencesService componentInspectorPreferencesService, final HubPreferencesService hubPreferencesService, final ProjectInformationService projectInformationService) {
         super(parent, style);
-        this.componentInspectorPreferencesService = BlackDuckEclipseServicesFactory.getInstance().getComponentInspectorPreferencesService();
-        this.projectInformationService = BlackDuckEclipseServicesFactory.getInstance().getProjectInformationService();
+        this.componentInspectorPreferencesService = componentInspectorPreferencesService;
+        this.hubPreferencesService = hubPreferencesService;
+        this.projectInformationService = projectInformationService;
         this.componentInspectorTableViewer = componentInspectorTableViewer;
-        this.hubConnectionService = BlackDuckEclipseServicesFactory.getInstance().getHubConnectionService();
         this.componentInspectorService = componentInspectorService;
         this.setText(NO_SELECTED_PROJECT_STATUS);
     }
 
     public void updateStatus(final String projectName) {
         if (componentInspectorTableViewer != null && componentInspectorTableViewer.getInput() != null) {
-            final boolean noComponents = ((ComponentModel[]) componentInspectorTableViewer.getInput()).length == 0;
-            final boolean noProjectMapping = componentInspectorService.getProjectComponents(projectName) == null;
-            final String statusMessage = determineStatusMessage(noComponents, noProjectMapping, projectName);
-            this.setStatus(statusMessage);
-        }
-    }
+            final boolean tableViewerHasNoComponents = ((ComponentModel[]) componentInspectorTableViewer.getInput()).length == 0;
+            final boolean projectShouldHaveBeenAutoInspected = componentInspectorService.getProjectComponents(projectName) == null;
+            final boolean canEstablishConnectionFromPreferences = hubPreferencesService.canEstablishHubConnection();
 
-    private String determineStatusMessage(final boolean noComponents, final boolean noProjectMapping, final String projectName) {
-        String status = "";
+            String status = "";
 
-        if (projectName.isEmpty()) {
-            status = NO_SELECTED_PROJECT_STATUS;
-        } else if (!projectInformationService.isProjectSupported(projectName)) {
-            status = PROJECT_NOT_SUPPORTED_STATUS;
-        } else if (!componentInspectorPreferencesService.isProjectMarkedForInspection(projectName)) {
-            status = PROJECT_NOT_MARKED_FOR_INSPECTION_STATUS;
-        } else if (!hubConnectionService.hasActiveConnection()) {
-            status = CONNECTION_DISCONNECTED_STATUS;
-        } else if (componentInspectorService.isProjectInspectionRunning(projectName)) {
-            status = PROJECT_INSPECTION_RUNNING_STATUS;
-        } else if (componentInspectorService.isProjectInspectionScheduled(projectName)) {
-            status = PROJECT_INSPECTION_SCHEDULED_STATUS;
-        } else if (noProjectMapping) {
-            status = PROJECT_NEEDS_INSPECTION_STATUS;
-        } else if (hubConnectionService.hasActiveConnection()) {
-            if (noComponents) {
-                status = HUB_CONNECTION_OK_NO_COMPONENTS_STATUS;
-            } else {
-                status = HUB_CONNECTION_OK_STATUS;
+            if (projectName.isEmpty()) {
+                status = NO_SELECTED_PROJECT_STATUS;
+            } else if (!projectInformationService.isProjectSupported(projectName)) {
+                status = PROJECT_NOT_SUPPORTED_STATUS;
+            } else if (!componentInspectorPreferencesService.isProjectMarkedForInspection(projectName)) {
+                status = PROJECT_NOT_MARKED_FOR_INSPECTION_STATUS;
+            } else if (!canEstablishConnectionFromPreferences) {
+                status = CONNECTION_DISCONNECTED_STATUS;
+            } else if (componentInspectorService.isProjectInspectionRunning(projectName)) {
+                status = PROJECT_INSPECTION_RUNNING_STATUS;
+            } else if (componentInspectorService.isProjectInspectionScheduled(projectName)) {
+                status = PROJECT_INSPECTION_SCHEDULED_STATUS;
+            } else if (projectShouldHaveBeenAutoInspected) {
+                status = PROJECT_NEEDS_INSPECTION_STATUS;
+            } else if (canEstablishConnectionFromPreferences) {
+                if (tableViewerHasNoComponents) {
+                    status = HUB_CONNECTION_OK_NO_COMPONENTS_STATUS;
+                } else {
+                    status = HUB_CONNECTION_OK_STATUS;
+                }
             }
-        }
 
-        return status;
+            this.setStatus(status);
+        }
     }
 
     private void setStatus(final String message) {

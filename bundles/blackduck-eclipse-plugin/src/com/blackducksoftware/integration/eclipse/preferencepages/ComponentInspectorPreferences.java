@@ -79,8 +79,9 @@ public class ComponentInspectorPreferences extends PreferencePage implements IWo
     public void init(final IWorkbench workbench) {
         this.noDefaultButton();
         this.setPreferenceStore(BlackDuckEclipseActivator.getDefault().getPreferenceStore());
-        inspectorPreferencesService = BlackDuckEclipseServicesFactory.getInstance().getComponentInspectorPreferencesService();
-        workspaceInformationService = BlackDuckEclipseServicesFactory.getInstance().getWorkspaceInformationService();
+        final BlackDuckEclipseServicesFactory blackDuckEclipseServicesFactory = BlackDuckEclipseServicesFactory.getInstance();
+        inspectorPreferencesService = blackDuckEclipseServicesFactory.getComponentInspectorPreferencesService();
+        workspaceInformationService = blackDuckEclipseServicesFactory.getWorkspaceInformationService();
 
     }
 

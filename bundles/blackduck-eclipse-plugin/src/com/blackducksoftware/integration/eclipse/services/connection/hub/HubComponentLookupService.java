@@ -29,7 +29,7 @@ import java.util.List;
 import java.util.Optional;
 
 import com.blackducksoftware.integration.eclipse.internal.ComponentModel;
-import com.blackducksoftware.integration.eclipse.services.connection.AbstractComponentLookupService;
+import com.blackducksoftware.integration.eclipse.internal.datastructures.TimedLRUCache;
 import com.blackducksoftware.integration.exception.IntegrationException;
 import com.blackducksoftware.integration.hub.api.generated.view.ComplexLicenseView;
 import com.blackducksoftware.integration.hub.api.generated.view.VulnerabilityV2View;
@@ -39,14 +39,19 @@ import com.blackducksoftware.integration.hub.service.HubServicesFactory;
 import com.blackducksoftware.integration.hub.service.LicenseService;
 import com.blackducksoftware.integration.rest.connection.RestConnection;
 
-public class HubComponentLookupService extends AbstractComponentLookupService {
-    public HubComponentLookupService(final HubConnectionService connectionService) {
-        super(connectionService);
+public class HubComponentLookupService {
+    private final HubPreferencesService hubPreferencesService;
+    private final TimedLRUCache<ExternalId, ComponentModel> componentLoadingCache;
+    private final int CACHE_CAPACITY = 10000;
+    private final int CACHE_TTL = 3600000;
+
+    public HubComponentLookupService(final HubPreferencesService hubPreferencesService) {
+        this.hubPreferencesService = hubPreferencesService;
+        this.componentLoadingCache = new TimedLRUCache<>(CACHE_CAPACITY, CACHE_TTL);
     }
 
-    @Override
     public ComponentModel lookupComponent(final ExternalId externalId) throws IOException, URISyntaxException, IntegrationException {
-        final Optional<RestConnection> restConnection = ((HubConnectionService) connectionService).getConnection();
+        final Optional<RestConnection> restConnection = hubPreferencesService.getHubConnectionFromPreferences();
         final HubServicesFactory hubServicesFactory = new HubServicesFactory(restConnection.get());
         final ComponentService componentService = hubServicesFactory.createComponentService();
         final LicenseService licenseService = hubServicesFactory.createLicenseService();

@@ -32,45 +32,69 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.blackducksoftware.integration.eclipse.BlackDuckEclipseActivator;
-import com.blackducksoftware.integration.eclipse.services.connection.AbstractConnectionService;
+import com.blackducksoftware.integration.eclipse.internal.DecryptedHubServerConfig;
+import com.blackducksoftware.integration.eclipse.internal.DecryptedHubServerConfigBuilder;
+import com.blackducksoftware.integration.exception.EncryptionException;
 import com.blackducksoftware.integration.exception.IntegrationException;
 import com.blackducksoftware.integration.hub.api.generated.view.ComponentVersionView;
 import com.blackducksoftware.integration.hub.bdio.model.externalid.ExternalId;
 import com.blackducksoftware.integration.hub.configuration.HubServerConfig;
+import com.blackducksoftware.integration.hub.configuration.HubServerConfigBuilder;
+import com.blackducksoftware.integration.hub.rest.CredentialsRestConnection;
 import com.blackducksoftware.integration.hub.service.ComponentService;
 import com.blackducksoftware.integration.hub.service.HubService;
 import com.blackducksoftware.integration.hub.service.HubServicesFactory;
 import com.blackducksoftware.integration.hub.service.PhoneHomeService;
-import com.blackducksoftware.integration.log.Slf4jIntLogger;
+import com.blackducksoftware.integration.log.IntLogger;
+import com.blackducksoftware.integration.log.SilentLogger;
 import com.blackducksoftware.integration.phonehome.PhoneHomeRequestBody;
 import com.blackducksoftware.integration.rest.connection.RestConnection;
 
-public class HubConnectionService extends AbstractConnectionService {
+public class HubConnectionService {
     private final Logger log = LoggerFactory.getLogger(HubConnectionService.class);
 
-    private Optional<RestConnection> connection;
-    private final HubPreferencesService hubPreferencesService;
+    public CredentialsRestConnection getCredentialsRestConnection(final String username, final String password, final String hubUrl, final String timeout, final boolean hubAlwaysTrust, final String proxyUsername, final String proxyPassword, final String proxyPort, final String proxyHost) throws IllegalStateException, EncryptionException {
+        final HubServerConfigBuilder hubServerConfigBuilder = new HubServerConfigBuilder();
+        final DecryptedHubServerConfigBuilder decryptedHubServerConfigBuilder = new DecryptedHubServerConfigBuilder();
 
-    public HubConnectionService(final HubPreferencesService hubPreferencesService) {
-        this.hubPreferencesService = hubPreferencesService;
+        hubServerConfigBuilder.setUsername(username);
+        hubServerConfigBuilder.setPassword(password);
+        hubServerConfigBuilder.setUrl(hubUrl);
+        hubServerConfigBuilder.setTimeout(timeout);
+        hubServerConfigBuilder.setTrustCert(hubAlwaysTrust);
+        hubServerConfigBuilder.setProxyUsername(proxyUsername);
+        hubServerConfigBuilder.setProxyPassword(proxyPassword);
+        hubServerConfigBuilder.setProxyPort(proxyPort);
+        hubServerConfigBuilder.setProxyHost(proxyHost);
+
+        HubServerConfig hubServerConfig = null;
+        DecryptedHubServerConfig decryptedHubServerConfig = null;
+
+        try {
+            hubServerConfig = hubServerConfigBuilder.build();
+        } catch (final Exception e) {
+            decryptedHubServerConfigBuilder.setUsername(username);
+            decryptedHubServerConfigBuilder.setPassword(password);
+            decryptedHubServerConfigBuilder.setUrl(hubUrl);
+            decryptedHubServerConfigBuilder.setTimeout(timeout);
+            decryptedHubServerConfigBuilder.setTrustCert(hubAlwaysTrust);
+            decryptedHubServerConfigBuilder.setProxyUsername(proxyUsername);
+            decryptedHubServerConfigBuilder.setProxyPassword(proxyPassword);
+            decryptedHubServerConfigBuilder.setProxyPort(proxyPort);
+            decryptedHubServerConfigBuilder.setProxyHost(proxyHost);
+
+            decryptedHubServerConfig = (DecryptedHubServerConfig) decryptedHubServerConfigBuilder.build();
+
+            log.error("Encryption or decryption failed. Your passwords may not be stored in an encrypted format!");
+            log.debug("Stack trace:", e);
+        }
+
+        final IntLogger logger = new SilentLogger();
+
+        return decryptedHubServerConfig == null ? hubServerConfig.createCredentialsRestConnection(logger) : decryptedHubServerConfig.createCredentialsRestConnection(logger);
     }
 
-    @Override
-    public void reloadConnection() {
-        this.connection = this.getHubConnectionFromPreferences();
-        this.phoneHome();
-    }
-
-    @Override
-    public boolean hasActiveConnection() {
-        return connection.isPresent();
-    }
-
-    public Optional<RestConnection> getConnection() {
-        return connection;
-    }
-
-    public String getComponentVersionLinkFromExternalId(final ExternalId externalId) throws IntegrationException {
+    public String getComponentVersionLinkFromExternalId(final Optional<RestConnection> connection, final ExternalId externalId) throws IntegrationException {
         if (connection.isPresent()) {
             final HubServicesFactory hubServicesFactory = new HubServicesFactory(connection.get());
             final ComponentService componentService = hubServicesFactory.createComponentService();
@@ -82,8 +106,8 @@ public class HubConnectionService extends AbstractConnectionService {
         throw new IntegrationException("No active connection with a Hub server");
     }
 
-    private void phoneHome() {
-        if (hasActiveConnection()) {
+    public void phoneHome(final Optional<RestConnection> connection) {
+        if (connection.isPresent()) {
             Display.getDefault().asyncExec(new Runnable() {
                 @Override
                 public void run() {
@@ -98,21 +122,6 @@ public class HubConnectionService extends AbstractConnectionService {
                 }
             });
         }
-    }
-
-    private Optional<RestConnection> getHubConnectionFromPreferences() {
-        RestConnection connection = null;
-
-        try {
-            final HubServerConfig hubServerConfig = hubPreferencesService.getHubServerConfig();
-            connection = hubServerConfig.createCredentialsRestConnection(new Slf4jIntLogger(log));
-            connection.connect();
-        } catch (final Exception e) {
-            log.warn("Could not get Hub connection from stored preferences: " + e.getMessage());
-            log.debug("Stack trace: ", e);
-        }
-
-        return Optional.ofNullable(connection);
     }
 
 }
