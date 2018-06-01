@@ -46,6 +46,7 @@ import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.browser.IWebBrowser;
+import org.eclipse.ui.browser.IWorkbenchBrowserSupport;
 import org.eclipse.ui.part.ViewPart;
 
 import com.blackducksoftware.integration.eclipse.BlackDuckEclipseActivator;
@@ -72,6 +73,7 @@ public class ComponentInspectorView extends ViewPart {
     public static final String WAITING_PNG_PATH = "resources/icons/waiting.gif";
     public static final String WARNING_PNG_PATH = "resources/icons/warning.gif";
 
+    private final BlackDuckEclipseServicesFactory blackDuckEclipseServicesFactory;
     private final ComponentInspectorViewService componentInspectorViewService;
     private final ComponentInspectorService componentInspectorService;
     private final WorkspaceInformationService workspaceInformationService;
@@ -86,7 +88,7 @@ public class ComponentInspectorView extends ViewPart {
 
     public ComponentInspectorView() {
         super();
-        final BlackDuckEclipseServicesFactory blackDuckEclipseServicesFactory = BlackDuckEclipseServicesFactory.getInstance();
+        blackDuckEclipseServicesFactory = BlackDuckEclipseServicesFactory.getInstance();
         componentInspectorViewService = blackDuckEclipseServicesFactory.getComponentInspectorViewService();
         componentInspectorService = blackDuckEclipseServicesFactory.getComponentInspectorService();
         workspaceInformationService = blackDuckEclipseServicesFactory.getWorkspaceInformationService();
@@ -115,7 +117,7 @@ public class ComponentInspectorView extends ViewPart {
         this.getSite().getPage().addSelectionListener(editorSelectionListener);
         this.createColumns();
         this.refreshInput();
-        tableStatus = new ComponentTableStatusCLabel(parent, SWT.LEFT, tableViewer, componentInspectorService);
+        tableStatus = new ComponentTableStatusCLabel(parent, SWT.LEFT, tableViewer, componentInspectorService, blackDuckEclipseServicesFactory.getComponentInspectorPreferencesService(), blackDuckEclipseServicesFactory.getHubPreferencesService(), blackDuckEclipseServicesFactory.getProjectInformationService());
         tableStatus.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
     }
 
@@ -167,11 +169,16 @@ public class ComponentInspectorView extends ViewPart {
     }
 
     public IWebBrowser getBrowser() throws PartInitException {
-        if (PlatformUI.getWorkbench().getBrowserSupport().isInternalWebBrowserAvailable()) {
-            return PlatformUI.getWorkbench().getBrowserSupport().createBrowser(BlackDuckEclipseActivator.PLUGIN_ID);
+        final IWebBrowser browser;
+        final IWorkbenchBrowserSupport browserSupport = PlatformUI.getWorkbench().getBrowserSupport();
+
+        if (browserSupport.isInternalWebBrowserAvailable()) {
+            browser = browserSupport.createBrowser(BlackDuckEclipseActivator.PLUGIN_ID);
         } else {
-            return PlatformUI.getWorkbench().getBrowserSupport().getExternalBrowser();
+            browser = browserSupport.getExternalBrowser();
         }
+
+        return browser;
     }
 
     private String getProjectNameFromActiveContext() {

@@ -104,8 +104,9 @@ public class HubPreferences extends PreferencePage implements IWorkbenchPreferen
 
     @Override
     public void init(final IWorkbench workbench) {
-        hubPreferencesService = BlackDuckEclipseServicesFactory.getInstance().getHubPreferencesService();
-        hubConnectionService = BlackDuckEclipseServicesFactory.getInstance().getHubConnectionService();
+        final BlackDuckEclipseServicesFactory blackDuckEclipseServicesFactory = BlackDuckEclipseServicesFactory.getInstance();
+        hubPreferencesService = blackDuckEclipseServicesFactory.getHubPreferencesService();
+        hubConnectionService = blackDuckEclipseServicesFactory.getHubConnectionService();
         this.setPreferenceStore(BlackDuckEclipseActivator.getDefault().getPreferenceStore());
         this.noDefaultButton();
     }
