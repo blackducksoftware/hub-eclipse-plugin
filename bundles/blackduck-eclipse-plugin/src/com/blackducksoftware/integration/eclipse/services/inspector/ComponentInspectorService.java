@@ -75,7 +75,7 @@ public class ComponentInspectorService {
 
     public boolean inspectProject(final String projectName) {
         boolean success = false;
-        if (hubPreferencesService.hasActiveHubConnection() && inspectorPreferencesService.isProjectMarkedForInspection(projectName)) {
+        if (hubPreferencesService.canEstablishHubConnection() && inspectorPreferencesService.isProjectMarkedForInspection(projectName)) {
             final ProjectInformationService projectInformationService = workspaceInformationService.getProjectInformationService();
             final ComponentInformationService componentInformationService = projectInformationService.getComponentInformationService();
             final InspectionJob inspection = new InspectionJob(projectName, this, inspectorPreferencesService, hubPreferencesService, componentInformationService, projectInformationService);

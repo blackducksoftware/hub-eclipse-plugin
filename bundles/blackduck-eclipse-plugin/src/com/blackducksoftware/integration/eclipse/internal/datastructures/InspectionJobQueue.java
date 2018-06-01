@@ -25,6 +25,7 @@ package com.blackducksoftware.integration.eclipse.internal.datastructures;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 import org.eclipse.core.runtime.jobs.IJobManager;
@@ -35,31 +36,33 @@ import com.blackducksoftware.integration.eclipse.internal.listeners.InspectionJo
 
 public class InspectionJobQueue {
     public final ConcurrentLinkedQueue<InspectionJob> inspectionQueue;
-
-    private InspectionJobChangeListener inspectionJobChangeListener = null;
-
-    private InspectionJob currentInspection = null;
+    private Optional<InspectionJobChangeListener> inspectionJobChangeListener = Optional.empty();
+    private Optional<InspectionJob> currentInspection = Optional.empty();
 
     public InspectionJobQueue(final InspectionJobChangeListener inspectionJobChangeListener) {
         this.inspectionQueue = new ConcurrentLinkedQueue<>();
-        this.inspectionJobChangeListener = inspectionJobChangeListener;
-        inspectionJobChangeListener.registerInspectionJobQueue(this);
+        this.inspectionJobChangeListener = Optional.ofNullable(inspectionJobChangeListener);
+        if (this.inspectionJobChangeListener.isPresent()) {
+            this.inspectionJobChangeListener.get().registerInspectionJobQueue(this);
+        }
     }
 
     public boolean enqueueInspection(final InspectionJob inspection) {
-        if(inspectionJobChangeListener == null || getInspectionIsRunning(inspection.getProjectName()) || getInspectionIsScheduled(inspection.getProjectName())) {
+        if (inspection == null || !inspectionJobChangeListener.isPresent() || getInspectionIsRunning(inspection.getProjectName()) || getInspectionIsScheduled(inspection.getProjectName())) {
             return false;
         }
-        inspection.addJobChangeListener(inspectionJobChangeListener);
-        if (currentInspection == null) {
-            currentInspection = inspection;
-            inspection.schedule();
-            return true;
+        inspection.addJobChangeListener(inspectionJobChangeListener.get());
+        if (!currentInspection.isPresent()) {
+            currentInspection = Optional.ofNullable(inspection);
+            if (currentInspection.isPresent()) {
+                currentInspection.get().schedule();
+                return true;
+            }
         }
         return inspectionQueue.add(inspection);
     }
 
-    public InspectionJob getCurrentInspection() {
+    public Optional<InspectionJob> getCurrentInspection() {
         return currentInspection;
     }
 
@@ -80,7 +83,7 @@ public class InspectionJobQueue {
     }
 
     public boolean getInspectionIsRunning(final String projectName) {
-        return currentInspection != null && currentInspection.getProjectName().equals(projectName);
+        return currentInspection.isPresent() && currentInspection.get().getProjectName().equals(projectName);
     }
 
     public boolean getInspectionIsScheduled(final String projectName) {
@@ -92,26 +95,31 @@ public class InspectionJobQueue {
         return false;
     }
 
-    public void currentInspectionDone(){
-        currentInspection = null;
+    public void currentInspectionDone() {
+        currentInspection = Optional.empty();
         if (!inspectionQueue.isEmpty()) {
-            currentInspection = inspectionQueue.poll();
-            currentInspection.schedule();
+            final InspectionJob nextJob = inspectionQueue.poll();
+            currentInspection = Optional.of(nextJob);
+            nextJob.schedule();
         }
     }
 
-    public void cancelAll(){
+    public void cancelAll() {
         inspectionQueue.forEach(inspection -> {
-            inspection.removeJobChangeListener(inspectionJobChangeListener);
+            if (inspectionJobChangeListener.isPresent()) {
+                inspection.removeJobChangeListener(inspectionJobChangeListener.get());
+            }
             inspection.cancel();
         });
         while (!inspectionQueue.isEmpty()) {
             inspectionQueue.remove();
         }
-        if (currentInspection != null) {
-            currentInspection.removeJobChangeListener(inspectionJobChangeListener);
-            currentInspection.cancel();
-            currentInspection = null;
+        if (currentInspection.isPresent()) {
+            if (inspectionJobChangeListener.isPresent()) {
+                currentInspection.get().removeJobChangeListener(inspectionJobChangeListener.get());
+            }
+            currentInspection.get().cancel();
+            currentInspection = Optional.empty();
         }
     }
 

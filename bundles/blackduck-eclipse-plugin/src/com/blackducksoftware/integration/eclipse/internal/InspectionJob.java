@@ -86,7 +86,7 @@ public class InspectionJob extends Job {
     @Override
     protected IStatus run(final IProgressMonitor monitor) {
         try {
-            if (componentInspectorPreferencesService.isProjectMarkedForInspection(projectName) && hubPreferencesService.hasActiveHubConnection()) {
+            if (componentInspectorPreferencesService.isProjectMarkedForInspection(projectName) && hubPreferencesService.canEstablishHubConnection()) {
                 componentInspectorService.initializeProjectComponents(projectName);
                 final SubMonitor subMonitor = SubMonitor.convert(monitor, ONE_HUNDRED_PERCENT);
                 subMonitor.setTaskName("Gathering dependencies");

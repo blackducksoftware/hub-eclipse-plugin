@@ -200,7 +200,7 @@ public class HubPreferencesService {
         return Optional.ofNullable(connection);
     }
 
-    public boolean hasActiveHubConnection() {
+    public boolean canEstablishHubConnection() {
         return getHubConnectionFromPreferences().isPresent();
     }
 

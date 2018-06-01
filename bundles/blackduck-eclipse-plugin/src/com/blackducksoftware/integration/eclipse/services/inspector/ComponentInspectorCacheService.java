@@ -63,7 +63,7 @@ public class ComponentInspectorCacheService {
 
     public void addComponentToProject(final String projectName, final ExternalId externalId) throws IOException, URISyntaxException {
         final List<ComponentModel> components = inspectorCache.get(projectName);
-        if (components != null && hubPreferencesService.hasActiveHubConnection()) {
+        if (components != null && hubPreferencesService.canEstablishHubConnection()) {
             try {
                 final ComponentModel newComponent = hubComponentLookupService.lookupComponent(externalId);
                 components.add(newComponent);
