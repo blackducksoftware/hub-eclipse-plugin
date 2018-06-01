@@ -71,13 +71,13 @@ public class ComponentTableStatusCLabel extends CLabel {
         if (componentInspectorTableViewer != null && componentInspectorTableViewer.getInput() != null) {
             final boolean noComponents = ((ComponentModel[]) componentInspectorTableViewer.getInput()).length == 0;
             final boolean noProjectMapping = componentInspectorService.getProjectComponents(projectName) == null;
-            final boolean activeHubConnection = hubPreferencesService.canEstablishHubConnection();
-            final String statusMessage = determineStatusMessage(noComponents, noProjectMapping, activeHubConnection, projectName);
+            final boolean canEstablishConnection = hubPreferencesService.canEstablishHubConnection();
+            final String statusMessage = determineStatusMessage(noComponents, noProjectMapping, canEstablishConnection, projectName);
             this.setStatus(statusMessage);
         }
     }
 
-    private String determineStatusMessage(final boolean noComponents, final boolean noProjectMapping, final boolean activeHubConnection, final String projectName) {
+    private String determineStatusMessage(final boolean noComponents, final boolean noProjectMapping, final boolean canEstablishConnection, final String projectName) {
         String status = "";
 
         if (projectName.isEmpty()) {
@@ -86,7 +86,7 @@ public class ComponentTableStatusCLabel extends CLabel {
             status = PROJECT_NOT_SUPPORTED_STATUS;
         } else if (!componentInspectorPreferencesService.isProjectMarkedForInspection(projectName)) {
             status = PROJECT_NOT_MARKED_FOR_INSPECTION_STATUS;
-        } else if (!hubPreferencesService.canEstablishHubConnection()) {
+        } else if (!canEstablishConnection) {
             status = CONNECTION_DISCONNECTED_STATUS;
         } else if (componentInspectorService.isProjectInspectionRunning(projectName)) {
             status = PROJECT_INSPECTION_RUNNING_STATUS;
@@ -94,7 +94,7 @@ public class ComponentTableStatusCLabel extends CLabel {
             status = PROJECT_INSPECTION_SCHEDULED_STATUS;
         } else if (noProjectMapping) {
             status = PROJECT_NEEDS_INSPECTION_STATUS;
-        } else if (hubPreferencesService.canEstablishHubConnection()) {
+        } else if (canEstablishConnection) {
             if (noComponents) {
                 status = HUB_CONNECTION_OK_NO_COMPONENTS_STATUS;
             } else {
